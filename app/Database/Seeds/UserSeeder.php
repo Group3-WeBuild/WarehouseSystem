@@ -72,7 +72,7 @@ class UserSeeder extends Seeder
             [
                 'username' => 'accounts_payable',
                 'name' => 'David Brown',
-                'email' => '    ',
+                'email' => 'david.brown@webuild.com',
                 'password' => password_hash('password123', PASSWORD_DEFAULT),
                 'role' => 'Accounts Payable Clerk',
                 'created_at' => date('Y-m-d H:i:s'),
