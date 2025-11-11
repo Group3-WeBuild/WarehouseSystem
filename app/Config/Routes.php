@@ -114,7 +114,27 @@ $routes->group('accounts-receivable', function($routes) {
     $routes->get('settings', 'AccountsReceivable::settings');
 });
 
-// Warehouse routes
+// Warehouse Manager routes
+// BACKEND: All warehouse management pages and AJAX endpoints
+$routes->group('warehouse-manager', function($routes) {
+    // VIEW ROUTES - Load HTML pages
+    $routes->get('dashboard', 'WarehouseManager::dashboard');
+    $routes->get('inventory', 'WarehouseManager::inventory');
+    $routes->get('stock-movements', 'WarehouseManager::stockMovements');
+    $routes->get('orders', 'WarehouseManager::orders');
+    $routes->get('reports', 'WarehouseManager::reports');
+    
+    // AJAX ENDPOINTS - Process form data and return JSON
+    $routes->post('add-item', 'WarehouseManager::addItem');
+    $routes->post('update-item/(:num)', 'WarehouseManager::updateItem/$1');
+    $routes->post('delete-item/(:num)', 'WarehouseManager::deleteItem/$1');
+    $routes->post('adjust-stock', 'WarehouseManager::adjustStock');
+    $routes->post('process-order/(:num)', 'WarehouseManager::processOrder/$1');
+    $routes->post('complete-order/(:num)', 'WarehouseManager::completeOrder/$1');
+    $routes->get('low-stock-alerts', 'WarehouseManager::getLowStockAlerts');
+});
+
+// Warehouse routes (legacy - keeping for compatibility)
 $routes->group('warehouse', function($routes) {
     $routes->get('dashboard', 'Warehouse::dashboard');
     // Add more routes as needed
@@ -129,12 +149,6 @@ $routes->group('inventory', function($routes) {
 // Procurement routes
 $routes->group('procurement', function($routes) {
     $routes->get('dashboard', 'Procurement::dashboard');
-    // Add more routes as needed
-});
-
-// IT Administration routes
-$routes->group('it-admin', function($routes) {
-    $routes->get('dashboard', 'ITAdmin::dashboard');
     // Add more routes as needed
 });
 
