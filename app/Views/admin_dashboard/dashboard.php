@@ -1,3 +1,54 @@
+<!-- 
+=====================================================
+STUDENT GUIDE: Admin Dashboard - Complete Flow
+=====================================================
+
+FILE PURPOSE:
+This is the main admin dashboard VIEW (frontend/HTML)
+
+WHAT IS A VIEW?
+- Views are HTML files that users see in their browser
+- They display data received from the Controller
+- They contain forms and buttons that send data back
+
+HOW DATA FLOWS (MVC Pattern):
+
+1. USER CLICKS LINK
+   Browser URL: http://localhost/admin/dashboard
+   
+2. ROUTES (app/Config/Routes.php)
+   Matches URL to Controller:
+   $routes->get('admin/dashboard', 'Admin::dashboard')
+   
+3. CONTROLLER (app/Controllers/Admin.php)
+   Function: dashboard()
+   - Checks if user is logged in
+   - Gets data from database (via Model)
+   - Prepares data array
+   - Loads this VIEW file with data
+   
+4. VIEW (THIS FILE - dashboard.php)
+   - Receives data from controller
+   - Displays data using PHP: <?= $variable ?>
+   - Shows HTML/CSS to user
+   
+5. USER INTERACTION (JavaScript/AJAX)
+   - User clicks button
+   - JavaScript sends AJAX request
+   - Goes back to Controller (POST route)
+   - Controller processes and responds
+   - JavaScript updates page
+
+BACKEND vs FRONTEND in this file:
+- BACKEND: <?php ?> code that displays data
+- FRONTEND: HTML, CSS, JavaScript
+
+DATA AVAILABLE in this view:
+- $stats: System statistics
+- $user: Current logged-in user info
+  
+=====================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>

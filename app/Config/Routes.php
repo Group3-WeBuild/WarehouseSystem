@@ -26,10 +26,40 @@ $routes->post('login', 'Auth::login');
 $routes->get('logout', 'Auth::logout');
 
 // Role-based dashboard routes
-$routes->get('dashboard', 'Auth::redirectToDashboard');
+$routes->get('/', 'Home::index');
+
+/**
+ * =====================================================
+ * STUDENT GUIDE: Understanding Routes
+ * =====================================================
+ * 
+ * What are Routes?
+ * Routes connect URLs to Controller functions
+ * 
+ * Example:
+ * URL: http://localhost/admin/dashboard
+ * Route: $routes->get('admin/dashboard', 'Admin::dashboard')
+ * Calls: Admin controller -> dashboard() function
+ * 
+ * Route Types:
+ * - GET routes: Load pages (views)
+ *   Example: $routes->get('admin/dashboard', ...)
+ * 
+ * - POST routes: Handle form submissions (AJAX)
+ *   Example: $routes->post('admin/create-user', ...)
+ * 
+ * Route Parameters:
+ * (:num) = Number parameter
+ * Example: admin/delete-user/5
+ * The "5" is passed to the function as $id
+ * 
+ * =====================================================
+ */
 
 // Admin routes
+// BACKEND: All admin dashboard pages and AJAX endpoints
 $routes->group('admin', function($routes) {
+    // VIEW ROUTES - Load HTML pages
     $routes->get('dashboard', 'Admin::dashboard');
     $routes->get('user-accounts', 'Admin::userAccounts');
     $routes->get('roles-permissions', 'Admin::rolesPermissions');
@@ -40,7 +70,8 @@ $routes->group('admin', function($routes) {
     $routes->get('database-management', 'Admin::databaseManagement');
     $routes->get('backup-recovery', 'Admin::backupRecovery');
     $routes->get('settings', 'Admin::settings');
-    // AJAX endpoints
+    
+    // AJAX ENDPOINTS - Process form data and return JSON
     $routes->post('create-user', 'Admin::createUser');
     $routes->post('update-user/(:num)', 'Admin::updateUser/$1');
     $routes->post('delete-user/(:num)', 'Admin::deleteUser/$1');

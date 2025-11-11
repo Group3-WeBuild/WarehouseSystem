@@ -1,3 +1,23 @@
+<!-- ============================================ -->
+<!-- BACKEND INTEGRATION: START                 -->
+<!-- This PHP code fetches data from the server -->
+<!-- ============================================ -->
+<?php
+/**
+ * User Accounts Management Page
+ * 
+ * BACKEND DATA PASSED FROM CONTROLLER:
+ * - $user: Current logged-in user information (username, role, email)
+ * - $users: Array of all users from the database
+ * 
+ * CONTROLLER: App\Controllers\Admin::userAccounts()
+ * DATABASE TABLES: users
+ */
+?>
+<!-- ============================================ -->
+<!-- BACKEND INTEGRATION: END                   -->
+<!-- ============================================ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,10 +123,15 @@
         <a href="<?= base_url('admin/settings') ?>">Settings</a>
       </div>
 
+      <!-- ============================================ -->
+      <!-- FRONTEND STARTS HERE                       -->
+      <!-- All content below uses static HTML + JS   -->
+      <!-- ============================================ -->
 
       <!-- Main Content -->
       <div class="col-md-10 p-0">
         <!-- Top Bar -->
+        <!-- BACKEND: Displays current user info from session -->
         <div class="topbar">
           <input type="text" class="form-control w-25" placeholder="Search">
           <div>
@@ -152,6 +177,10 @@
             </div>
           </div>
 
+          <!-- ============================================ -->
+          <!-- BACKEND DATA DISPLAY: User Accounts Table  -->
+          <!-- Data comes from $users array (Controller)  -->
+          <!-- ============================================ -->
           <!-- User Accounts Table -->
           <div>
             <table class="table table-bordered table-sm mt-2">
@@ -194,13 +223,22 @@
                 <?php endif; ?>
               </tbody>
             </table>
+            <!-- ============================================ -->
+            <!-- BACKEND DATA DISPLAY: END                  -->
+            <!-- ============================================ -->
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ============================================ -->
+  <!-- MODALS: Add & Edit User Forms              -->
+  <!-- These forms submit to backend via AJAX     -->
+  <!-- ============================================ -->
+  
   <!-- Add User Modal -->
+  <!-- BACKEND: Submits to /admin/create-user via AJAX -->
   <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -251,6 +289,7 @@
   </div>
 
   <!-- Edit User Modal -->
+  <!-- BACKEND: Submits to /admin/update-user/{id} via AJAX -->
   <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -299,8 +338,17 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- ============================================ -->
+  <!-- JAVASCRIPT: AJAX & Frontend Interactions   -->
+  <!-- These functions communicate with backend   -->
+  <!-- ============================================ -->
   <script>
-    // Add User Form Submission
+    // ==========================================
+    // BACKEND AJAX: Add User Form Submission
+    // Endpoint: POST /admin/create-user
+    // Controller: Admin::createUser()
+    // ==========================================
     $('#addUserForm').on('submit', function(e) {
       e.preventDefault();
       
@@ -327,7 +375,10 @@
       });
     });
 
-    // Edit User Function
+    // ==========================================
+    // FRONTEND: Edit User Function
+    // Populates modal with existing user data
+    // ==========================================
     function editUser(userId) {
       // Find user data from table
       const row = $(`tr[data-user-id="${userId}"]`);
@@ -346,7 +397,11 @@
       $('#editUserModal').modal('show');
     }
 
-    // Edit User Form Submission
+    // ==========================================
+    // BACKEND AJAX: Edit User Form Submission
+    // Endpoint: POST /admin/update-user/{id}
+    // Controller: Admin::updateUser()
+    // ==========================================
     $('#editUserForm').on('submit', function(e) {
       e.preventDefault();
       
@@ -375,7 +430,11 @@
       });
     });
 
-    // Delete User Function
+    // ==========================================
+    // BACKEND AJAX: Delete User Function
+    // Endpoint: POST /admin/delete-user/{id}
+    // Controller: Admin::deleteUser()
+    // ==========================================
     function deleteUser(userId) {
       if (confirm('Are you sure you want to delete this user?')) {
         $.ajax({
@@ -397,7 +456,12 @@
       }
     }
 
-    // Toggle User Status Function
+    // ==========================================
+    // BACKEND AJAX: Toggle User Status
+    // Endpoint: POST /admin/toggle-user-status/{id}
+    // Controller: Admin::toggleUserStatus()
+    // Switches between Active/Inactive
+    // ==========================================
     function toggleStatus(userId) {
       if (confirm('Are you sure you want to change this user\'s status?')) {
         $.ajax({
@@ -419,7 +483,11 @@
       }
     }
 
-    // Filter Functions
+    // ==========================================
+    // FRONTEND: Filter Functions
+    // These work on the client-side only
+    // No backend calls required
+    // ==========================================
     function applyFilters() {
       const searchTerm = $('#searchInput').val().toLowerCase();
       const roleFilter = $('#roleFilter').val();
@@ -457,7 +525,11 @@
       $('#usersTableBody tr').show();
     }
 
-    // Export Users Function
+    // ==========================================
+    // FRONTEND: Export Users to CSV
+    // Creates CSV file on client-side
+    // No backend call needed
+    // ==========================================
     function exportUsers() {
       // Create CSV content
       let csv = 'Name,Email,Username,Role,Status\n';
@@ -487,10 +559,16 @@
       window.URL.revokeObjectURL(url);
     }
 
-    // Real-time search
+    // ==========================================
+    // FRONTEND: Real-time search as you type
+    // ==========================================
     $('#searchInput').on('keyup', function() {
       applyFilters();
     });
+    
+    // ==========================================
+    // END OF JAVASCRIPT FUNCTIONS
+    // ==========================================
   </script>
 </body>
 </html>

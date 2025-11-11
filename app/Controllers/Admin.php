@@ -1,14 +1,65 @@
 <?php
+/**
+ * =====================================================
+ * STUDENT GUIDE: Understanding Backend vs Frontend
+ * =====================================================
+ * 
+ * THIS FILE: Admin.php (BACKEND CONTROLLER)
+ * Location: app/Controllers/Admin.php
+ * 
+ * What is a Controller?
+ * - Handles requests from the browser
+ * - Processes data from database
+ * - Sends data to views (HTML pages)
+ * 
+ * How it works:
+ * 1. User clicks button in browser (FRONTEND)
+ * 2. AJAX request sent to this controller (BACKEND)
+ * 3. Controller processes data
+ * 4. Controller sends response back (JSON)
+ * 5. JavaScript updates page (FRONTEND)
+ * 
+ * Key Concepts:
+ * - VIEW functions: Load HTML pages with data
+ * - AJAX functions: Process requests and return JSON
+ * - Helper functions: Support main functions
+ * 
+ * Database Table Used:
+ * - users (id, username, name, email, password, role, status)
+ * 
+ * =====================================================
+ */
 
 namespace App\Controllers;
 
 use App\Models\UserModel;
+
+/**
+ * =====================================================
+ * ADMIN CONTROLLER - Backend Logic
+ * =====================================================
+ * 
+ * This controller handles all administrative functions:
+ * - User management (CRUD operations)
+ * - Dashboard statistics
+ * - System monitoring
+ * - Security policies
+ * 
+ * STUDENT NOTE: This is the BACKEND - it processes data
+ * and sends it to VIEWS (frontend HTML files)
+ * 
+ * =====================================================
+ */
 
 class Admin extends BaseController
 {
     protected $session;
     protected $userModel;
 
+    /**
+     * Constructor - Runs when controller is loaded
+     * Initializes session and helper functions
+     */
     public function __construct()
     {
         $this->session = \Config\Services::session();
@@ -16,6 +67,19 @@ class Admin extends BaseController
         $this->userModel = new UserModel();
     }
 
+    /**
+     * =====================================================
+     * SECURITY CHECK - Authentication & Authorization
+     * =====================================================
+     * 
+     * This function checks if user is:
+     * 1. Logged in
+     * 2. Has admin privileges
+     * 
+     * STUDENT NOTE: Always call this at the start of
+     * admin functions to protect sensitive pages
+     * =====================================================
+     */
     private function checkAuth()
     {
         if (!$this->session->get('isLoggedIn')) {
@@ -34,6 +98,24 @@ class Admin extends BaseController
         return null;
     }
 
+    /**
+     * =====================================================
+     * VIEW: Admin Dashboard (Main Page)
+     * =====================================================
+     * 
+     * Route: /admin/dashboard
+     * Method: GET
+     * 
+     * What it does:
+     * 1. Checks if user is authorized
+     * 2. Gets system statistics from database
+     * 3. Loads dashboard view with data
+     * 
+     * Data sent to view:
+     * - $stats: System statistics (users, health, etc.)
+     * - $user: Current user information
+     * =====================================================
+     */
     public function dashboard()
     {
         $authCheck = $this->checkAuth();
@@ -79,6 +161,23 @@ class Admin extends BaseController
         return view('admin_dashboard/dashboard', $data);
     }
 
+    /**
+     * =====================================================
+     * VIEW: User Accounts Management Page
+     * =====================================================
+     * 
+     * Route: /admin/user-accounts
+     * Method: GET
+     * 
+     * What it does:
+     * 1. Gets all users from database
+     * 2. Sends user list to the view
+     * 
+     * Data sent to view:
+     * - $users: Array of all users
+     * - $user: Current logged-in user info
+     * =====================================================
+     */
     public function userAccounts()
     {
         $authCheck = $this->checkAuth();
@@ -273,13 +372,31 @@ class Admin extends BaseController
         return view('admin_dashboard/settings', $data);
     }
 
-    // AJAX Endpoints
+    /**
+     * =====================================================
+     * AJAX ENDPOINTS - User Management
+     * =====================================================
+     * 
+     * These functions handle AJAX requests from frontend
+     * They process data and return JSON responses
+     * 
+     * STUDENT NOTE: These are called via JavaScript
+     * fetch/AJAX, not by direct browser navigation
+     * =====================================================
+     */
+
+    /**
+     * CREATE USER - AJAX Endpoint
+     * Route: POST /admin/create-user
+     * Called from: user_accounts.php (Add User Modal)
+     */
     public function createUser()
     {
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
         if ($this->request->getMethod() === 'post') {
+            // Validation rules for form fields
             $rules = [
                 'username' => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
                 'name' => 'required|min_length[3]|max_length[255]',
@@ -289,16 +406,19 @@ class Admin extends BaseController
             ];
 
             if ($this->validate($rules)) {
+                // Prepare user data for database
                 $userData = [
                     'username' => $this->request->getPost('username'),
                     'name' => $this->request->getPost('name'),
                     'email' => $this->request->getPost('email'),
-                    'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+                    'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT), // Hash password for security
                     'role' => $this->request->getPost('role'),
                     'status' => 'Active'
                 ];
 
+                // Insert into database
                 if ($this->userModel->insert($userData)) {
+                    // Success response
                     return $this->response->setJSON([
                         'success' => true,
                         'message' => 'User created successfully'
@@ -306,6 +426,7 @@ class Admin extends BaseController
                 }
             }
 
+            // Failure response
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Failed to create user',
@@ -314,6 +435,13 @@ class Admin extends BaseController
         }
     }
 
+    /**
+     * UPDATE USER - AJAX Endpoint
+     * Route: POST /admin/update-user/{id}
+     * Called from: user_accounts.php (Edit User Modal)
+     * 
+     * Note: Password is only updated if provided
+     */
     public function updateUser($id = null)
     {
         $authCheck = $this->checkAuth();
@@ -356,6 +484,13 @@ class Admin extends BaseController
         }
     }
 
+    /**
+     * DELETE USER - AJAX Endpoint
+     * Route: POST /admin/delete-user/{id}
+     * Called from: user_accounts.php (Delete Button)
+     * 
+     * Security: Prevents admin from deleting themselves
+     */
     public function deleteUser($id = null)
     {
         $authCheck = $this->checkAuth();
@@ -363,7 +498,7 @@ class Admin extends BaseController
 
         $userId = $id ?? $this->request->getUri()->getSegment(3);
 
-        // Prevent deleting own account
+        // Security check: Prevent admin from deleting their own account
         if ($userId == $this->session->get('user_id')) {
             return $this->response->setJSON([
                 'success' => false,
@@ -371,6 +506,7 @@ class Admin extends BaseController
             ]);
         }
 
+        // Delete user from database
         if ($this->userModel->delete($userId)) {
             return $this->response->setJSON([
                 'success' => true,
@@ -384,6 +520,13 @@ class Admin extends BaseController
         ]);
     }
 
+    /**
+     * TOGGLE USER STATUS - AJAX Endpoint
+     * Route: POST /admin/toggle-user-status/{id}
+     * Called from: user_accounts.php (Activate/Deactivate Button)
+     * 
+     * Switches between 'Active' and 'Inactive' status
+     */
     public function toggleUserStatus($id = null)
     {
         $authCheck = $this->checkAuth();
@@ -393,8 +536,10 @@ class Admin extends BaseController
         $user = $this->userModel->find($userId);
 
         if ($user) {
+            // Toggle status: Active <-> Inactive
             $newStatus = ($user['status'] ?? 'Active') === 'Active' ? 'Inactive' : 'Active';
             
+            // Update in database
             if ($this->userModel->update($userId, ['status' => $newStatus])) {
                 return $this->response->setJSON([
                     'success' => true,
@@ -409,7 +554,21 @@ class Admin extends BaseController
         ]);
     }
 
-    // Helper functions
+    /**
+     * =====================================================
+     * HELPER FUNCTIONS - Support Functions
+     * =====================================================
+     * 
+     * These functions provide data for dashboard displays
+     * 
+     * STUDENT NOTE: In a real system, these would query
+     * actual database tables or system metrics
+     * =====================================================
+     */
+
+    /**
+     * Get recent system activities for dashboard
+     */
     private function getRecentActivities($limit = 10)
     {
         // In a real system, this would fetch from an activity log table
