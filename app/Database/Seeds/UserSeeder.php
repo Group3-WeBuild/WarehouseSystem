@@ -9,7 +9,9 @@ class UserSeeder extends Seeder
     public function run()
     {
         // Clear existing users first
-        $this->db->table('users')->truncate();
+        /** @var \CodeIgniter\Database\BaseBuilder $builder */
+        $builder = $this->db->table('users');
+        $builder->truncate();
         
         $data = [
             // Admin Users
@@ -108,7 +110,9 @@ class UserSeeder extends Seeder
         ];
 
         // Insert data
-        $this->db->table('users')->insertBatch($data);
+        /** @var \CodeIgniter\Database\BaseBuilder $builder */
+        $builder = $this->db->table('users');
+        $builder->insertBatch($data);
 
         echo "User seeder completed successfully!\n";
         echo "Created " . count($data) . " users:\n";

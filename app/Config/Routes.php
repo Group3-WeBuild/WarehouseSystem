@@ -43,7 +43,19 @@ $routes->group('accounts-payable', function($routes) {
 // Accounts Receivable routes
 $routes->group('accounts-receivable', function($routes) {
     $routes->get('dashboard', 'AccountsReceivable::dashboard');
-    // Add more routes as needed
+    $routes->get('manage-invoices', 'AccountsReceivable::manageInvoices');
+    $routes->post('create-invoice', 'AccountsReceivable::createInvoice');
+    $routes->post('update-invoice/(:num)', 'AccountsReceivable::updateInvoice/$1');
+    $routes->post('delete-invoice/(:num)', 'AccountsReceivable::deleteInvoice/$1');
+    $routes->get('record-payments', 'AccountsReceivable::recordPayments');
+    $routes->post('create-payment', 'AccountsReceivable::createPayment');
+    $routes->get('client-management', 'AccountsReceivable::clientManagement');
+    $routes->post('create-client', 'AccountsReceivable::createClient');
+    $routes->post('update-client/(:num)', 'AccountsReceivable::updateClient/$1');
+    $routes->get('overdue-followups', 'AccountsReceivable::overdueFollowups');
+    $routes->get('aging-report', 'AccountsReceivable::agingReport');
+    $routes->get('reports-analytics', 'AccountsReceivable::reportsAnalytics');
+    $routes->get('settings', 'AccountsReceivable::settings');
 });
 
 // Warehouse routes

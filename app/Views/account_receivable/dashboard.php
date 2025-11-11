@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Accounts Receivable Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- 
+  =====================================================
+  FRONTEND - CSS STYLING
+  =====================================================
+  All styling for the dashboard interface
+  =====================================================
+  -->
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -109,19 +116,26 @@
 </head>
 
 <body>
+<!-- 
+=====================================================
+FRONTEND - DASHBOARD LAYOUT
+=====================================================
+Main dashboard interface with sidebar navigation
+=====================================================
+-->
 <div class="container-fluid">
   <div class="row">
     <!-- Sidebar -->
     <div class="col-md-2 sidebar">
       <h5>WeBuild</h5>
-      <a href="dashboard.php" class="active">Dashboard</a>
-      <a href="manage_invoices.php">Manage Invoices</a>
-      <a href="record_payments.php">Record Payments</a>
-      <a href="client_management.php">Client Management</a>
-      <a href="overdue_followups.php">Overdue Follow-ups</a>
-      <a href="reports_analytics.php">Reports & Analytics</a>
-      <a href="aging_report.php">Aging Report</a>
-      <a href="settings.php">Settings</a>
+      <a href="<?= base_url('accounts-receivable/dashboard') ?>" class="active">Dashboard</a>
+      <a href="<?= base_url('accounts-receivable/manage-invoices') ?>">Manage Invoices</a>
+      <a href="<?= base_url('accounts-receivable/record-payments') ?>">Record Payments</a>
+      <a href="<?= base_url('accounts-receivable/client-management') ?>">Client Management</a>
+      <a href="<?= base_url('accounts-receivable/overdue-followups') ?>">Overdue Follow-ups</a>
+      <a href="<?= base_url('accounts-receivable/reports-analytics') ?>">Reports & Analytics</a>
+      <a href="<?= base_url('accounts-receivable/aging-report') ?>">Aging Report</a>
+      <a href="<?= base_url('accounts-receivable/settings') ?>">Settings</a>
     </div>
 
     <!-- Main Content -->
@@ -130,8 +144,8 @@
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | Accounts Receivable Clerk | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('F d, Y | h:i A') ?> | <?= esc($user['role']) ?> | <strong><?= esc($user['username']) ?></strong></span>
+          <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
@@ -140,29 +154,37 @@
         <h5><strong>Accounts Receivable Dashboard</strong></h5>
         <p class="text-muted mb-4">Monitor, Track & Manage Customer Payments</p>
 
+        <!-- 
+        =====================================================
+        BACKEND DATA DISPLAY - Statistics
+        =====================================================
+        These values come from the controller's dashboard() method
+        Data source: InvoiceModel and PaymentModel
+        =====================================================
+        -->
         <!-- Stats Boxes -->
         <div class="row g-3 mb-4">
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4>₱<?= number_format($stats['totalOutstanding'], 2) ?></h4>
               <p>Total Outstanding</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4>₱<?= number_format($stats['overdueAmount'], 2) ?></h4>
               <p>Overdue Amount</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= $stats['pendingInvoices'] ?></h4>
               <p>Pending Invoices</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4>₱<?= number_format($stats['monthlyCollections'], 2) ?></h4>
               <p>This Month Collections</p>
             </div>
           </div>
@@ -171,14 +193,23 @@
         <!-- Quick Actions -->
         <div class="mb-4">
           <h6><strong>Quick Actions</strong></h6>
+          <!-- FRONTEND: Action buttons linking to backend endpoints -->
           <div class="quick-actions mt-2">
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#invoiceModal">Create New Invoice</button>
-            <button class="btn btn-success btn-sm">Record Payment</button>
+            <a href="<?= base_url('accounts-receivable/record-payments') ?>" class="btn btn-success btn-sm">Record Payment</a>
             <button class="btn btn-warning btn-sm text-dark">Send Reminders</button>
-            <button class="btn btn-secondary btn-sm">Generate Report</button>
+            <a href="<?= base_url('accounts-receivable/reports-analytics') ?>" class="btn btn-secondary btn-sm">Generate Report</a>
           </div>
         </div>
 
+        <!-- 
+        =====================================================
+        BACKEND DATA DISPLAY - Recent Activities
+        =====================================================
+        Data source: $recentActivities from controller
+        Generated by: InvoiceModel->getRecentActivities()
+        =====================================================
+        -->
         <!-- Recent Activities -->
         <div>
           <h6><strong>Recent Activities</strong></h6>
@@ -186,27 +217,40 @@
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Activity</th>
+                <th>Invoice Number</th>
                 <th>Client</th>
                 <th>Amount</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
-                <td><span class="badge bg-success">Paid</span></td>
-              </tr>
-              <tr>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
-                <td><span class="badge bg-warning text-dark">Pending</span></td>
-              </tr>
+              <?php if (!empty($recentActivities)): ?>
+                <?php foreach ($recentActivities as $activity): ?>
+                  <tr>
+                    <td><?= date('M d, Y', strtotime($activity['updated_at'])) ?></td>
+                    <td><?= esc($activity['invoice_number']) ?></td>
+                    <td><?= esc($activity['client_name']) ?></td>
+                    <td>₱<?= number_format($activity['amount'], 2) ?></td>
+                    <td>
+                      <?php
+                        $badgeClass = 'bg-secondary';
+                        if ($activity['status'] == 'Paid') {
+                          $badgeClass = 'bg-success';
+                        } elseif ($activity['status'] == 'Pending') {
+                          $badgeClass = 'bg-warning text-dark';
+                        } elseif ($activity['status'] == 'Overdue') {
+                          $badgeClass = 'bg-danger';
+                        }
+                      ?>
+                      <span class="badge <?= $badgeClass ?>"><?= esc($activity['status']) ?></span>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="5" class="text-center">No recent activities</td>
+                </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
@@ -216,6 +260,14 @@
   </div>
 </div>
 
+<!-- 
+=====================================================
+FRONTEND - CREATE INVOICE MODAL
+=====================================================
+Modal form for creating new invoices
+Connected to backend: AccountsReceivable->createInvoice()
+=====================================================
+-->
 <!-- Create Invoice Modal -->
 <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -224,31 +276,43 @@
         <h5 class="modal-title" id="invoiceModalLabel">Create New Invoice</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form>
+      <form id="invoiceForm">
         <div class="modal-body">
+          <div id="invoiceAlert" class="alert d-none"></div>
           <div class="mb-3">
-            <label class="form-label">Client</label>
-            <select class="form-select">
-              <option selected>Select Client</option>
-              <option>Client A</option>
-              <option>Client B</option>
+            <label class="form-label">Client *</label>
+            <select name="client_id" class="form-select" required>
+              <option value="">Select Client</option>
+              <?php if (!empty($recentActivities)): ?>
+                <?php 
+                  $clients = [];
+                  foreach ($recentActivities as $activity) {
+                    if (!isset($clients[$activity['client_id']])) {
+                      $clients[$activity['client_id']] = $activity['client_name'];
+                    }
+                  }
+                  foreach ($clients as $id => $name):
+                ?>
+                  <option value="<?= $id ?>"><?= esc($name) ?></option>
+                <?php endforeach; ?>
+              <?php endif; ?>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">Issue Date</label>
-            <input type="date" class="form-control">
+            <label class="form-label">Issue Date *</label>
+            <input type="date" name="issue_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Collections / Amount</label>
-            <input type="number" class="form-control" placeholder="Enter Amount">
+            <label class="form-label">Amount *</label>
+            <input type="number" name="amount" class="form-control" placeholder="Enter Amount" step="0.01" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Due Date</label>
-            <input type="date" class="form-control">
+            <label class="form-label">Due Date *</label>
+            <input type="date" name="due_date" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Description</label>
-            <textarea class="form-control" rows="3" placeholder="Invoice description ..."></textarea>
+            <textarea name="description" class="form-control" rows="3" placeholder="Invoice description ..."></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -261,5 +325,44 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- 
+=====================================================
+BACKEND AJAX INTEGRATION - Invoice Creation
+=====================================================
+JavaScript code that sends form data to backend
+Endpoint: /accounts-receivable/create-invoice
+Method: POST
+Response: JSON with success/error message
+=====================================================
+-->
+<script>
+$(document).ready(function() {
+  // Handle invoice form submission
+  $('#invoiceForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    $.ajax({
+      url: '<?= base_url('accounts-receivable/create-invoice') ?>',
+      type: 'POST',
+      data: $(this).serialize(),
+      dataType: 'json',
+      success: function(response) {
+        if (response.success) {
+          $('#invoiceAlert').removeClass('d-none alert-danger').addClass('alert-success').text(response.message);
+          setTimeout(function() {
+            location.reload();
+          }, 1500);
+        } else {
+          $('#invoiceAlert').removeClass('d-none alert-success').addClass('alert-danger').text(response.message);
+        }
+      },
+      error: function() {
+        $('#invoiceAlert').removeClass('d-none alert-success').addClass('alert-danger').text('An error occurred. Please try again.');
+      }
+    });
+  });
+});
+</script>
 </body>
 </html>

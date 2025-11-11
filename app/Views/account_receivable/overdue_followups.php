@@ -99,14 +99,14 @@
       <!-- Sidebar -->
       <div class="col-md-2 sidebar">
         <h5>WeBuild</h5>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="manage_invoices.php">Manage Invoices</a>
-        <a href="record_payments.php">Record Payments</a>
-        <a href="client_management.php">Client Management</a>
-        <a href="overdue_followups.php" class="active">Overdue Follow-ups</a>
-        <a href="reports_analytics.php">Reports & Analytics</a>
-        <a href="aging_report.php">Aging Report</a>
-        <a href="settings.php">Settings</a>
+        <a href="<?= base_url('accounts-receivable/dashboard') ?>">Dashboard</a>
+        <a href="<?= base_url('accounts-receivable/manage-invoices') ?>">Manage Invoices</a>
+        <a href="<?= base_url('accounts-receivable/record-payments') ?>">Record Payments</a>
+        <a href="<?= base_url('accounts-receivable/client-management') ?>">Client Management</a>
+        <a href="<?= base_url('accounts-receivable/overdue-followups') ?>" class="active">Overdue Follow-ups</a>
+        <a href="<?= base_url('accounts-receivable/reports-analytics') ?>">Reports & Analytics</a>
+        <a href="<?= base_url('accounts-receivable/aging-report') ?>">Aging Report</a>
+        <a href="<?= base_url('accounts-receivable/settings') ?>">Settings</a>
       </div>
 
       <!-- Main Content -->
@@ -115,8 +115,8 @@
         <div class="topbar">
           <input type="text" class="form-control w-25" placeholder="Search">
           <div>
-            <span class="me-3">Date | Time | Accounts Receivable Clerk | <strong>Username</strong></span>
-            <button class="btn btn-outline-secondary btn-sm">Logout</button>
+            <span class="me-3"><?= date('F d, Y | h:i A') ?> | <?= esc($user['role']) ?> | <strong><?= esc($user['username']) ?></strong></span>
+            <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
           </div>
         </div>
 

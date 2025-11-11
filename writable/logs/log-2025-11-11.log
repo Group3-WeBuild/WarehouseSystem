@@ -1,0 +1,52 @@
+ERROR - 2025-11-11 11:16:51 --> mysqli_sql_exception: Duplicate key name 'invoice_number' in D:\XAMPP\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\XAMPP\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `i...', 0)
+#1 D:\XAMPP\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `i...')
+#2 D:\XAMPP\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `i...')
+#3 D:\XAMPP\htdocs\WarehouseSystem\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `i...')
+#4 D:\XAMPP\htdocs\WarehouseSystem\app\Database\Migrations\2024-01-01-000002_CreateInvoicesTable.php(72): CodeIgniter\Database\Forge->createTable('invoices')
+#5 D:\XAMPP\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateInvoicesTable->up()
+#6 D:\XAMPP\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 D:\XAMPP\htdocs\WarehouseSystem\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 D:\XAMPP\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 D:\XAMPP\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 D:\XAMPP\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 D:\XAMPP\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 D:\XAMPP\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-11-11 11:18:30 --> mysqli_sql_exception: Duplicate key name 'invoice_number' in D:\XAMPP\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\XAMPP\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `i...', 0)
+#1 D:\XAMPP\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `i...')
+#2 D:\XAMPP\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `i...')
+#3 D:\XAMPP\htdocs\WarehouseSystem\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `i...')
+#4 D:\XAMPP\htdocs\WarehouseSystem\app\Database\Migrations\2024-01-01-000002_CreateInvoicesTable.php(72): CodeIgniter\Database\Forge->createTable('invoices')
+#5 D:\XAMPP\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateInvoicesTable->up()
+#6 D:\XAMPP\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 D:\XAMPP\htdocs\WarehouseSystem\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 D:\XAMPP\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 D:\XAMPP\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 D:\XAMPP\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 D:\XAMPP\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 D:\XAMPP\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-11-11 11:51:01 --> ErrorException: Undefined property: App\Controllers\AccountsReceivable::$invoiceModel
+[Method: GET, Route: accounts-receivable/dashboard]
+in APPPATH\Controllers\AccountsReceivable.php on line 51.
+ 1 APPPATH\Controllers\AccountsReceivable.php(51): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined property: App\\Controllers\\AccountsReceivable::$invoiceModel', 'D:\\XAMPP\\htdocs\\WarehouseSystem\\app\\Controllers\\AccountsReceivable.php', 51)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AccountsReceivable->dashboard()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AccountsReceivable))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-11-11 11:51:10 --> ErrorException: Undefined property: App\Controllers\AccountsReceivable::$invoiceModel
+[Method: GET, Route: accounts-receivable/dashboard]
+in APPPATH\Controllers\AccountsReceivable.php on line 51.
+ 1 APPPATH\Controllers\AccountsReceivable.php(51): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined property: App\\Controllers\\AccountsReceivable::$invoiceModel', 'D:\\XAMPP\\htdocs\\WarehouseSystem\\app\\Controllers\\AccountsReceivable.php', 51)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\AccountsReceivable->dashboard()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AccountsReceivable))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
