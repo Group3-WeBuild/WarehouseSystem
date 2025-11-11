@@ -38,6 +38,12 @@ $routes->group('accounts-payable', function($routes) {
     $routes->get('payment-reports', 'AccountsPayable::paymentReports');
     $routes->get('overdue-payments', 'AccountsPayable::overduePayments');
     $routes->get('audit-trail', 'AccountsPayable::auditTrail');
+    // AJAX endpoints
+    $routes->post('create-invoice', 'AccountsPayable::createInvoice');
+    $routes->post('approve-invoice/(:num)', 'AccountsPayable::approveInvoice/$1');
+    $routes->post('reject-invoice/(:num)', 'AccountsPayable::rejectInvoice/$1');
+    $routes->post('process-payment', 'AccountsPayable::processPayment');
+    $routes->post('create-vendor', 'AccountsPayable::createVendor');
 });
 
 // Accounts Receivable routes

@@ -50,3 +50,18 @@ in APPPATH\Controllers\AccountsReceivable.php on line 51.
  5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
  6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
  7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-11-11 12:15:38 --> mysqli_sql_exception: Cannot truncate a table referenced in a foreign key constraint (`g3web`.`vendor_payments`, CONSTRAINT `vendor_payments_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `g3web`.`vendor_invoices` (`id`)) in D:\XAMPP\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 D:\XAMPP\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('TRUNCATE `vendo...', 0)
+#1 D:\XAMPP\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('TRUNCATE `vendo...')
+#2 D:\XAMPP\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('TRUNCATE `vendo...')
+#3 D:\XAMPP\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2773): CodeIgniter\Database\BaseConnection->query('TRUNCATE `vendo...', NULL, false)
+#4 D:\XAMPP\htdocs\WarehouseSystem\app\Database\Seeds\AccountsPayableSeeder.php(25): CodeIgniter\Database\BaseBuilder->truncate()
+#5 D:\XAMPP\htdocs\WarehouseSystem\system\Database\Seeder.php(149): App\Database\Seeds\AccountsPayableSeeder->run()
+#6 D:\XAMPP\htdocs\WarehouseSystem\system\Commands\Database\Seed.php(79): CodeIgniter\Database\Seeder->call('App\\Database\\Se...')
+#7 D:\XAMPP\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Seed->run(Array)
+#8 D:\XAMPP\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('db:seed', Array)
+#9 D:\XAMPP\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#10 D:\XAMPP\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#11 D:\XAMPP\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#12 {main}
