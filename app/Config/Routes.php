@@ -28,6 +28,25 @@ $routes->get('logout', 'Auth::logout');
 // Role-based dashboard routes
 $routes->get('dashboard', 'Auth::redirectToDashboard');
 
+// Admin routes
+$routes->group('admin', function($routes) {
+    $routes->get('dashboard', 'Admin::dashboard');
+    $routes->get('user-accounts', 'Admin::userAccounts');
+    $routes->get('roles-permissions', 'Admin::rolesPermissions');
+    $routes->get('active-sessions', 'Admin::activeSessions');
+    $routes->get('security-policies', 'Admin::securityPolicies');
+    $routes->get('audit-logs', 'Admin::auditLogs');
+    $routes->get('system-health', 'Admin::systemHealth');
+    $routes->get('database-management', 'Admin::databaseManagement');
+    $routes->get('backup-recovery', 'Admin::backupRecovery');
+    $routes->get('settings', 'Admin::settings');
+    // AJAX endpoints
+    $routes->post('create-user', 'Admin::createUser');
+    $routes->post('update-user/(:num)', 'Admin::updateUser/$1');
+    $routes->post('delete-user/(:num)', 'Admin::deleteUser/$1');
+    $routes->post('toggle-user-status/(:num)', 'Admin::toggleUserStatus/$1');
+});
+
 // Accounts Payable routes
 $routes->group('accounts-payable', function($routes) {
     $routes->get('dashboard', 'AccountsPayable::dashboard');

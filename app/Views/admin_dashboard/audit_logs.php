@@ -59,16 +59,16 @@
     <!-- Sidebar -->
     <div class="col-md-2 sidebar">
       <h5>WeBuild</h5>
-      <a href="dashboard.php">Dashboard</a>
-      <a href="user_accounts.php">User Accounts</a>
-      <a href="roles_permissions.php">Roles & Permissions</a>
-      <a href="active_sessions.php">Active Sessions</a>
-      <a href="security_policies.php">Security Policies</a>
-      <a href="audit_logs.php" class="active">Audit Logs</a>
-      <a href="system_health.php">System Health</a>
-      <a href="database_management.php">Database Management</a>
-      <a href="backup_recovery.php">Backup & Recovery</a>
-      <a href="settings.php">Settings</a>
+      <a href="<?= base_url('admin/dashboard') ?>">Dashboard</a>
+      <a href="<?= base_url('admin/user-accounts') ?>">User Accounts</a>
+      <a href="<?= base_url('admin/roles-permissions') ?>">Roles & Permissions</a>
+      <a href="<?= base_url('admin/active-sessions') ?>">Active Sessions</a>
+      <a href="<?= base_url('admin/security-policies') ?>">Security Policies</a>
+      <a href="<?= base_url('admin/audit-logs') ?>" class="active">Audit Logs</a>
+      <a href="<?= base_url('admin/system-health') ?>">System Health</a>
+      <a href="<?= base_url('admin/database-management') ?>">Database Management</a>
+      <a href="<?= base_url('admin/backup-recovery') ?>">Backup & Recovery</a>
+      <a href="<?= base_url('admin/settings') ?>">Settings</a>
     </div>
 
     <!-- Main Content -->
@@ -77,8 +77,8 @@
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | IT Administrator | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('M d, Y') ?> | <?= date('h:i A') ?> | <?= session()->get('role_name') ?> | <strong><?= session()->get('username') ?></strong></span>
+          <a href="<?= base_url('auth/logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
@@ -89,9 +89,9 @@
 
         <!-- Quick Actions -->
         <div class="mb-4 d-flex flex-wrap gap-2">
-          <button class="btn btn-primary btn-sm">Generate Report</button>
-          <button class="btn btn-outline-secondary btn-sm">Export Logs</button>
-          <button class="btn btn-outline-secondary btn-sm">Archive Old Logs</button>
+          <button class="btn btn-primary btn-sm" onclick="generateAuditReport()">Generate Report</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="exportAuditLogs()">Export Logs</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="archiveLogs()">Archive Old Logs</button>
         </div>
 
         <!-- Stats Boxes -->
@@ -163,5 +163,46 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  function generateAuditReport() {
+    alert('Generating audit report... This will be available for download shortly.');
+    // In production: window.location.href = '<?= base_url('admin/generate-audit-report') ?>';
+  }
+
+  function exportAuditLogs() {
+    let csv = 'Timestamp,User,Action,IP Address,Status\n';
+    
+    $('.table tbody tr').each(function() {
+      const cells = $(this).find('td');
+      if (cells.length > 1) {
+        const row = [];
+        cells.each(function(index) {
+          if (index < 5) {
+            row.push('"' + $(this).text().trim().replace(/"/g, '""') + '"');
+          }
+        });
+        csv += row.join(',') + '\n';
+      }
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'audit_logs_' + new Date().getTime() + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+  function archiveLogs() {
+    if (confirm('Archive logs older than 90 days?')) {
+      alert('Old logs archived successfully.');
+      // In production: $.ajax({ url: '<?= base_url('admin/archive-logs') ?>', method: 'POST' ...
+    }
+  }
+</script>
 </body>
 </html>

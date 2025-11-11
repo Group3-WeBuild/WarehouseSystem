@@ -109,16 +109,16 @@
     <!-- Sidebar -->
     <div class="col-md-2 sidebar">
       <h5>WeBuild</h5>
-      <a href="dashboard.php" class="active">Dashboard</a>
-      <a href="user_accounts.php">User Accounts</a>
-      <a href="roles_permissions.php">Roles & Permissions</a>
-      <a href="active_sessions.php">Active Sessions</a>
-      <a href="security_policies.php">Security Policies</a>
-      <a href="audit_logs.php">Audit Logs</a>
-      <a href="system_health.php">System Health</a>
-      <a href="database_management.php">Database Management</a>
-      <a href="backup_recovery.php">Backup & Recovery</a>
-      <a href="settings.php">Settings</a>
+      <a href="<?= base_url('admin/dashboard') ?>" class="active">Dashboard</a>
+      <a href="<?= base_url('admin/user-accounts') ?>">User Accounts</a>
+      <a href="<?= base_url('admin/roles-permissions') ?>">Roles & Permissions</a>
+      <a href="<?= base_url('admin/active-sessions') ?>">Active Sessions</a>
+      <a href="<?= base_url('admin/security-policies') ?>">Security Policies</a>
+      <a href="<?= base_url('admin/audit-logs') ?>">Audit Logs</a>
+      <a href="<?= base_url('admin/system-health') ?>">System Health</a>
+      <a href="<?= base_url('admin/database-management') ?>">Database Management</a>
+      <a href="<?= base_url('admin/backup-recovery') ?>">Backup & Recovery</a>
+      <a href="<?= base_url('admin/settings') ?>">Settings</a>
     </div>
 
     <!-- Main Content -->
@@ -127,8 +127,8 @@
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | IT Administrator | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('F d, Y | h:i A') ?> | <?= esc($user['role']) ?> | <strong><?= esc($user['username']) ?></strong></span>
+          <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
@@ -141,25 +141,25 @@
         <div class="row g-3 mb-4">
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= $stats['activeUsers'] ?? 0 ?></h4>
               <p>Active Users</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= $stats['systemHealth']['status'] ?? 'Good' ?></h4>
               <p>Security Status</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= $stats['systemHealth']['uptime'] ?? '99.9%' ?></h4>
               <p>System Uptime</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= date('Y-m-d') ?></h4>
               <p>Last Backup</p>
             </div>
           </div>
@@ -169,10 +169,10 @@
 <div class="mb-4">
   <h6><strong>Quick Actions</strong></h6>
   <div class="quick-actions mt-2 d-flex flex-wrap gap-2">
-    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">+ Add New User</button>
-    <button class="btn btn-outline-secondary btn-sm">Active Sessions</button>
-    <button class="btn btn-outline-secondary btn-sm">Audit Logs</button>
-    <button class="btn btn-outline-secondary btn-sm">Backup & Recovery</button>
+    <a href="<?= base_url('admin/user-accounts') ?>" class="btn btn-primary btn-sm">+ Add New User</a>
+    <a href="<?= base_url('admin/active-sessions') ?>" class="btn btn-outline-secondary btn-sm">Active Sessions</a>
+    <a href="<?= base_url('admin/audit-logs') ?>" class="btn btn-outline-secondary btn-sm">Audit Logs</a>
+    <a href="<?= base_url('admin/backup-recovery') ?>" class="btn btn-outline-secondary btn-sm">Backup & Recovery</a>
   </div>
 </div>
 

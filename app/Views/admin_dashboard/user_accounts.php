@@ -91,17 +91,17 @@
       <!-- Sidebar -->
       <div class="col-md-2 sidebar">
         <h5>WeBuild</h5>
-     <a href="dashboard.php">Dashboard</a>
-      <a href="user_accounts.php" class="active">User Accounts</a>
-      <a href="roles_permissions.php">Roles & Permissions</a>
-      <a href="active_sessions.php">Active Sessions</a>
-      <a href="security_policies.php">Security Policies</a>
-      <a href="audit_logs.php">Audit Logs</a>
-      <a href="system_health.php">System Health</a>
-      <a href="database_management.php">Database Management</a>
-      <a href="backup_recovery.php">Backup & Recovery</a>
-      <a href="settings.php">Settings</a>
-    </div>
+        <a href="<?= base_url('admin/dashboard') ?>">Dashboard</a>
+        <a href="<?= base_url('admin/user-accounts') ?>" class="active">User Accounts</a>
+        <a href="<?= base_url('admin/roles-permissions') ?>">Roles & Permissions</a>
+        <a href="<?= base_url('admin/active-sessions') ?>">Active Sessions</a>
+        <a href="<?= base_url('admin/security-policies') ?>">Security Policies</a>
+        <a href="<?= base_url('admin/audit-logs') ?>">Audit Logs</a>
+        <a href="<?= base_url('admin/system-health') ?>">System Health</a>
+        <a href="<?= base_url('admin/database-management') ?>">Database Management</a>
+        <a href="<?= base_url('admin/backup-recovery') ?>">Backup & Recovery</a>
+        <a href="<?= base_url('admin/settings') ?>">Settings</a>
+      </div>
 
 
       <!-- Main Content -->
@@ -110,8 +110,8 @@
         <div class="topbar">
           <input type="text" class="form-control w-25" placeholder="Search">
           <div>
-            <span class="me-3">Date | Time | IT Administrator | <strong>Username</strong></span>
-            <button class="btn btn-outline-secondary btn-sm">Logout</button>
+            <span class="me-3"><?= date('F d, Y | h:i A') ?> | <?= esc($user['role']) ?> | <strong><?= esc($user['username']) ?></strong></span>
+            <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
           </div>
         </div>
 
@@ -123,25 +123,32 @@
           <!-- Quick Actions -->
           <div class="mb-4 d-flex flex-wrap gap-2">
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">+ Add New User</button>
-            <button class="btn btn-secondary btn-sm">Export Users</button>
-            <button class="btn btn-secondary btn-sm">Import Users</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportUsers()">Export Users</button>
+            <button class="btn btn-secondary btn-sm" onclick="alert('Import functionality coming soon')">Import Users</button>
           </div>
 
           <!-- Filters -->
           <div class="filter-section mb-3">
             <div class="filter-inputs d-flex flex-wrap align-items-center">
-              <input type="text" class="form-control w-auto" placeholder="Search by name, email">
-              <select class="form-select w-auto">
-                <option>All Roles</option>
+              <input type="text" id="searchInput" class="form-control w-auto" placeholder="Search by name, email">
+              <select id="roleFilter" class="form-select w-auto">
+                <option value="">All Roles</option>
+                <option value="IT Administrator">IT Administrator</option>
+                <option value="Top Management">Top Management</option>
+                <option value="Warehouse Manager">Warehouse Manager</option>
+                <option value="Accounts Payable Clerk">Accounts Payable Clerk</option>
+                <option value="Accounts Receivable Clerk">Accounts Receivable Clerk</option>
+                <option value="Procurement Officer">Procurement Officer</option>
+                <option value="Warehouse Staff">Warehouse Staff</option>
+                <option value="Inventory Auditor">Inventory Auditor</option>
               </select>
-              <select class="form-select w-auto">
-                <option>All Status</option>
+              <select id="statusFilter" class="form-select w-auto">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
               </select>
-              <select class="form-select w-auto">
-                <option>All Location</option>
-              </select>
-              <button class="btn btn-outline-primary btn-sm">Apply Filters</button>
-              <button class="btn btn-outline-secondary btn-sm">Clear Filters</button>
+              <button class="btn btn-outline-primary btn-sm" onclick="applyFilters()">Apply Filters</button>
+              <button class="btn btn-outline-secondary btn-sm" onclick="clearFilters()">Clear Filters</button>
             </div>
           </div>
 
@@ -152,24 +159,39 @@
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
+                  <th>Username</th>
                   <th>Role</th>
-                  <th>Location</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <button class="btn btn-outline-info btn-sm">Edit</button>
-                    <button class="btn btn-outline-danger btn-sm">Delete</button>
-                  </td>
-                </tr>
+              <tbody id="usersTableBody">
+                <?php if (!empty($users)): ?>
+                  <?php foreach ($users as $userItem): ?>
+                    <tr data-user-id="<?= $userItem['id'] ?>">
+                      <td><?= esc($userItem['name']) ?></td>
+                      <td><?= esc($userItem['email']) ?></td>
+                      <td><?= esc($userItem['username']) ?></td>
+                      <td><?= esc($userItem['role']) ?></td>
+                      <td>
+                        <span class="badge bg-<?= ($userItem['status'] ?? 'Active') === 'Active' ? 'success' : 'secondary' ?>">
+                          <?= esc($userItem['status'] ?? 'Active') ?>
+                        </span>
+                      </td>
+                      <td>
+                        <button class="btn btn-outline-info btn-sm" onclick="editUser(<?= $userItem['id'] ?>)">Edit</button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="toggleStatus(<?= $userItem['id'] ?>)">
+                          <?= ($userItem['status'] ?? 'Active') === 'Active' ? 'Deactivate' : 'Activate' ?>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteUser(<?= $userItem['id'] ?>)">Delete</button>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <tr>
+                    <td colspan="6" class="text-center text-muted">No users found</td>
+                  </tr>
+                <?php endif; ?>
               </tbody>
             </table>
           </div>
@@ -186,35 +208,37 @@
           <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form>
+        <form id="addUserForm">
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label">Full Name</label>
-              <input type="text" class="form-control" placeholder="">
+              <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input type="text" class="form-control" name="username" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Email</label>
-              <input type="email" class="form-control" placeholder="">
+              <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" name="password" required minlength="6">
             </div>
             <div class="mb-3">
               <label class="form-label">Role</label>
-              <select class="form-select">
-                <option selected>Select Role</option>
+              <select class="form-select" name="role" required>
+                <option value="">Select Role</option>
+                <option value="IT Administrator">IT Administrator</option>
+                <option value="Top Management">Top Management</option>
+                <option value="Warehouse Manager">Warehouse Manager</option>
+                <option value="Accounts Payable Clerk">Accounts Payable Clerk</option>
+                <option value="Accounts Receivable Clerk">Accounts Receivable Clerk</option>
+                <option value="Procurement Officer">Procurement Officer</option>
+                <option value="Warehouse Staff">Warehouse Staff</option>
+                <option value="Inventory Auditor">Inventory Auditor</option>
               </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Location Access</label>
-              <select class="form-select">
-                <option selected>All Locations</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Phone Number</label>
-              <input type="text" class="form-control" placeholder="">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Department</label>
-              <input type="text" class="form-control" placeholder="">
             </div>
           </div>
           <div class="modal-footer">
@@ -226,6 +250,247 @@
     </div>
   </div>
 
+  <!-- Edit User Modal -->
+  <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="editUserForm">
+          <input type="hidden" id="editUserId" name="user_id">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="editName" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" id="editEmail" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Role</label>
+              <select class="form-select" id="editRole" name="role" required>
+                <option value="">Select Role</option>
+                <option value="IT Administrator">IT Administrator</option>
+                <option value="Top Management">Top Management</option>
+                <option value="Warehouse Manager">Warehouse Manager</option>
+                <option value="Accounts Payable Clerk">Accounts Payable Clerk</option>
+                <option value="Accounts Receivable Clerk">Accounts Receivable Clerk</option>
+                <option value="Procurement Officer">Procurement Officer</option>
+                <option value="Warehouse Staff">Warehouse Staff</option>
+                <option value="Inventory Auditor">Inventory Auditor</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">New Password (leave blank to keep current)</label>
+              <input type="password" class="form-control" id="editPassword" name="password" minlength="6">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm">Update User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Add User Form Submission
+    $('#addUserForm').on('submit', function(e) {
+      e.preventDefault();
+      
+      $.ajax({
+        url: '<?= base_url('admin/create-user') ?>',
+        method: 'POST',
+        data: $(this).serialize(),
+        dataType: 'json',
+        success: function(response) {
+          if (response.success) {
+            alert(response.message);
+            $('#addUserModal').modal('hide');
+            location.reload();
+          } else {
+            alert(response.message || 'Failed to create user');
+            if (response.errors) {
+              console.log(response.errors);
+            }
+          }
+        },
+        error: function() {
+          alert('An error occurred while creating the user');
+        }
+      });
+    });
+
+    // Edit User Function
+    function editUser(userId) {
+      // Find user data from table
+      const row = $(`tr[data-user-id="${userId}"]`);
+      const name = row.find('td:eq(0)').text();
+      const email = row.find('td:eq(1)').text();
+      const role = row.find('td:eq(3)').text();
+      
+      // Populate edit form
+      $('#editUserId').val(userId);
+      $('#editName').val(name);
+      $('#editEmail').val(email);
+      $('#editRole').val(role);
+      $('#editPassword').val('');
+      
+      // Show modal
+      $('#editUserModal').modal('show');
+    }
+
+    // Edit User Form Submission
+    $('#editUserForm').on('submit', function(e) {
+      e.preventDefault();
+      
+      const userId = $('#editUserId').val();
+      
+      $.ajax({
+        url: '<?= base_url('admin/update-user/') ?>' + userId,
+        method: 'POST',
+        data: $(this).serialize(),
+        dataType: 'json',
+        success: function(response) {
+          if (response.success) {
+            alert(response.message);
+            $('#editUserModal').modal('hide');
+            location.reload();
+          } else {
+            alert(response.message || 'Failed to update user');
+            if (response.errors) {
+              console.log(response.errors);
+            }
+          }
+        },
+        error: function() {
+          alert('An error occurred while updating the user');
+        }
+      });
+    });
+
+    // Delete User Function
+    function deleteUser(userId) {
+      if (confirm('Are you sure you want to delete this user?')) {
+        $.ajax({
+          url: '<?= base_url('admin/delete-user/') ?>' + userId,
+          method: 'POST',
+          dataType: 'json',
+          success: function(response) {
+            if (response.success) {
+              alert(response.message);
+              location.reload();
+            } else {
+              alert(response.message || 'Failed to delete user');
+            }
+          },
+          error: function() {
+            alert('An error occurred while deleting the user');
+          }
+        });
+      }
+    }
+
+    // Toggle User Status Function
+    function toggleStatus(userId) {
+      if (confirm('Are you sure you want to change this user\'s status?')) {
+        $.ajax({
+          url: '<?= base_url('admin/toggle-user-status/') ?>' + userId,
+          method: 'POST',
+          dataType: 'json',
+          success: function(response) {
+            if (response.success) {
+              alert(response.message);
+              location.reload();
+            } else {
+              alert(response.message || 'Failed to update status');
+            }
+          },
+          error: function() {
+            alert('An error occurred while updating the status');
+          }
+        });
+      }
+    }
+
+    // Filter Functions
+    function applyFilters() {
+      const searchTerm = $('#searchInput').val().toLowerCase();
+      const roleFilter = $('#roleFilter').val();
+      const statusFilter = $('#statusFilter').val();
+      
+      $('#usersTableBody tr').each(function() {
+        const row = $(this);
+        const name = row.find('td:eq(0)').text().toLowerCase();
+        const email = row.find('td:eq(1)').text().toLowerCase();
+        const role = row.find('td:eq(3)').text();
+        const status = row.find('td:eq(4)').text().trim();
+        
+        let show = true;
+        
+        if (searchTerm && !name.includes(searchTerm) && !email.includes(searchTerm)) {
+          show = false;
+        }
+        
+        if (roleFilter && role !== roleFilter) {
+          show = false;
+        }
+        
+        if (statusFilter && status !== statusFilter) {
+          show = false;
+        }
+        
+        row.toggle(show);
+      });
+    }
+
+    function clearFilters() {
+      $('#searchInput').val('');
+      $('#roleFilter').val('');
+      $('#statusFilter').val('');
+      $('#usersTableBody tr').show();
+    }
+
+    // Export Users Function
+    function exportUsers() {
+      // Create CSV content
+      let csv = 'Name,Email,Username,Role,Status\n';
+      
+      $('#usersTableBody tr:visible').each(function() {
+        const row = $(this);
+        if (row.find('td').length > 1) {
+          const name = row.find('td:eq(0)').text();
+          const email = row.find('td:eq(1)').text();
+          const username = row.find('td:eq(2)').text();
+          const role = row.find('td:eq(3)').text();
+          const status = row.find('td:eq(4)').text().trim();
+          
+          csv += `"${name}","${email}","${username}","${role}","${status}"\n`;
+        }
+      });
+      
+      // Download CSV
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'users_export_' + new Date().getTime() + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    // Real-time search
+    $('#searchInput').on('keyup', function() {
+      applyFilters();
+    });
+  </script>
 </body>
 </html>

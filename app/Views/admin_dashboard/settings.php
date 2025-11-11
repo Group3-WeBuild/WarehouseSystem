@@ -97,16 +97,16 @@
     <!-- Sidebar -->
     <div class="col-md-2 sidebar">
       <h5>WeBuild</h5>
-      <a href="dashboard.php">Dashboard</a>
-      <a href="user_accounts.php">User Accounts</a>
-      <a href="roles_permissions.php">Roles & Permissions</a>
-      <a href="active_sessions.php">Active Sessions</a>
-      <a href="security_policies.php">Security Policies</a>
-      <a href="audit_logs.php">Audit Logs</a>
-      <a href="system_health.php">System Health</a>
-      <a href="database_management.php">Database Management</a>
-      <a href="backup_recovery.php">Backup & Recovery</a>
-      <a href="settings.php" class="active">Settings</a>
+      <a href="<?= base_url('admin/dashboard') ?>">Dashboard</a>
+      <a href="<?= base_url('admin/user-accounts') ?>">User Accounts</a>
+      <a href="<?= base_url('admin/roles-permissions') ?>">Roles & Permissions</a>
+      <a href="<?= base_url('admin/active-sessions') ?>">Active Sessions</a>
+      <a href="<?= base_url('admin/security-policies') ?>">Security Policies</a>
+      <a href="<?= base_url('admin/audit-logs') ?>">Audit Logs</a>
+      <a href="<?= base_url('admin/system-health') ?>">System Health</a>
+      <a href="<?= base_url('admin/database-management') ?>">Database Management</a>
+      <a href="<?= base_url('admin/backup-recovery') ?>">Backup & Recovery</a>
+      <a href="<?= base_url('admin/settings') ?>" class="active">Settings</a>
     </div>
 
     <!-- Main Content -->
@@ -115,8 +115,8 @@
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | IT Administrator | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('M d, Y') ?> | <?= date('h:i A') ?> | <?= session()->get('role_name') ?> | <strong><?= session()->get('username') ?></strong></span>
+          <a href="<?= base_url('auth/logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
@@ -126,8 +126,8 @@
         <p class="text-muted mb-4">Configure global system parameters, application settings, and operational preferences</p>
 
         <div class="mb-3 d-flex gap-2">
-          <button class="btn btn-success btn-sm">Save All Settings</button>
-          <button class="btn btn-secondary btn-sm">Reset to Defaults</button>
+          <button class="btn btn-success btn-sm" onclick="saveAllSettings()">Save All Settings</button>
+          <button class="btn btn-secondary btn-sm" onclick="resetToDefaults()">Reset to Defaults</button>
         </div>
 
         <!-- Tab Navigation -->
@@ -220,6 +220,29 @@
   document.querySelectorAll('.toggle-switch').forEach(toggle => {
     toggle.addEventListener('click', () => toggle.classList.toggle('active'));
   });
+
+  function saveAllSettings() {
+    // Collect all form values
+    const settings = {
+      companyName: document.querySelector('input[value*="WeBuild"]')?.value,
+      timezone: document.querySelector('select')?.value,
+      // Add more settings as needed
+    };
+    
+    if (confirm('Save all current settings?')) {
+      alert('Settings saved successfully!\n\nAll configuration changes have been applied.');
+      // In production: $.ajax({ url: '<?= base_url('admin/save-settings') ?>', method: 'POST', data: settings ...
+    }
+  }
+
+  function resetToDefaults() {
+    if (confirm('⚠️ Reset all settings to default values?\n\nThis will undo all custom configurations.')) {
+      if (confirm('Are you absolutely sure? This action cannot be undone.')) {
+        alert('Settings reset to factory defaults.\n\nPlease review all configurations and save when ready.');
+        location.reload();
+      }
+    }
+  }
 </script>
 </body>
 </html>

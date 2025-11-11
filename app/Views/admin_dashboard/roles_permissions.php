@@ -123,16 +123,16 @@
     <!-- Sidebar -->
     <div class="col-md-2 sidebar">
       <h5>WeBuild</h5>
-      <a href="dashboard.php">Dashboard</a>
-      <a href="user_accounts.php">User Accounts</a>
-      <a href="roles_permissions.php" class="active">Roles & Permissions</a>
-      <a href="active_sessions.php">Active Sessions</a>
-      <a href="security_policies.php">Security Policies</a>
-      <a href="audit_logs.php">Audit Logs</a>
-      <a href="system_health.php">System Health</a>
-      <a href="database_management.php">Database Management</a>
-      <a href="backup_recovery.php">Backup & Recovery</a>
-      <a href="settings.php">Settings</a>
+      <a href="<?= base_url('admin/dashboard') ?>">Dashboard</a>
+      <a href="<?= base_url('admin/user-accounts') ?>">User Accounts</a>
+      <a href="<?= base_url('admin/roles-permissions') ?>" class="active">Roles & Permissions</a>
+      <a href="<?= base_url('admin/active-sessions') ?>">Active Sessions</a>
+      <a href="<?= base_url('admin/security-policies') ?>">Security Policies</a>
+      <a href="<?= base_url('admin/audit-logs') ?>">Audit Logs</a>
+      <a href="<?= base_url('admin/system-health') ?>">System Health</a>
+      <a href="<?= base_url('admin/database-management') ?>">Database Management</a>
+      <a href="<?= base_url('admin/backup-recovery') ?>">Backup & Recovery</a>
+      <a href="<?= base_url('admin/settings') ?>">Settings</a>
     </div>
 
     <!-- Main Content -->
@@ -141,8 +141,8 @@
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | IT Administrator | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('F d, Y | h:i A') ?> | <?= esc($user['role']) ?> | <strong><?= esc($user['username']) ?></strong></span>
+          <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
@@ -153,9 +153,9 @@
 
         <!-- Quick Actions -->
         <div class="mb-4 d-flex flex-wrap gap-2">
-          <button class="btn btn-primary btn-sm">+ Create Custom Role</button>
-          <button class="btn btn-outline-secondary btn-sm">Export Roles</button>
-          <button class="btn btn-outline-secondary btn-sm">Audit Roles</button>
+          <button class="btn btn-primary btn-sm" onclick="alert('Custom role creation coming soon')">+ Create Custom Role</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="exportRoles()">Export Roles</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="window.location.href='<?= base_url('admin/audit-logs') ?>'">Audit Roles</button>
         </div>
 
         <!-- Role Cards -->
@@ -197,5 +197,29 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  function exportRoles() {
+    let csv = 'Role,Description,Permissions,Users Assigned\n';
+    
+    $('.role-card').each(function() {
+      const role = $(this).find('h5').text();
+      const description = $(this).find('p:first').text().replace(/"/g, '""');
+      const usersAssigned = $(this).find('.badge').text();
+      
+      csv += `"${role}","${description}","Multiple","${usersAssigned}"\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'roles_export_' + new Date().getTime() + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+</script>
 </body>
 </html>

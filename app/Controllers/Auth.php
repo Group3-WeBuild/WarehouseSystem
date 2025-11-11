@@ -102,9 +102,9 @@ class Auth extends BaseController
             'Warehouse Staff' => 'warehouse/dashboard',
             'Inventory Auditor' => 'inventory/dashboard',
             'Procurement Officer' => 'procurement/dashboard',
-            'IT Administrator' => 'it-admin/dashboard',
+            'IT Administrator' => 'admin/dashboard',
             'Top Management' => 'management/dashboard',
-            'admin' => 'management/dashboard',
+            'admin' => 'admin/dashboard',
             'user' => 'accounts-payable/dashboard' // Default for generic users
         ];
 
