@@ -152,8 +152,16 @@ $routes->group('procurement', function($routes) {
     // Add more routes as needed
 });
 
-// Management routes
+// Management Dashboard routes
+// BACKEND: Top management executive dashboard and analytics
 $routes->group('management', function($routes) {
-    $routes->get('dashboard', 'Management::dashboard');
-    // Add more routes as needed
+    // VIEW ROUTES - Load management dashboard pages
+    $routes->get('dashboard', 'ManagementDashboard::index');
+    $routes->get('inventory-overview', 'ManagementDashboard::inventoryOverview');
+    $routes->get('warehouse-analytics', 'ManagementDashboard::warehouseAnalytics');
+    
+    // AJAX API ENDPOINTS - Real-time data for charts and widgets
+    $routes->get('api/inventory-stats', 'ManagementDashboard::getInventoryStats');
+    $routes->get('api/warehouse-performance', 'ManagementDashboard::getWarehousePerformanceData');
+    $routes->get('api/inventory-trend', 'ManagementDashboard::getInventoryTrendData');
 });
