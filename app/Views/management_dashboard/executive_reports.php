@@ -93,20 +93,23 @@
     <!-- Sidebar -->
     <div class="col-md-2 sidebar">
       <h5>WeBuild</h5>
-  <a href="<?= base_url('management/dashboard') ?>">Dashboard</a>
-  <a href="<?= base_url('management/financial-reports') ?>">Financial Reports</a>
-  <a href="<?= base_url('management/inventory-overview') ?>">Inventory Overview</a>
-  <a href="<?= base_url('management/warehouse-analytics') ?>">Warehouse Analytics</a>
-  <a href="<?= base_url('management/forecasting') ?>">Forecasting</a>
-  <a href="<?= base_url('management/performance-kpis') ?>">Performance KPIs</a>
-  <a href="<?= base_url('management/executive-reports') ?>" class="active">Executive Reports</a>
+      <a href="<?= base_url('management/dashboard') ?>">Dashboard</a>
+      <a href="<?= base_url('management/financial-reports') ?>">Financial Reports</a>
+      <a href="<?= base_url('management/inventory-overview') ?>">Inventory Overview</a>
+      <a href="<?= base_url('management/warehouse-analytics') ?>">Warehouse Analytics</a>
+      <a href="<?= base_url('management/forecasting') ?>">Forecasting</a>
+      <a href="<?= base_url('management/performance-kpis') ?>">Performance KPIs</a>
+      <a href="<?= base_url('management/executive-reports') ?>" class="active">Executive Reports</a>
+    </div>
+
+    <!-- Main Content -->
     <div class="col-md-10 p-0">
       <!-- Top Bar -->
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | Top Management | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('M d, Y | h:i A') ?> | <?= esc($user['role'] ?? 'Top Management') ?> | <strong><?= esc($user['name'] ?? 'User') ?></strong></span>
+          <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
@@ -118,40 +121,58 @@
         <!-- Report Cards -->
         <div class="row g-3">
           <div class="col-md-4">
-            <div class="report-card">
-              <h5>Monthly Executive Summary</h5>
-              <p>Key metrics and highlights</p>
-            </div>
+            <a href="<?= base_url('management/monthly-report') ?>" class="text-decoration-none">
+              <div class="report-card">
+                <h5>📊 Monthly Executive Summary</h5>
+                <p>Key metrics and highlights</p>
+                <span class="badge bg-primary">Generate Report</span>
+              </div>
+            </a>
           </div>
           <div class="col-md-4">
-            <div class="report-card">
-              <h5>Board Presentation</h5>
-              <p>Quarterly board meeting deck</p>
-            </div>
+            <a href="<?= base_url('management/quarterly-report') ?>" class="text-decoration-none">
+              <div class="report-card">
+                <h5>📈 Board Presentation</h5>
+                <p>Quarterly board meeting deck</p>
+                <span class="badge bg-primary">Generate Report</span>
+              </div>
+            </a>
           </div>
           <div class="col-md-4">
-            <div class="report-card">
-              <h5>Strategic Review</h5>
-              <p>Annual strategic assessment</p>
-            </div>
+            <a href="<?= base_url('management/financial-reports') ?>" class="text-decoration-none">
+              <div class="report-card">
+                <h5>💰 Financial Overview</h5>
+                <p>Revenue, expenses & cash flow</p>
+                <span class="badge bg-success">View Report</span>
+              </div>
+            </a>
           </div>
           <div class="col-md-4">
-            <div class="report-card">
-              <h5>Investor Report</h5>
-              <p>Stakeholder communications</p>
-            </div>
+            <a href="<?= base_url('management/inventory-overview') ?>" class="text-decoration-none">
+              <div class="report-card">
+                <h5>📦 Inventory Report</h5>
+                <p>Stock levels & valuations</p>
+                <span class="badge bg-info">View Report</span>
+              </div>
+            </a>
           </div>
           <div class="col-md-4">
-            <div class="report-card">
-              <h5>Risk Assessment</h5>
-              <p>Business risk analysis</p>
-            </div>
+            <a href="<?= base_url('management/warehouse-analytics') ?>" class="text-decoration-none">
+              <div class="report-card">
+                <h5>🏭 Warehouse Performance</h5>
+                <p>Efficiency & utilization</p>
+                <span class="badge bg-info">View Report</span>
+              </div>
+            </a>
           </div>
           <div class="col-md-4">
-            <div class="report-card">
-              <h5>Competitive Analysis</h5>
-              <p>Market position review</p>
-            </div>
+            <a href="<?= base_url('print/audit-logs') ?>" target="_blank" class="text-decoration-none">
+              <div class="report-card">
+                <h5>📋 Audit Trail Report</h5>
+                <p>System activity log</p>
+                <span class="badge bg-warning text-dark">Export PDF</span>
+              </div>
+            </a>
           </div>
         </div>
 

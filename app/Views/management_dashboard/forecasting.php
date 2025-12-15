@@ -93,20 +93,23 @@
     <!-- Sidebar -->
     <div class="col-md-2 sidebar">
       <h5>WeBuild</h5>
-  <a href="<?= base_url('management/dashboard') ?>">Dashboard</a>
-  <a href="<?= base_url('management/financial-reports') ?>">Financial Reports</a>
-  <a href="<?= base_url('management/inventory-overview') ?>">Inventory Overview</a>
-  <a href="<?= base_url('management/warehouse-analytics') ?>">Warehouse Analytics</a>
-  <a href="<?= base_url('management/forecasting') ?>" class="active">Forecasting</a>
-  <a href="<?= base_url('management/performance-kpis') ?>">Performance KPIs</a>
-  <a href="<?= base_url('management/executive-reports') ?>">Executive Reports</a>
+      <a href="<?= base_url('management/dashboard') ?>">Dashboard</a>
+      <a href="<?= base_url('management/financial-reports') ?>">Financial Reports</a>
+      <a href="<?= base_url('management/inventory-overview') ?>">Inventory Overview</a>
+      <a href="<?= base_url('management/warehouse-analytics') ?>">Warehouse Analytics</a>
+      <a href="<?= base_url('management/forecasting') ?>" class="active">Forecasting</a>
+      <a href="<?= base_url('management/performance-kpis') ?>">Performance KPIs</a>
+      <a href="<?= base_url('management/executive-reports') ?>">Executive Reports</a>
+    </div>
+
+    <!-- Main Content -->
     <div class="col-md-10 p-0">
       <!-- Top Bar -->
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | Top Management | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('M d, Y | h:i A') ?> | <?= esc($user['role'] ?? 'Top Management') ?> | <strong><?= esc($user['name'] ?? 'User') ?></strong></span>
+          <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
