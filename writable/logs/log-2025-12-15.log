@@ -5154,3 +5154,45 @@ in APPPATH\Views\inventory_auditor\count_sessions.php on line 226.
  9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
 10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-15 17:33:49 --> ErrorException: Undefined array key "name"
+[Method: GET, Route: procurement/purchase-orders]
+in APPPATH\Views\procurement\purchase_orders.php on line 241.
+ 1 APPPATH\Views\procurement\purchase_orders.php(241): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "name"', 'C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\procurement\\purchase_orders.php', 241)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\procurement\\purchase_orders.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('procurement/purchase_orders', [], true)
+ 5 APPPATH\Controllers\Procurement.php(156): view('procurement/purchase_orders', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Procurement->purchaseOrders()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Procurement))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-15 17:34:14 --> ErrorException: Undefined array key "name"
+[Method: GET, Route: procurement/purchase-orders]
+in APPPATH\Views\procurement\purchase_orders.php on line 241.
+ 1 APPPATH\Views\procurement\purchase_orders.php(241): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "name"', 'C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\procurement\\purchase_orders.php', 241)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\procurement\\purchase_orders.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('procurement/purchase_orders', [], true)
+ 5 APPPATH\Controllers\Procurement.php(156): view('procurement/purchase_orders', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Procurement->purchaseOrders()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Procurement))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-15 17:34:35 --> ErrorException: Undefined array key "name"
+[Method: GET, Route: procurement/purchase-orders]
+in APPPATH\Views\procurement\purchase_orders.php on line 241.
+ 1 APPPATH\Views\procurement\purchase_orders.php(241): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "name"', 'C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\procurement\\purchase_orders.php', 241)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\procurement\\purchase_orders.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('procurement/purchase_orders', [], true)
+ 5 APPPATH\Controllers\Procurement.php(156): view('procurement/purchase_orders', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Procurement->purchaseOrders()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Procurement))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

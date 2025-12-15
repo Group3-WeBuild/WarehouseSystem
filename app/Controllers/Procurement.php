@@ -158,6 +158,31 @@ class Procurement extends BaseController
 
     /**
      * =====================================================
+     * VIEW: Vendors Management
+     * =====================================================
+     */
+    public function vendors()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $vendors = $this->vendorModel->findAll();
+        
+        $data = [
+            'title' => 'Vendors Management',
+            'user' => [
+                'username' => $this->session->get('username'),
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'vendors' => $vendors
+        ];
+
+        return view('procurement/vendors', $data);
+    }
+
+    /**
+     * =====================================================
      * VIEW: Delivery Tracking
      * =====================================================
      */
@@ -588,5 +613,69 @@ class Procurement extends BaseController
         $html = $pdfService->requisitionsReport($requisitions);
 
         return $pdfService->generateFromHtml($html, 'requisitions_report_' . date('Y-m-d'), false);
+    }
+
+    /**
+     * =====================================================
+     * ACTION: Create Vendor
+     * =====================================================
+     */
+    public function createVendor()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $data = [
+            'vendor_name' => $this->request->getPost('vendor_name'),
+            'contact_person' => $this->request->getPost('contact_person'),
+            'email' => $this->request->getPost('email'),
+            'phone' => $this->request->getPost('phone'),
+            'address' => $this->request->getPost('address'),
+            'tax_id' => $this->request->getPost('tax_id'),
+            'payment_terms' => $this->request->getPost('payment_terms') ?? 'Net 30',
+            'status' => 'Active'
+        ];
+
+        try {
+            $this->vendorModel->insert($data);
+            $this->session->setFlashdata('success', 'Vendor created successfully.');
+        } catch (\Exception $e) {
+            log_message('error', 'Create Vendor Error: ' . $e->getMessage());
+            $this->session->setFlashdata('error', 'Failed to create vendor.');
+        }
+
+        return redirect()->to(base_url('procurement/vendors'));
+    }
+
+    /**
+     * =====================================================
+     * ACTION: Update Vendor
+     * =====================================================
+     */
+    public function updateVendor($id)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $data = [
+            'vendor_name' => $this->request->getPost('vendor_name'),
+            'contact_person' => $this->request->getPost('contact_person'),
+            'email' => $this->request->getPost('email'),
+            'phone' => $this->request->getPost('phone'),
+            'address' => $this->request->getPost('address'),
+            'tax_id' => $this->request->getPost('tax_id'),
+            'payment_terms' => $this->request->getPost('payment_terms'),
+            'status' => $this->request->getPost('status') ?? 'Active'
+        ];
+
+        try {
+            $this->vendorModel->update($id, $data);
+            $this->session->setFlashdata('success', 'Vendor updated successfully.');
+        } catch (\Exception $e) {
+            log_message('error', 'Update Vendor Error: ' . $e->getMessage());
+            $this->session->setFlashdata('error', 'Failed to update vendor.');
+        }
+
+        return redirect()->to(base_url('procurement/vendors'));
     }
 }

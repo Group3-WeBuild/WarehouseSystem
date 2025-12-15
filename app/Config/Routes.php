@@ -204,6 +204,7 @@ $routes->group('procurement', function($routes) {
     $routes->get('dashboard', 'Procurement::dashboard');
     $routes->get('requisitions', 'Procurement::requisitions');
     $routes->get('purchase-orders', 'Procurement::purchaseOrders');
+    $routes->get('vendors', 'Procurement::vendors');
     $routes->get('delivery-tracking', 'Procurement::deliveryTracking');
     $routes->get('reports', 'Procurement::reports');
     
@@ -217,6 +218,10 @@ $routes->group('procurement', function($routes) {
     $routes->post('create-purchase-order', 'Procurement::createPurchaseOrder');
     $routes->post('send-po', 'Procurement::sendPOToVendor');
     $routes->post('receive-po', 'Procurement::receivePO');
+    
+    // AJAX ENDPOINTS - Vendors
+    $routes->post('create-vendor', 'Procurement::createVendor');
+    $routes->post('update-vendor/(:num)', 'Procurement::updateVendor/$1');
 });
 
 // Inventory Auditor routes

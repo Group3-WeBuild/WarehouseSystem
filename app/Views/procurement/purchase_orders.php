@@ -238,7 +238,7 @@
                             <select class="form-select" name="vendor_id" required>
                                 <option value="">Select Vendor</option>
                                 <?php foreach ($vendors ?? [] as $v): ?>
-                                <option value="<?= $v['id'] ?>"><?= esc($v['name']) ?></option>
+                                <option value="<?= $v['id'] ?>"><?= esc($v['vendor_name'] ?? $v['name'] ?? 'Unknown') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
