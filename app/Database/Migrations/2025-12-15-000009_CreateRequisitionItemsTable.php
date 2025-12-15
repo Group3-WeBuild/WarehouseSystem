@@ -26,12 +26,10 @@ class CreateRequisitionItemsTable extends Migration
             'requisition_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
             ],
             'inventory_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
             ],
             'quantity_requested' => [
                 'type' => 'INT',
@@ -60,9 +58,6 @@ class CreateRequisitionItemsTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addKey('requisition_id');
         $this->forge->addKey('inventory_id');
-        
-        $this->forge->addForeignKey('requisition_id', 'purchase_requisitions', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('inventory_id', 'inventory', 'id', 'CASCADE', 'CASCADE');
 
         $this->forge->createTable('requisition_items');
     }

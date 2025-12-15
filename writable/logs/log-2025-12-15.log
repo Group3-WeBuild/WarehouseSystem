@@ -1,0 +1,134 @@
+ERROR - 2025-12-15 04:01:38 --> Error connecting to the database: mysqli_sql_exception: Unknown database 'g3web' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:201
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(201): mysqli->real_connect('localhost', 'root', Object(SensitiveParameterValue), 'G3Web', 3306, '', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WarehouseSystem\app\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WarehouseSystem\app\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\Auth->login()
+#9 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+#10 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: Unknown database 'g3web' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\xampp\htdocs\WarehouseSystem\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#5 C:\xampp\htdocs\WarehouseSystem\app\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+#6 C:\xampp\htdocs\WarehouseSystem\app\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+#7 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\Auth->login()
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+#9 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-15 04:01:38 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: Unknown database 'g3web'
+[Method: POST, Route: login]
+in SYSTEMPATH\Database\BaseConnection.php on line 465.
+ 1 SYSTEMPATH\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `users`
+WHERE `email` = :email:
+OR `username` = :username:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->login()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-15 04:03:23 --> mysqli_sql_exception: Can't create table `g3web`.`warehouse_inventory` (errno: 150 "Foreign key constraint is incorrectly formed") in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `w...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `w...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `w...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `w...')
+#4 C:\xampp\htdocs\WarehouseSystem\app\Database\Migrations\2025-12-15-000001_CreateWarehouseInventoryTable.php(111): CodeIgniter\Database\Forge->createTable('warehouse_inven...')
+#5 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateWarehouseInventoryTable->up()
+#6 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WarehouseSystem\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-15 04:11:44 --> mysqli_sql_exception: Duplicate key name 'batch_number' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `b...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `b...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `b...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `b...')
+#4 C:\xampp\htdocs\WarehouseSystem\app\Database\Migrations\2025-12-15-000002_CreateBatchTrackingTable.php(146): CodeIgniter\Database\Forge->createTable('batch_tracking')
+#5 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateBatchTrackingTable->up()
+#6 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WarehouseSystem\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-15 04:13:00 --> mysqli_sql_exception: Duplicate key name 'serial_number' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `l...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `l...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `l...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `l...')
+#4 C:\xampp\htdocs\WarehouseSystem\app\Database\Migrations\2025-12-15-000003_CreateLotTrackingTable.php(122): CodeIgniter\Database\Forge->createTable('lot_tracking')
+#5 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreateLotTrackingTable->up()
+#6 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WarehouseSystem\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-15 04:14:59 --> mysqli_sql_exception: Duplicate key name 'count_number' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('CREATE TABLE `p...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `p...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `p...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `p...')
+#4 C:\xampp\htdocs\WarehouseSystem\app\Database\Migrations\2025-12-15-000004_CreatePhysicalCountsTable.php(116): CodeIgniter\Database\Forge->createTable('physical_counts')
+#5 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(876): App\Database\Migrations\CreatePhysicalCountsTable->up()
+#6 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WarehouseSystem\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}
+ERROR - 2025-12-15 04:19:33 --> mysqli_sql_exception: Table 'g3web.inventory' doesn't exist in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('ALTER TABLE `in...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('ALTER TABLE `in...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('ALTER TABLE `in...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\Forge.php(772): CodeIgniter\Database\BaseConnection->query('ALTER TABLE `in...')
+#4 C:\xampp\htdocs\WarehouseSystem\app\Database\Migrations\2025-12-15-000007_AddBarcodeFieldsToInventory.php(25): CodeIgniter\Database\Forge->addColumn('inventory', Array)
+#5 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(876): App\Database\Migrations\AddBarcodeFieldsToInventory->up()
+#6 C:\xampp\htdocs\WarehouseSystem\system\Database\MigrationRunner.php(182): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+#7 C:\xampp\htdocs\WarehouseSystem\system\Commands\Database\Migrate.php(85): CodeIgniter\Database\MigrationRunner->latest(NULL)
+#8 C:\xampp\htdocs\WarehouseSystem\system\CLI\Commands.php(74): CodeIgniter\Commands\Database\Migrate->run(Array)
+#9 C:\xampp\htdocs\WarehouseSystem\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', Array)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#12 C:\xampp\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#13 {main}

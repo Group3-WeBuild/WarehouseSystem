@@ -33,20 +33,17 @@ class CreatePurchaseOrdersTable extends Migration
             'requisition_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'Source requisition'
             ],
             'vendor_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Supplier'
             ],
             'warehouse_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Delivery warehouse'
             ],
             'order_date' => [
@@ -87,7 +84,6 @@ class CreatePurchaseOrdersTable extends Migration
             'created_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -100,15 +96,9 @@ class CreatePurchaseOrdersTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addKey('po_number');
         $this->forge->addKey('vendor_id');
         $this->forge->addKey('status');
         $this->forge->addKey('order_date');
-        
-        $this->forge->addForeignKey('requisition_id', 'purchase_requisitions', 'id', 'SET NULL', 'CASCADE');
-        $this->forge->addForeignKey('vendor_id', 'vendors', 'id', 'RESTRICT', 'CASCADE');
-        $this->forge->addForeignKey('warehouse_id', 'warehouses', 'id', 'RESTRICT', 'CASCADE');
-        $this->forge->addForeignKey('created_by', 'users', 'id', 'RESTRICT', 'CASCADE');
 
         $this->forge->createTable('purchase_orders');
     }

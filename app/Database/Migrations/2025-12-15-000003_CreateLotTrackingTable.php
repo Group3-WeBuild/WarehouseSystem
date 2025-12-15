@@ -38,7 +38,6 @@ class CreateLotTrackingTable extends Migration
             'batch_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Reference to batch_tracking'
             ],
             'lot_number' => [
@@ -61,7 +60,6 @@ class CreateLotTrackingTable extends Migration
             'warehouse_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Current warehouse location'
             ],
             'rack_location' => [
@@ -84,7 +82,6 @@ class CreateLotTrackingTable extends Migration
             'allocated_to_order_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'Order ID if allocated'
             ],
@@ -116,16 +113,10 @@ class CreateLotTrackingTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addKey('batch_id');
         $this->forge->addKey('lot_number');
-        $this->forge->addKey('serial_number');
         $this->forge->addKey('warehouse_id');
         $this->forge->addKey('status');
         $this->forge->addKey('allocated_to_order_id');
         $this->forge->addKey('created_at');
-        
-        // Foreign keys
-        $this->forge->addForeignKey('batch_id', 'batch_tracking', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('warehouse_id', 'warehouses', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('allocated_to_order_id', 'orders', 'id', 'SET NULL', 'CASCADE');
 
         $this->forge->createTable('lot_tracking');
     }

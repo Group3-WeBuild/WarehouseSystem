@@ -98,17 +98,20 @@ class Auth extends BaseController
         $roleRoutes = [
             'Accounts Payable Clerk' => 'accounts-payable/dashboard',
             'Accounts Receivable Clerk' => 'accounts-receivable/dashboard',
-            'Warehouse Manager' => 'warehouse/dashboard',
-            'Warehouse Staff' => 'warehouse/dashboard',
-            'Inventory Auditor' => 'inventory/dashboard',
+            'Warehouse Manager' => 'warehouse-manager/dashboard',
+            'Warehouse Staff' => 'warehouse-manager/dashboard',
+            'Inventory Auditor' => 'inventory-auditor/dashboard',
             'Procurement Officer' => 'procurement/dashboard',
             'IT Administrator' => 'admin/dashboard',
             'Top Management' => 'management/dashboard',
+            'CEO' => 'management/dashboard',
+            'CFO' => 'management/dashboard',
+            'COO' => 'management/dashboard',
             'admin' => 'admin/dashboard',
-            'user' => 'accounts-payable/dashboard' // Default for generic users
+            'user' => 'warehouse-manager/dashboard' // Default for generic users
         ];
 
-        return base_url($roleRoutes[$role] ?? 'accounts-payable/dashboard');
+        return base_url($roleRoutes[$role] ?? 'warehouse-manager/dashboard');
     }
 
     public function forgotPassword()

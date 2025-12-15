@@ -37,7 +37,6 @@ class CreateAuditTrailTable extends Migration
             'user_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'User who performed the action'
             ],
@@ -150,9 +149,6 @@ class CreateAuditTrailTable extends Migration
         $this->forge->addKey('timestamp');
         $this->forge->addKey('ip_address');
         $this->forge->addKey(['timestamp', 'user_id'], false, false, 'idx_timestamp_user');
-        
-        // Foreign key
-        $this->forge->addForeignKey('user_id', 'users', 'id', 'SET NULL', 'CASCADE');
 
         $this->forge->createTable('audit_trail');
     }

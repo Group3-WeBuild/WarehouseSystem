@@ -43,13 +43,11 @@ class CreatePhysicalCountsTable extends Migration
             'warehouse_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Warehouse being counted'
             ],
             'initiated_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'User who initiated the count'
             ],
             'count_type' => [
@@ -86,7 +84,6 @@ class CreatePhysicalCountsTable extends Migration
             'approved_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'Supervisor/Manager who approved results'
             ],
@@ -111,15 +108,9 @@ class CreatePhysicalCountsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addKey('count_number');
         $this->forge->addKey('warehouse_id');
         $this->forge->addKey('status');
         $this->forge->addKey('count_start_date');
-        
-        // Foreign keys
-        $this->forge->addForeignKey('warehouse_id', 'warehouses', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('initiated_by', 'users', 'id', 'RESTRICT', 'CASCADE');
-        $this->forge->addForeignKey('approved_by', 'users', 'id', 'SET NULL', 'CASCADE');
 
         $this->forge->createTable('physical_counts');
     }

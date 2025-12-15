@@ -36,13 +36,11 @@ class CreateCountDetailsTable extends Migration
             'count_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Reference to physical_counts'
             ],
             'inventory_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Item being counted'
             ],
             'system_quantity' => [
@@ -77,13 +75,11 @@ class CreateCountDetailsTable extends Migration
             'counted_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Staff member who counted'
             ],
             'verified_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'Auditor who verified count'
             ],
@@ -135,12 +131,6 @@ class CreateCountDetailsTable extends Migration
         $this->forge->addKey('has_discrepancy');
         $this->forge->addKey('verification_status');
         $this->forge->addKey('resolution_status');
-        
-        // Foreign keys
-        $this->forge->addForeignKey('count_id', 'physical_counts', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('inventory_id', 'inventory', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('counted_by', 'users', 'id', 'RESTRICT', 'CASCADE');
-        $this->forge->addForeignKey('verified_by', 'users', 'id', 'SET NULL', 'CASCADE');
 
         $this->forge->createTable('count_details');
     }

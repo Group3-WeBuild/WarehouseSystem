@@ -38,7 +38,6 @@ class CreateBatchTrackingTable extends Migration
             'inventory_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Reference to inventory item'
             ],
             'batch_number' => [
@@ -84,14 +83,12 @@ class CreateBatchTrackingTable extends Migration
             'supplier_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'Vendor/supplier reference'
             ],
             'warehouse_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'Primary storage warehouse'
             ],
@@ -109,7 +106,6 @@ class CreateBatchTrackingTable extends Migration
             'inspected_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'Auditor who inspected batch'
             ],
@@ -125,7 +121,6 @@ class CreateBatchTrackingTable extends Migration
             'received_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'User who received batch'
             ],
@@ -140,20 +135,12 @@ class CreateBatchTrackingTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addKey('batch_number');
         $this->forge->addKey('inventory_id');
         $this->forge->addKey('expiry_date');
         $this->forge->addKey('quality_status');
         $this->forge->addKey('warehouse_id');
         $this->forge->addKey('supplier_id');
         $this->forge->addKey('received_date');
-        
-        // Foreign keys
-        $this->forge->addForeignKey('inventory_id', 'inventory', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('supplier_id', 'vendors', 'id', 'SET NULL', 'CASCADE');
-        $this->forge->addForeignKey('warehouse_id', 'warehouses', 'id', 'SET NULL', 'CASCADE');
-        $this->forge->addForeignKey('inspected_by', 'users', 'id', 'SET NULL', 'CASCADE');
-        $this->forge->addForeignKey('received_by', 'users', 'id', 'SET NULL', 'CASCADE');
 
         $this->forge->createTable('batch_tracking');
     }

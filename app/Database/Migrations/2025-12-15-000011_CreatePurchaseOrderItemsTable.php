@@ -26,12 +26,10 @@ class CreatePurchaseOrderItemsTable extends Migration
             'po_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
             ],
             'inventory_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
             ],
             'quantity_ordered' => [
                 'type' => 'INT',
@@ -62,9 +60,6 @@ class CreatePurchaseOrderItemsTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addKey('po_id');
         $this->forge->addKey('inventory_id');
-        
-        $this->forge->addForeignKey('po_id', 'purchase_orders', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('inventory_id', 'inventory', 'id', 'CASCADE', 'CASCADE');
 
         $this->forge->createTable('purchase_order_items');
     }

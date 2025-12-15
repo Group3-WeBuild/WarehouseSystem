@@ -37,13 +37,11 @@ class CreateWarehouseInventoryTable extends Migration
             'warehouse_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Reference to warehouses table'
             ],
             'inventory_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Reference to inventory table'
             ],
             'quantity' => [
@@ -81,7 +79,6 @@ class CreateWarehouseInventoryTable extends Migration
             'last_adjusted_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true,
                 'comment' => 'User who last adjusted quantity'
             ],
@@ -102,11 +99,6 @@ class CreateWarehouseInventoryTable extends Migration
         $this->forge->addKey('quantity');
         $this->forge->addKey('available_quantity');
         $this->forge->addKey('last_counted_at');
-        
-        // Add foreign keys
-        $this->forge->addForeignKey('warehouse_id', 'warehouses', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('inventory_id', 'inventory', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('last_adjusted_by', 'users', 'id', 'SET NULL', 'CASCADE');
 
         $this->forge->createTable('warehouse_inventory');
     }

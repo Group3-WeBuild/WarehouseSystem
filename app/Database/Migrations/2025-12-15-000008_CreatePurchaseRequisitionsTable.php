@@ -37,13 +37,11 @@ class CreatePurchaseRequisitionsTable extends Migration
             'requested_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'User who created requisition'
             ],
             'warehouse_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'comment' => 'Target warehouse for items'
             ],
             'priority' => [
@@ -64,7 +62,6 @@ class CreatePurchaseRequisitionsTable extends Migration
             'approved_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'unsigned' => true,
                 'null' => true
             ],
             'approved_date' => [
@@ -91,14 +88,9 @@ class CreatePurchaseRequisitionsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addKey('requisition_number');
         $this->forge->addKey('status');
         $this->forge->addKey('requested_by');
         $this->forge->addKey('warehouse_id');
-        
-        $this->forge->addForeignKey('requested_by', 'users', 'id', 'RESTRICT', 'CASCADE');
-        $this->forge->addForeignKey('warehouse_id', 'warehouses', 'id', 'RESTRICT', 'CASCADE');
-        $this->forge->addForeignKey('approved_by', 'users', 'id', 'SET NULL', 'CASCADE');
 
         $this->forge->createTable('purchase_requisitions');
     }
