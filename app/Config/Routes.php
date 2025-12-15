@@ -253,6 +253,36 @@ $routes->group('management', function($routes) {
     $routes->get('api/inventory-trend', 'ManagementDashboard::getInventoryTrendData');
 });
 
+// =====================================================
+// ANALYTICS & FORECASTING ROUTES (Finals Phase)
+// =====================================================
+$routes->group('analytics', function($routes) {
+    // Dashboard and Views
+    $routes->get('/', 'Analytics::index');
+    $routes->get('dashboard', 'Analytics::index');
+    $routes->get('forecasting', 'Analytics::forecasting');
+    $routes->get('forecasting/(:num)', 'Analytics::forecasting/$1');
+    $routes->get('inventory-kpis', 'Analytics::inventoryKpis');
+    $routes->get('warehouse-performance', 'Analytics::warehousePerformance');
+    $routes->get('warehouse-performance/(:num)', 'Analytics::warehousePerformance/$1');
+    $routes->get('financial-kpis', 'Analytics::financialKpis');
+    $routes->get('trends', 'Analytics::trends');
+    $routes->get('reorder-recommendations', 'Analytics::reorderRecommendations');
+    
+    // API Endpoints (JSON)
+    $routes->get('api/forecast/(:num)', 'Analytics::getForecast/$1');
+    $routes->get('api/abc-analysis', 'Analytics::getAbcAnalysis');
+    $routes->get('api/warehouse-performance', 'Analytics::getWarehousePerformance');
+    $routes->get('api/warehouse-performance/(:num)', 'Analytics::getWarehousePerformance/$1');
+    $routes->get('api/financial-kpis', 'Analytics::getFinancialKpis');
+    $routes->get('api/financial-kpis/(:num)', 'Analytics::getFinancialKpis/$1');
+    $routes->get('api/trends', 'Analytics::getTrends');
+    $routes->get('api/trends/(:num)', 'Analytics::getTrends/$1');
+    
+    // Export Reports
+    $routes->get('export/(:alpha)', 'Analytics::exportReport/$1');
+});
+
 // Print Report Routes
 $routes->group('print', function($routes) {
     // Warehouse Manager Reports

@@ -34,6 +34,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        // Custom filters for RBAC and Audit
+        'role'          => \App\Filters\RoleFilter::class,
+        'audit'         => \App\Filters\AuditFilter::class,
     ];
 
     /**
@@ -106,5 +109,26 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        // Role-based access control for protected routes
+        'role:warehouse' => ['before' => ['warehouse/*']],
+        'role:inventory-auditor' => ['before' => ['inventory-auditor/*', 'auditor/*']],
+        'role:procurement' => ['before' => ['procurement/*']],
+        'role:accounts-payable' => ['before' => ['accounts-payable/*']],
+        'role:accounts-receivable' => ['before' => ['accounts-receivable/*']],
+        'role:management' => ['before' => ['management/*']],
+        'role:admin' => ['before' => ['admin/*']],
+        'role:analytics' => ['before' => ['analytics/*']],
+        
+        // Audit logging for all sensitive routes
+        'audit' => ['after' => [
+            'warehouse/*',
+            'inventory-auditor/*',
+            'procurement/*',
+            'accounts-payable/*',
+            'accounts-receivable/*',
+            'management/*',
+            'admin/*'
+        ]]
+    ];
 }
