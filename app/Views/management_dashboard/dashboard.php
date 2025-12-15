@@ -110,17 +110,13 @@
     <!-- Sidebar -->
 <div class="col-md-2 sidebar">
   <h5>WeBuild</h5>
-  <a href="dashboard.php" class="active">Dashboard</a>
-  <a href="financial_reports.php">Financial Reports</a>
-  <a href="inventory_overview.php">Inventory Overview</a>
-  <a href="warehouse_analytics.php">Warehouse Analytics</a>
-  <a href="revenue_tracking.php">Revenue Tracking</a>
-  <a href="expense_management.php">Expense Management</a>
-  <a href="profit_analysis.php">Profit Analysis</a>
-  <a href="forecasting.php">Forecasting</a>
-  <a href="performance_kpis.php">Performance KPIs</a>
-  <a href="executive_reports.php">Executive Reports</a>
-  <a href="audit_trail.php">Audit Trail</a>
+  <a href="<?= base_url('management/dashboard') ?>" class="active">Dashboard</a>
+  <a href="<?= base_url('management/financial-reports') ?>">Financial Reports</a>
+  <a href="<?= base_url('management/inventory-overview') ?>">Inventory Overview</a>
+  <a href="<?= base_url('management/warehouse-analytics') ?>">Warehouse Analytics</a>
+  <a href="<?= base_url('management/forecasting') ?>">Forecasting</a>
+  <a href="<?= base_url('management/performance-kpis') ?>">Performance KPIs</a>
+  <a href="<?= base_url('management/executive-reports') ?>">Executive Reports</a>
 </div>
 
     <!-- Main Content -->

@@ -1403,33 +1403,39 @@ class ManagementDashboard extends BaseController
         // Inventory valuation
         $inventoryValue = $this->calculateTotalInventoryValue();
         
-        // Get AR data (receivables)
-        $arInvoices = $this->invoiceModel
-            ->where('invoice_type', 'sales')
+        $db = \Config\Database::connect();
+        
+        // Get AR data (receivables) from invoices table
+        $arInvoices = $db->table('invoices')
             ->where('DATE(created_at) >=', $startDate)
             ->where('DATE(created_at) <=', $endDate)
-            ->findAll();
+            ->get()
+            ->getResultArray();
         
         $totalReceivables = 0;
         $receivablesPaid = 0;
         foreach ($arInvoices as $invoice) {
-            $totalReceivables += floatval($invoice['total_amount'] ?? 0);
-            $receivablesPaid += floatval($invoice['amount_paid'] ?? 0);
+            $totalReceivables += floatval($invoice['amount'] ?? 0);
+            if ($invoice['status'] === 'Paid') {
+                $receivablesPaid += floatval($invoice['amount'] ?? 0);
+            }
         }
         $receivablesOutstanding = $totalReceivables - $receivablesPaid;
         
-        // Get AP data (payables)
-        $apInvoices = $this->invoiceModel
-            ->where('invoice_type', 'purchase')
+        // Get AP data (payables) from vendor_invoices table
+        $apInvoices = $db->table('vendor_invoices')
             ->where('DATE(created_at) >=', $startDate)
             ->where('DATE(created_at) <=', $endDate)
-            ->findAll();
+            ->get()
+            ->getResultArray();
         
         $totalPayables = 0;
         $payablesPaid = 0;
         foreach ($apInvoices as $invoice) {
-            $totalPayables += floatval($invoice['total_amount'] ?? 0);
-            $payablesPaid += floatval($invoice['amount_paid'] ?? 0);
+            $totalPayables += floatval($invoice['amount'] ?? 0);
+            if ($invoice['status'] === 'Paid') {
+                $payablesPaid += floatval($invoice['amount'] ?? 0);
+            }
         }
         $payablesOutstanding = $totalPayables - $payablesPaid;
         

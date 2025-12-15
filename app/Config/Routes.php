@@ -248,6 +248,20 @@ $routes->group('management', function($routes) {
     $routes->get('monthly-report', 'ManagementDashboard::monthlyReport');
     $routes->get('quarterly-report', 'ManagementDashboard::quarterlyReport');
     
+    // Legacy .php routes - redirect to proper routes
+    $routes->get('financial_reports.php', static function() {
+        return redirect()->to(base_url('management/financial-reports'));
+    });
+    $routes->get('dashboard.php', static function() {
+        return redirect()->to(base_url('management/dashboard'));
+    });
+    $routes->get('inventory_overview.php', static function() {
+        return redirect()->to(base_url('management/inventory-overview'));
+    });
+    $routes->get('warehouse_analytics.php', static function() {
+        return redirect()->to(base_url('management/warehouse-analytics'));
+    });
+    
     // AJAX API ENDPOINTS - Real-time data for charts and widgets
     $routes->get('api/inventory-stats', 'ManagementDashboard::getInventoryStats');
     $routes->get('api/warehouse-performance', 'ManagementDashboard::getWarehousePerformanceData');
