@@ -586,4 +586,107 @@ class AccountsReceivable extends BaseController
         
         return 'INV-' . $year . $month . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * =====================================================
+     * PRINT/EXPORT PDF REPORTS
+     * =====================================================
+     */
+    
+    public function printInvoiceReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $pdf = new \App\Libraries\PdfService();
+        
+        // Get invoices with client names
+        $db = \Config\Database::connect();
+        $invoices = $db->query("
+            SELECT i.*, c.company_name as client_name
+            FROM invoices i
+            LEFT JOIN clients c ON i.client_id = c.id
+            ORDER BY i.created_at DESC
+        ")->getResultArray();
+        
+        $html = $pdf->arInvoicesReport($invoices);
+        
+        return $pdf->generateFromHtml($html, 'accounts_receivable_report_' . date('Y-m-d'));
+    }
+    
+    public function printAgingReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $pdf = new \App\Libraries\PdfService();
+        
+        // Get aging data
+        $db = \Config\Database::connect();
+        $invoices = $db->query("
+            SELECT i.*, c.company_name as client_name,
+                   DATEDIFF(CURDATE(), i.due_date) as days_overdue
+            FROM invoices i
+            LEFT JOIN clients c ON i.client_id = c.id
+            WHERE i.status != 'Paid'
+            ORDER BY i.due_date ASC
+        ")->getResultArray();
+        
+        // Categorize by aging buckets
+        $current = [];
+        $days30 = [];
+        $days60 = [];
+        $days90 = [];
+        $over90 = [];
+        
+        foreach ($invoices as $inv) {
+            $daysOverdue = $inv['days_overdue'] ?? 0;
+            if ($daysOverdue <= 0) {
+                $current[] = $inv;
+            } elseif ($daysOverdue <= 30) {
+                $days30[] = $inv;
+            } elseif ($daysOverdue <= 60) {
+                $days60[] = $inv;
+            } elseif ($daysOverdue <= 90) {
+                $days90[] = $inv;
+            } else {
+                $over90[] = $inv;
+            }
+        }
+        
+        $headers = ['Invoice #', 'Client', 'Amount', 'Due Date', 'Days Overdue', 'Status'];
+        $data = [];
+        
+        foreach ($invoices as $inv) {
+            $balance = ($inv['total_amount'] ?? 0) - ($inv['paid_amount'] ?? 0);
+            $daysOverdue = max(0, $inv['days_overdue'] ?? 0);
+            
+            $data[] = [
+                esc($inv['invoice_number'] ?? 'N/A'),
+                esc($inv['client_name'] ?? 'N/A'),
+                '₱' . number_format($balance, 2),
+                date('M d, Y', strtotime($inv['due_date'] ?? 'now')),
+                $daysOverdue > 0 ? "<span class='text-danger'>{$daysOverdue} days</span>" : 'Current',
+                esc($inv['status'] ?? 'Pending')
+            ];
+        }
+        
+        $html = $pdf->setTitle('AR Aging Report')->buildReportHtml(
+            'Accounts Receivable Aging Report',
+            'Outstanding customer balances by aging bucket',
+            $headers,
+            $data,
+            [
+                'summary' => [
+                    'Current' => count($current),
+                    '1-30 Days' => count($days30),
+                    '31-60 Days' => count($days60),
+                    '61-90 Days' => count($days90),
+                    'Over 90 Days' => count($over90)
+                ]
+            ]
+        );
+        
+        return $pdf->generateFromHtml($html, 'ar_aging_report_' . date('Y-m-d'));
+    }
 }

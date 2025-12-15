@@ -513,4 +513,80 @@ class Procurement extends BaseController
 
         return view('procurement/reports', $data);
     }
+
+    /**
+     * =====================================================
+     * PRINT/EXPORT PDF REPORTS
+     * =====================================================
+     */
+
+    /**
+     * Print Purchase Orders Report as PDF
+     */
+    public function printPurchaseOrdersReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        // Get filter parameters
+        $status = $this->request->getGet('status');
+        $startDate = $this->request->getGet('start_date') ?? date('Y-m-d', strtotime('-30 days'));
+        $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
+
+        $builder = $this->poModel->builder();
+        $builder->select('purchase_orders.*, vendors.company_name as vendor_name');
+        $builder->join('vendors', 'vendors.id = purchase_orders.vendor_id', 'left');
+        $builder->where('DATE(purchase_orders.created_at) >=', $startDate);
+        $builder->where('DATE(purchase_orders.created_at) <=', $endDate);
+        
+        if ($status) {
+            $builder->where('purchase_orders.status', $status);
+        }
+        
+        $builder->orderBy('purchase_orders.created_at', 'DESC');
+        $purchaseOrders = $builder->get()->getResultArray();
+
+        $stats = $this->poModel->getStatistics();
+
+        $pdfService = new \App\Libraries\PdfService();
+        $html = $pdfService->procurementReport($purchaseOrders, [
+            'Pending' => $stats['pending'] ?? 0,
+            'Approved' => $stats['approved'] ?? 0,
+            'Received' => $stats['received'] ?? 0
+        ]);
+
+        return $pdfService->generateFromHtml($html, 'procurement_report_' . date('Y-m-d'), false);
+    }
+
+    /**
+     * Print Requisitions Report as PDF
+     */
+    public function printRequisitionsReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        // Get filter parameters
+        $status = $this->request->getGet('status');
+        $startDate = $this->request->getGet('start_date') ?? date('Y-m-d', strtotime('-30 days'));
+        $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
+
+        $builder = $this->requisitionModel->builder();
+        $builder->select('purchase_requisitions.*, users.name as requester_name');
+        $builder->join('users', 'users.id = purchase_requisitions.requested_by', 'left');
+        $builder->where('DATE(purchase_requisitions.created_at) >=', $startDate);
+        $builder->where('DATE(purchase_requisitions.created_at) <=', $endDate);
+        
+        if ($status) {
+            $builder->where('purchase_requisitions.status', $status);
+        }
+        
+        $builder->orderBy('purchase_requisitions.created_at', 'DESC');
+        $requisitions = $builder->get()->getResultArray();
+
+        $pdfService = new \App\Libraries\PdfService();
+        $html = $pdfService->requisitionsReport($requisitions);
+
+        return $pdfService->generateFromHtml($html, 'requisitions_report_' . date('Y-m-d'), false);
+    }
 }

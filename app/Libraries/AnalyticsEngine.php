@@ -438,7 +438,7 @@ class AnalyticsEngine
     /**
      * Financial Dashboard Metrics
      */
-    public function financialKPIs($period = 30)
+    public function financialKPIs($period = 30): array
     {
         // Total inventory value
         $inventoryValue = $this->db->table('inventory')

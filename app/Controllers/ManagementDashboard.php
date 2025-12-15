@@ -978,6 +978,50 @@ class ManagementDashboard extends BaseController
         return view('management_dashboard/executive_reports', $data);
     }
     
+    /**
+     * =====================================================
+     * VIEW: Financial Reports
+     * =====================================================
+     * 
+     * Route: GET /management/financial-reports
+     * 
+     * BACKEND PURPOSE:
+     * Provides comprehensive financial analytics for management
+     * Integrates data from AR, AP, Inventory valuation
+     * =====================================================
+     */
+    public function financialReports()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        // Get date range from request or default to current month
+        $startDate = $this->request->getGet('start_date') ?? date('Y-m-01');
+        $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
+
+        // Get financial summary data
+        $financialSummary = $this->getFinancialSummary($startDate, $endDate);
+        
+        // Get monthly trends for charts
+        $monthlyTrends = $this->getMonthlyFinancialTrends(6); // Last 6 months
+
+        $data = [
+            'user' => [
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role'),
+                'email' => $this->session->get('email')
+            ],
+            'pageTitle' => 'Financial Reports',
+            'breadcrumb' => 'Financial Reports',
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'summary' => $financialSummary,
+            'monthlyTrends' => $monthlyTrends
+        ];
+
+        return view('management_dashboard/financial_reports', $data);
+    }
+    
     public function monthlyReport()
     {
         $authCheck = $this->checkAuth();
@@ -1349,6 +1393,111 @@ class ManagementDashboard extends BaseController
         return [
             'totalValue' => $this->calculateTotalInventoryValue()
         ];
+    }
+    
+    /**
+     * Get comprehensive financial summary for a date range
+     */
+    private function getFinancialSummary($startDate, $endDate)
+    {
+        // Inventory valuation
+        $inventoryValue = $this->calculateTotalInventoryValue();
+        
+        // Get AR data (receivables)
+        $arInvoices = $this->invoiceModel
+            ->where('invoice_type', 'sales')
+            ->where('DATE(created_at) >=', $startDate)
+            ->where('DATE(created_at) <=', $endDate)
+            ->findAll();
+        
+        $totalReceivables = 0;
+        $receivablesPaid = 0;
+        foreach ($arInvoices as $invoice) {
+            $totalReceivables += floatval($invoice['total_amount'] ?? 0);
+            $receivablesPaid += floatval($invoice['amount_paid'] ?? 0);
+        }
+        $receivablesOutstanding = $totalReceivables - $receivablesPaid;
+        
+        // Get AP data (payables)
+        $apInvoices = $this->invoiceModel
+            ->where('invoice_type', 'purchase')
+            ->where('DATE(created_at) >=', $startDate)
+            ->where('DATE(created_at) <=', $endDate)
+            ->findAll();
+        
+        $totalPayables = 0;
+        $payablesPaid = 0;
+        foreach ($apInvoices as $invoice) {
+            $totalPayables += floatval($invoice['total_amount'] ?? 0);
+            $payablesPaid += floatval($invoice['amount_paid'] ?? 0);
+        }
+        $payablesOutstanding = $totalPayables - $payablesPaid;
+        
+        // Calculate net position
+        $netPosition = $receivablesOutstanding - $payablesOutstanding;
+        
+        // Get inventory movement value
+        $stockMovements = $this->stockMovementModel
+            ->where('DATE(created_at) >=', $startDate)
+            ->where('DATE(created_at) <=', $endDate)
+            ->findAll();
+        
+        $stockInValue = 0;
+        $stockOutValue = 0;
+        foreach ($stockMovements as $movement) {
+            $value = floatval($movement['quantity'] ?? 0) * floatval($movement['unit_cost'] ?? 0);
+            if ($movement['movement_type'] === 'IN') {
+                $stockInValue += $value;
+            } else {
+                $stockOutValue += $value;
+            }
+        }
+        
+        return [
+            'inventory_value' => $inventoryValue,
+            'total_receivables' => $totalReceivables,
+            'receivables_collected' => $receivablesPaid,
+            'receivables_outstanding' => $receivablesOutstanding,
+            'total_payables' => $totalPayables,
+            'payables_paid' => $payablesPaid,
+            'payables_outstanding' => $payablesOutstanding,
+            'net_position' => $netPosition,
+            'stock_in_value' => $stockInValue,
+            'stock_out_value' => $stockOutValue,
+            'ar_count' => count($arInvoices),
+            'ap_count' => count($apInvoices),
+            'collection_rate' => $totalReceivables > 0 ? ($receivablesPaid / $totalReceivables) * 100 : 0,
+            'payment_rate' => $totalPayables > 0 ? ($payablesPaid / $totalPayables) * 100 : 0
+        ];
+    }
+    
+    /**
+     * Get monthly financial trends for charts
+     */
+    private function getMonthlyFinancialTrends($months = 6)
+    {
+        $trends = [];
+        
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $date = date('Y-m-01', strtotime("-$i months"));
+            $month = date('m', strtotime($date));
+            $year = date('Y', strtotime($date));
+            $startDate = "$year-$month-01";
+            $endDate = date('Y-m-t', strtotime($startDate));
+            
+            $summary = $this->getFinancialSummary($startDate, $endDate);
+            
+            $trends[] = [
+                'month' => date('M Y', strtotime($startDate)),
+                'receivables' => $summary['total_receivables'],
+                'payables' => $summary['total_payables'],
+                'net_position' => $summary['net_position'],
+                'stock_in' => $summary['stock_in_value'],
+                'stock_out' => $summary['stock_out_value']
+            ];
+        }
+        
+        return $trends;
     }
     
     private function getTopItemsByMonth($month, $year, $limit)

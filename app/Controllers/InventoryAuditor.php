@@ -467,4 +467,90 @@ class InventoryAuditor extends BaseController
 
         return view('inventory_auditor/reports', $data);
     }
+
+    /**
+     * =====================================================
+     * PRINT/EXPORT PDF REPORTS
+     * =====================================================
+     */
+
+    /**
+     * Print Inventory Audit Report as PDF
+     */
+    public function printAuditReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        // Get filter parameters
+        $status = $this->request->getGet('status');
+        $startDate = $this->request->getGet('start_date') ?? date('Y-m-d', strtotime('-90 days'));
+        $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
+
+        $builder = $this->physicalCountModel->builder();
+        $builder->select('physical_counts.*, warehouses.name as warehouse_name');
+        $builder->join('warehouses', 'warehouses.id = physical_counts.warehouse_id', 'left');
+        $builder->where('DATE(physical_counts.count_start_date) >=', $startDate);
+        $builder->where('DATE(physical_counts.count_start_date) <=', $endDate);
+        
+        if ($status) {
+            $builder->where('physical_counts.status', $status);
+        }
+        
+        $builder->orderBy('physical_counts.count_start_date', 'DESC');
+        $counts = $builder->get()->getResultArray();
+
+        // Enrich with accuracy data
+        foreach ($counts as &$count) {
+            $detailStats = $this->countDetailsModel->getDiscrepancyStats($count['id']);
+            $count['total_items'] = $detailStats['total_items'] ?? 0;
+            $count['accuracy_rate'] = $detailStats['accuracy_rate'] ?? 0;
+        }
+
+        $stats = $this->physicalCountModel->getCountStatistics();
+
+        $pdfService = new \App\Libraries\PdfService();
+        $html = $pdfService->inventoryAuditReport($counts, [
+            'Completed' => $stats['completed'] ?? 0,
+            'In Progress' => $stats['in_progress'] ?? 0,
+            'Avg. Accuracy' => number_format($stats['avg_accuracy'] ?? 0, 1) . '%'
+        ]);
+
+        return $pdfService->generateFromHtml($html, 'inventory_audit_report_' . date('Y-m-d'), false);
+    }
+
+    /**
+     * Print Discrepancy Report as PDF
+     */
+    public function printDiscrepancyReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $countId = $this->request->getGet('count_id');
+        $status = $this->request->getGet('status');
+
+        $builder = $this->countDetailsModel->builder();
+        $builder->select('physical_count_details.*, inventory_items.item_code, inventory_items.name as item_name');
+        $builder->join('inventory_items', 'inventory_items.id = physical_count_details.item_id', 'left');
+        
+        // Only get items with discrepancies
+        $builder->where('physical_count_details.system_quantity != physical_count_details.counted_quantity', null, false);
+        
+        if ($countId) {
+            $builder->where('physical_count_details.physical_count_id', $countId);
+        }
+        
+        if ($status) {
+            $builder->where('physical_count_details.status', $status);
+        }
+        
+        $builder->orderBy('ABS(physical_count_details.counted_quantity - physical_count_details.system_quantity)', 'DESC');
+        $discrepancies = $builder->get()->getResultArray();
+
+        $pdfService = new \App\Libraries\PdfService();
+        $html = $pdfService->discrepancyReport($discrepancies);
+
+        return $pdfService->generateFromHtml($html, 'discrepancy_report_' . date('Y-m-d'), false);
+    }
 }

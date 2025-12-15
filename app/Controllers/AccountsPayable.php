@@ -398,7 +398,7 @@ class AccountsPayable extends BaseController
     
     /**
      * =====================================================
-     * PRINT REPORTS
+     * PRINT/EXPORT PDF REPORTS
      * =====================================================
      */
     
@@ -407,10 +407,12 @@ class AccountsPayable extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        helper('printing_helper');
+        $pdf = new \App\Libraries\PdfService();
         
         $invoices = $this->invoiceModel->getAllInvoicesWithVendors();
-        echo generate_invoice_report_html($invoices, 'payable');
+        $html = $pdf->apInvoicesReport($invoices);
+        
+        return $pdf->generateFromHtml($html, 'accounts_payable_report_' . date('Y-m-d'));
     }
     
     public function printOverdueReport()
@@ -418,74 +420,44 @@ class AccountsPayable extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        helper('printing_helper');
+        $pdf = new \App\Libraries\PdfService();
         
         $overdueInvoices = $this->invoiceModel->getOverdueInvoices();
         
-        $html = '<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Accounts Payable Overdue Report</title>
-            ' . generate_print_styles() . '
-        </head>
-        <body>
-            <div class="print-button-container no-print">
-                <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
-                <button class="btn-print" onclick="window.close()" style="background-color: #95a5a6;">✕ Close</button>
-            </div>
-            
-            ' . generate_print_header('Accounts Payable Overdue Report', 'Vendor Invoices Requiring Payment') . '
-            
-            <div class="summary-box">
-                <h3>⚠️ Overdue Payments: ' . count($overdueInvoices) . ' invoices</h3>
-            </div>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Invoice No.</th>
-                        <th>Vendor</th>
-                        <th>Invoice Date</th>
-                        <th>Due Date</th>
-                        <th>Days Overdue</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>';
-        
-        $counter = 1;
+        // Build custom overdue report
+        $headers = ['#', 'Invoice No.', 'Vendor', 'Invoice Date', 'Due Date', 'Days Overdue', 'Amount'];
+        $data = [];
         $total = 0;
-        foreach ($overdueInvoices as $invoice) {
-            $daysOverdue = (strtotime('now') - strtotime($invoice['due_date'])) / 86400;
-            $amount = $invoice['amount'] ?? 0;
+        
+        foreach ($overdueInvoices as $index => $invoice) {
+            $daysOverdue = floor((strtotime('now') - strtotime($invoice['due_date'] ?? 'now')) / 86400);
+            $amount = $invoice['amount'] ?? $invoice['total_amount'] ?? 0;
             $total += $amount;
             
-            $html .= '
-                    <tr>
-                        <td>' . $counter++ . '</td>
-                        <td>' . esc($invoice['invoice_number'] ?? '') . '</td>
-                        <td>' . esc($invoice['vendor_name'] ?? '') . '</td>
-                        <td>' . date('M d, Y', strtotime($invoice['invoice_date'] ?? 'now')) . '</td>
-                        <td>' . date('M d, Y', strtotime($invoice['due_date'] ?? 'now')) . '</td>
-                        <td style="color: red; font-weight: bold;">' . floor($daysOverdue) . ' days</td>
-                        <td>₱' . number_format($amount, 2) . '</td>
-                    </tr>';
+            $data[] = [
+                $index + 1,
+                esc($invoice['invoice_number'] ?? 'N/A'),
+                esc($invoice['vendor_name'] ?? 'N/A'),
+                date('M d, Y', strtotime($invoice['invoice_date'] ?? 'now')),
+                date('M d, Y', strtotime($invoice['due_date'] ?? 'now')),
+                "<span class='text-danger'><strong>{$daysOverdue} days</strong></span>",
+                '₱' . number_format($amount, 2)
+            ];
         }
         
-        $html .= '
-                    <tr style="font-weight: bold; background-color: #e74c3c; color: white;">
-                        <td colspan="6" style="text-align: right;">TOTAL OVERDUE:</td>
-                        <td>₱' . number_format($total, 2) . '</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            ' . generate_print_footer() . '
-        </body>
-        </html>';
+        $html = $pdf->setTitle('Overdue Payments Report')->buildReportHtml(
+            'Accounts Payable - Overdue Report',
+            'Vendor invoices requiring immediate payment',
+            $headers,
+            $data,
+            [
+                'summary' => [
+                    'Overdue Invoices' => count($overdueInvoices),
+                    'Total Overdue Amount' => '₱' . number_format($total, 2)
+                ]
+            ]
+        );
         
-        echo $html;
+        return $pdf->generateFromHtml($html, 'ap_overdue_report_' . date('Y-m-d'));
     }
 }

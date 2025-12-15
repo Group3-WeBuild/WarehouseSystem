@@ -1383,7 +1383,7 @@ class WarehouseManager extends BaseController
 
     /**
      * =====================================================
-     * PRINT REPORTS - Generate Printable HTML
+     * PRINT/EXPORT REPORTS - Generate PDF Reports
      * =====================================================
      */
     
@@ -1392,21 +1392,15 @@ class WarehouseManager extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        helper('printing_helper');
+        $pdf = new \App\Libraries\PdfService();
         
         // Get all inventory items
         $inventory = $this->inventoryModel->where('status', 'Active')->findAll();
         
-        // Calculate stats
-        $stats = [
-            'totalItems' => count($inventory),
-            'totalValue' => $this->inventoryModel->getTotalInventoryValue(),
-            'inStock' => $this->inventoryModel->where('quantity >', 0)->where('status', 'Active')->countAllResults(),
-            'lowStock' => $this->getLowStockCount()
-        ];
+        // Generate PDF
+        $html = $pdf->inventoryReport($inventory);
         
-        // Generate and return HTML
-        echo generate_inventory_report_html($inventory, $stats);
+        return $pdf->generateFromHtml($html, 'inventory_report_' . date('Y-m-d'));
     }
     
     public function printStockMovementReport()
@@ -1414,62 +1408,23 @@ class WarehouseManager extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        helper('printing_helper');
+        $pdf = new \App\Libraries\PdfService();
         
-        $movements = $this->stockMovementModel
-            ->orderBy('created_at', 'DESC')
-            ->findAll(100); // Last 100 movements
+        // Get movements with product names
+        $db = \Config\Database::connect();
+        $movements = $db->query("
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ")->getResultArray();
         
-        $html = '<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Stock Movement Report</title>
-            ' . generate_print_styles() . '
-        </head>
-        <body>
-            <div class="print-button-container no-print">
-                <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
-                <button class="btn-print" onclick="window.close()" style="background-color: #95a5a6;">✕ Close</button>
-            </div>
-            
-            ' . generate_print_header('Stock Movement Report', 'Last 100 Transactions') . '
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Date</th>
-                        <th>Reference</th>
-                        <th>Type</th>
-                        <th>Quantity</th>
-                        <th>Notes</th>
-                    </tr>
-                </thead>
-                <tbody>';
+        // Generate PDF
+        $html = $pdf->stockMovementReport($movements);
         
-        $counter = 1;
-        foreach ($movements as $movement) {
-            $html .= '
-                    <tr>
-                        <td>' . $counter++ . '</td>
-                        <td>' . date('M d, Y', strtotime($movement['created_at'] ?? 'now')) . '</td>
-                        <td>' . esc($movement['reference_number'] ?? '') . '</td>
-                        <td>' . esc($movement['movement_type'] ?? '') . '</td>
-                        <td>' . number_format($movement['quantity'] ?? 0) . '</td>
-                        <td>' . esc($movement['notes'] ?? '') . '</td>
-                    </tr>';
-        }
-        
-        $html .= '
-                </tbody>
-            </table>
-            
-            ' . generate_print_footer() . '
-        </body>
-        </html>';
-        
-        echo $html;
+        return $pdf->generateFromHtml($html, 'stock_movement_report_' . date('Y-m-d'));
     }
     
     public function printLowStockReport()
@@ -1477,67 +1432,13 @@ class WarehouseManager extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        helper('printing_helper');
+        $pdf = new \App\Libraries\PdfService();
         
         $lowStockItems = $this->inventoryModel->getLowStockItems();
         
-        $html = '<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Low Stock Alert Report</title>
-            ' . generate_print_styles() . '
-        </head>
-        <body>
-            <div class="print-button-container no-print">
-                <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
-                <button class="btn-print" onclick="window.close()" style="background-color: #95a5a6;">✕ Close</button>
-            </div>
-            
-            ' . generate_print_header('Low Stock Alert Report', 'Items Requiring Reorder') . '
-            
-            <div class="summary-box">
-                <h3>⚠️ URGENT: ' . count($lowStockItems) . ' Items Need Attention</h3>
-                <p>These items are at or below their reorder levels and require immediate restocking.</p>
-            </div>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>SKU</th>
-                        <th>Product Name</th>
-                        <th>Current Qty</th>
-                        <th>Reorder Level</th>
-                        <th>Shortage</th>
-                        <th>Unit Price</th>
-                    </tr>
-                </thead>
-                <tbody>';
+        // Generate PDF
+        $html = $pdf->lowStockReport($lowStockItems);
         
-        $counter = 1;
-        foreach ($lowStockItems as $item) {
-            $shortage = ($item['reorder_level'] ?? 0) - ($item['quantity'] ?? 0);
-            $html .= '
-                    <tr>
-                        <td>' . $counter++ . '</td>
-                        <td>' . esc($item['sku'] ?? '') . '</td>
-                        <td>' . esc($item['product_name'] ?? '') . '</td>
-                        <td style="color: red; font-weight: bold;">' . number_format($item['quantity'] ?? 0) . '</td>
-                        <td>' . number_format($item['reorder_level'] ?? 0) . '</td>
-                        <td>' . number_format($shortage) . '</td>
-                        <td>₱' . number_format($item['unit_price'] ?? 0, 2) . '</td>
-                    </tr>';
-        }
-        
-        $html .= '
-                </tbody>
-            </table>
-            
-            ' . generate_print_footer() . '
-        </body>
-        </html>';
-        
-        echo $html;
+        return $pdf->generateFromHtml($html, 'low_stock_report_' . date('Y-m-d'));
     }
 }

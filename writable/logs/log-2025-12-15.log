@@ -149,3 +149,461 @@ Stack trace:
 #12 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
 #13 C:\xampp\htdocs\WarehouseSystem\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
 #14 {main}
+ERROR - 2025-12-15 11:03:13 --> mysqli_sql_exception: MySQL server has gone away in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *\nFROM `...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WarehouseSystem\app\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WarehouseSystem\app\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\Auth->login()
+#9 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+#10 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2025-12-15 11:03:13 --> CodeIgniter\Database\Exceptions\DatabaseException: MySQL server has gone away
+[Method: POST, Route: login]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `users`
+WHERE `email` = :email:
+OR `username` = :username:
+ LIMIT 1', [...], false)
+ 2 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 4 APPPATH\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+ 5 APPPATH\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->login()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-15 11:03:13 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: MySQL server has gone away
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `users`
+WHERE `email` = \'admin@lms.com\'
+OR `username` = \'admin@lms.com\'
+ LIMIT 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `users`
+WHERE `email` = \'admin@lms.com\'
+OR `username` = \'admin@lms.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `users`
+WHERE `email` = :email:
+OR `username` = :username:
+ LIMIT 1', [...], false)
+ 4 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 6 APPPATH\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+ 7 APPPATH\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->login()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-15 11:03:13 --> [Caused by] mysqli_sql_exception: MySQL server has gone away
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *
+FROM `users`
+WHERE `email` = \'admin@lms.com\'
+OR `username` = \'admin@lms.com\'
+ LIMIT 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `users`
+WHERE `email` = \'admin@lms.com\'
+OR `username` = \'admin@lms.com\'
+ LIMIT 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `users`
+WHERE `email` = \'admin@lms.com\'
+OR `username` = \'admin@lms.com\'
+ LIMIT 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `users`
+WHERE `email` = :email:
+OR `username` = :username:
+ LIMIT 1', [...], false)
+ 5 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 7 APPPATH\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+ 8 APPPATH\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->login()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-15 11:04:47 --> Error connecting to the database: mysqli_sql_exception: No connection could be made because the target machine actively refused it in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:201
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(201): mysqli->real_connect('localhost', 'root', Object(SensitiveParameterValue), 'G3Web', 3306, '', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#6 C:\xampp\htdocs\WarehouseSystem\app\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+#7 C:\xampp\htdocs\WarehouseSystem\app\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\Auth->login()
+#9 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+#10 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: No connection could be made because the target machine actively refused it in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:246
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(419): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#3 C:\xampp\htdocs\WarehouseSystem\system\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+#4 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(715): CodeIgniter\Model->doFirst()
+#5 C:\xampp\htdocs\WarehouseSystem\app\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+#6 C:\xampp\htdocs\WarehouseSystem\app\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+#7 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\Auth->login()
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+#9 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2025-12-15 11:04:47 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: No connection could be made because the target machine actively refused it
+[Method: POST, Route: login]
+in SYSTEMPATH\Database\BaseConnection.php on line 465.
+ 1 SYSTEMPATH\Database\BaseConnection.php(614): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `users`
+WHERE `email` = :email:
+OR `username` = :username:
+ LIMIT 1', [...], false)
+ 3 SYSTEMPATH\Model.php(330): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH\BaseModel.php(715): CodeIgniter\Model->doFirst()
+ 5 APPPATH\Models\UserModel.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH\Controllers\Auth.php(50): App\Models\UserModel->findByEmailOrUsername('admin@lms.com')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Auth->login()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Auth))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-15 11:10:03 --> mysqli_sql_exception: Unknown column 'updated_at' in 'field list' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(194): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\RoleFilter.php(156): App\Libraries\AuditService->logSecurityEvent('Sensitive Area ...', 'User 'admin' ac...', 'info')
+#9 C:\xampp\htdocs\WarehouseSystem\app\Filters\RoleFilter.php(136): App\Filters\RoleFilter->logSecurityEvent('Sensitive Area ...', 'User 'admin' ac...', 'info')
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(241): App\Filters\RoleFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore(Array)
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('admin/dashboard', 'before')
+#13 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#15 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#16 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#17 {main}
+ERROR - 2025-12-15 11:10:03 --> Failed to log security event: Unknown column 'updated_at' in 'field list'
+CRITICAL - 2025-12-15 11:10:04 --> ErrorException: Undefined variable $variable
+[Method: GET, Route: admin/dashboard]
+in APPPATH\Views\admin_dashboard\dashboard.php on line 32.
+ 1 APPPATH\Views\admin_dashboard\dashboard.php(32): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $variable', 'C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\admin_dashboard\\dashboard.php', 32)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\admin_dashboard\\dashboard.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin_dashboard/dashboard', [], true)
+ 5 APPPATH\Controllers\Admin.php(161): view('admin_dashboard/dashboard', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->dashboard()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-15 11:13:12 --> mysqli_sql_exception: Unknown column 'updated_at' in 'field list' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(194): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\RoleFilter.php(156): App\Libraries\AuditService->logSecurityEvent('Sensitive Area ...', 'User 'admin' ac...', 'info')
+#9 C:\xampp\htdocs\WarehouseSystem\app\Filters\RoleFilter.php(136): App\Filters\RoleFilter->logSecurityEvent('Sensitive Area ...', 'User 'admin' ac...', 'info')
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(241): App\Filters\RoleFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore(Array)
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('admin/dashboard', 'before')
+#13 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#15 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#16 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#17 {main}
+ERROR - 2025-12-15 11:13:12 --> Failed to log security event: Unknown column 'updated_at' in 'field list'
+CRITICAL - 2025-12-15 11:13:12 --> ErrorException: Undefined variable $variable
+[Method: GET, Route: admin/dashboard]
+in APPPATH\Views\admin_dashboard\dashboard.php on line 32.
+ 1 APPPATH\Views\admin_dashboard\dashboard.php(32): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $variable', 'C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\admin_dashboard\\dashboard.php', 32)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\admin_dashboard\\dashboard.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('admin_dashboard/dashboard', [], true)
+ 5 APPPATH\Controllers\Admin.php(161): view('admin_dashboard/dashboard', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Admin->dashboard()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-15 11:16:23 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/dashboard', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:16:23 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:18:00 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/user-acco...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:18:00 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:19:24 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/roles-per...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:19:24 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:19:43 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/active-se...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:19:43 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:19:56 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/security-...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:19:56 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:20:00 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/audit-log...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:20:00 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:20:08 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/system-he...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:20:08 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:20:13 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/database-...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:20:13 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:20:17 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/backup-re...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:20:17 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:20:28 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/user-acco...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:20:28 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:20:30 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('admin/dashboard', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:20:30 --> Audit logging failed: Column 'table_name' cannot be null
+ERROR - 2025-12-15 11:21:00 --> mysqli_sql_exception: Column 'table_name' cannot be null in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `au...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `au...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `au...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `au...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\WarehouseSystem\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\WarehouseSystem\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\WarehouseSystem\app\Libraries\AuditService.php(74): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\WarehouseSystem\app\Filters\AuditFilter.php(83): App\Libraries\AuditService->logAction('WarehouseSystem', 'view', 'HTTP GET reques...', NULL, NULL, NULL, NULL, 'success')
+#9 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(278): App\Filters\AuditFilter->after(Object(CodeIgniter\HTTP\IncomingRequest), Object(CodeIgniter\HTTP\Response), NULL)
+#10 C:\xampp\htdocs\WarehouseSystem\system\Filters\Filters.php(225): CodeIgniter\Filters\Filters->runAfter(Array)
+#11 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(525): CodeIgniter\Filters\Filters->run('management/dash...', 'after')
+#12 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#13 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#14 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#15 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#16 {main}
+ERROR - 2025-12-15 11:21:00 --> Audit logging failed: Column 'table_name' cannot be null

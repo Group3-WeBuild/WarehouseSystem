@@ -244,6 +244,7 @@ $routes->group('management', function($routes) {
     $routes->get('forecasting', 'ManagementDashboard::forecasting');
     $routes->get('performance-kpis', 'ManagementDashboard::performanceKpis');
     $routes->get('executive-reports', 'ManagementDashboard::executiveReports');
+    $routes->get('financial-reports', 'ManagementDashboard::financialReports');
     $routes->get('monthly-report', 'ManagementDashboard::monthlyReport');
     $routes->get('quarterly-report', 'ManagementDashboard::quarterlyReport');
     
@@ -297,4 +298,15 @@ $routes->group('print', function($routes) {
     // Accounts Payable Reports
     $routes->get('ap-invoices', 'AccountsPayable::printInvoiceReport');
     $routes->get('ap-overdue', 'AccountsPayable::printOverdueReport');
+    
+    // Admin Reports
+    $routes->get('audit-logs', 'Admin::exportAuditLogs');
+    
+    // Procurement Reports
+    $routes->get('purchase-orders', 'Procurement::printPurchaseOrdersReport');
+    $routes->get('requisitions', 'Procurement::printRequisitionsReport');
+    
+    // Inventory Auditor Reports
+    $routes->get('audit-sessions', 'InventoryAuditor::printAuditReport');
+    $routes->get('discrepancies', 'InventoryAuditor::printDiscrepancyReport');
 });

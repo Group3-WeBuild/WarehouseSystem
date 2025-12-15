@@ -294,6 +294,43 @@ class Admin extends BaseController
         return view('admin_dashboard/audit_logs', $data);
     }
 
+    /**
+     * Export Audit Logs as PDF
+     * Generates printable audit trail report
+     */
+    public function exportAuditLogs()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        // Get date range from request
+        $startDate = $this->request->getGet('start_date') ?? date('Y-m-d', strtotime('-30 days'));
+        $endDate = $this->request->getGet('end_date') ?? date('Y-m-d');
+        $action = $this->request->getGet('action') ?? null;
+
+        // Build query
+        $db = \Config\Database::connect();
+        $builder = $db->table('audit_trail');
+        $builder->select('audit_trail.*, users.name as user_name, users.username');
+        $builder->join('users', 'users.id = audit_trail.user_id', 'left');
+        $builder->where('DATE(audit_trail.created_at) >=', $startDate);
+        $builder->where('DATE(audit_trail.created_at) <=', $endDate);
+        
+        if ($action) {
+            $builder->where('action', $action);
+        }
+        
+        $builder->orderBy('audit_trail.created_at', 'DESC');
+        $logs = $builder->get()->getResultArray();
+
+        // Use PdfService to generate report
+        $pdfService = new \App\Libraries\PdfService();
+        return $pdfService->auditTrailReport($logs, [
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ]);
+    }
+
     public function systemHealth()
     {
         $authCheck = $this->checkAuth();

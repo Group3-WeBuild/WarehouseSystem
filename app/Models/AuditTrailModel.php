@@ -52,9 +52,11 @@ class AuditTrailModel extends Model
         'timestamp'
     ];
 
+    // Audit trail only needs created_at, not updated_at (logs are immutable)
     protected $useTimestamps = true;
     protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
+    protected $updatedField = ''; // Disable updated_at - audit logs are immutable
 
     protected $skipValidation = true;
     protected $cleanValidationRules = true;

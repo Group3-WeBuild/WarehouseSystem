@@ -106,17 +106,13 @@
 <!-- Sidebar -->
 <div class="col-md-2 sidebar">
   <h5>WeBuild</h5>
-  <a href="dashboard.php">Dashboard</a>
-  <a href="financial_reports.php"class="active">Financial Reports</a>
-  <a href="inventory_overview.php">Inventory Overview</a>
-  <a href="warehouse_analytics.php">Warehouse Analytics</a>
-  <a href="revenue_tracking.php">Revenue Tracking</a>
-  <a href="expense_management.php">Expense Management</a>
-  <a href="profit_analysis.php">Profit Analysis</a>
-  <a href="forecasting.php">Forecasting</a>
-  <a href="performance_kpis.php">Performance KPIs</a>
-  <a href="executive_reports.php">Executive Reports</a>
-  <a href="audit_trail.php">Audit Trail</a>
+  <a href="<?= base_url('management/dashboard') ?>">Dashboard</a>
+  <a href="<?= base_url('management/financial-reports') ?>" class="active">Financial Reports</a>
+  <a href="<?= base_url('management/inventory-overview') ?>">Inventory Overview</a>
+  <a href="<?= base_url('management/warehouse-analytics') ?>">Warehouse Analytics</a>
+  <a href="<?= base_url('management/forecasting') ?>">Forecasting</a>
+  <a href="<?= base_url('management/performance-kpis') ?>">Performance KPIs</a>
+  <a href="<?= base_url('management/executive-reports') ?>">Executive Reports</a>
 </div>
 
     <!-- Main Content -->
@@ -125,8 +121,8 @@
       <div class="topbar">
         <input type="text" class="form-control w-25" placeholder="Search">
         <div>
-          <span class="me-3">Date | Time | Top Management | <strong>Username</strong></span>
-          <button class="btn btn-outline-secondary btn-sm">Logout</button>
+          <span class="me-3"><?= date('M d, Y | h:i A') ?> | <?= esc($user['role']) ?> | <strong><?= esc($user['name']) ?></strong></span>
+          <a href="<?= base_url('logout') ?>" class="btn btn-outline-secondary btn-sm">Logout</a>
         </div>
       </div>
 
@@ -135,73 +131,150 @@
         <h5><strong>Financial Reports</strong></h5>
         <p class="text-muted mb-4">Comprehensive financial analysis and reporting for WeBuild operations</p>
 
-        <!-- Filter Dropdowns -->
-        <div class="filter-group">
-          <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
-              Select Period
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Last 3 Months</a></li>
-              <li><a class="dropdown-item" href="#">Last 6 Months</a></li>
-              <li><a class="dropdown-item" href="#">Last Year</a></li>
-              <li><a class="dropdown-item" href="#">Custom Range</a></li>
-            </ul>
-          </div>
-
-          <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
-              Select Report Type
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">All Reports</a></li>
-              <li><a class="dropdown-item" href="#">P&L Statements</a></li>
-              <li><a class="dropdown-item" href="#">Cash Flow Reports</a></li>
-              <li><a class="dropdown-item" href="#">Balance Sheets</a></li>
-              <li><a class="dropdown-item" href="#">Tax Reports</a></li>
-            </ul>
-          </div>
-
-          <button class="btn btn-primary btn-sm">Generate Report</button>
+        <!-- Date Range Filter -->
+        <div class="filter-group mb-4">
+          <form method="get" action="<?= base_url('management/financial-reports') ?>" class="d-flex gap-2 align-items-center">
+            <label class="me-2">Date Range:</label>
+            <input type="date" name="start_date" class="form-control form-control-sm" value="<?= $startDate ?>" style="width: 180px;">
+            <span>to</span>
+            <input type="date" name="end_date" class="form-control form-control-sm" value="<?= $endDate ?>" style="width: 180px;">
+            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+            <a href="<?= base_url('management/financial-reports') ?>" class="btn btn-outline-secondary btn-sm">Reset</a>
+          </form>
         </div>
 
-        <!-- Reports Cards -->
-        <div class="row g-3">
-          <div class="col-md-4">
-            <div class="report-card">
-              <h6>Monthly P&L Statement</h6>
-              <p>Detailed profit and loss analysis</p>
+        <!-- Financial Summary Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">
+            <div class="card border-primary">
+              <div class="card-body">
+                <h6 class="text-muted">Inventory Value</h6>
+                <h4 class="text-primary">₱<?= number_format($summary['inventory_value'], 2) ?></h4>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="report-card">
-              <h6>Cash Flow Report</h6>
-              <p>Inflow and outflow analysis</p>
+          <div class="col-md-3">
+            <div class="card border-success">
+              <div class="card-body">
+                <h6 class="text-muted">Accounts Receivable</h6>
+                <h4 class="text-success">₱<?= number_format($summary['receivables_outstanding'], 2) ?></h4>
+                <small class="text-muted"><?= number_format($summary['collection_rate'], 1) ?>% collected</small>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="report-card">
-              <h6>Revenue Analysis</h6>
-              <p>Revenue trends and projections</p>
+          <div class="col-md-3">
+            <div class="card border-danger">
+              <div class="card-body">
+                <h6 class="text-muted">Accounts Payable</h6>
+                <h4 class="text-danger">₱<?= number_format($summary['payables_outstanding'], 2) ?></h4>
+                <small class="text-muted"><?= number_format($summary['payment_rate'], 1) ?>% paid</small>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="report-card">
-              <h6>Expense Breakdown</h6>
-              <p>Detailed expense categorization</p>
+          <div class="col-md-3">
+            <div class="card border-info">
+              <div class="card-body">
+                <h6 class="text-muted">Net Position</h6>
+                <h4 class="<?= $summary['net_position'] >= 0 ? 'text-success' : 'text-danger' ?>">
+                  ₱<?= number_format(abs($summary['net_position']), 2) ?>
+                  <?= $summary['net_position'] >= 0 ? '▲' : '▼' ?>
+                </h4>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="report-card">
-              <h6>Balance Sheet</h6>
-              <p>Assets, liabilities, and equity</p>
+        </div>
+
+        <!-- Detailed Breakdown -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">Receivables Summary</h6>
+              </div>
+              <div class="card-body">
+                <table class="table table-sm">
+                  <tr>
+                    <td>Total Invoices</td>
+                    <td class="text-end"><strong><?= $summary['ar_count'] ?></strong></td>
+                  </tr>
+                  <tr>
+                    <td>Total Amount</td>
+                    <td class="text-end">₱<?= number_format($summary['total_receivables'], 2) ?></td>
+                  </tr>
+                  <tr>
+                    <td>Amount Collected</td>
+                    <td class="text-end text-success">₱<?= number_format($summary['receivables_collected'], 2) ?></td>
+                  </tr>
+                  <tr>
+                    <td>Outstanding</td>
+                    <td class="text-end text-warning">₱<?= number_format($summary['receivables_outstanding'], 2) ?></td>
+                  </tr>
+                </table>
+                <a href="<?= base_url('print/ar-invoices') ?>" class="btn btn-sm btn-outline-primary w-100" target="_blank">
+                  📄 Export AR Report
+                </a>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="report-card">
-              <h6>Tax Reports</h6>
-              <p>Tax preparation and compliance</p>
+          
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header bg-danger text-white">
+                <h6 class="mb-0">Payables Summary</h6>
+              </div>
+              <div class="card-body">
+                <table class="table table-sm">
+                  <tr>
+                    <td>Total Invoices</td>
+                    <td class="text-end"><strong><?= $summary['ap_count'] ?></strong></td>
+                  </tr>
+                  <tr>
+                    <td>Total Amount</td>
+                    <td class="text-end">₱<?= number_format($summary['total_payables'], 2) ?></td>
+                  </tr>
+                  <tr>
+                    <td>Amount Paid</td>
+                    <td class="text-end text-success">₱<?= number_format($summary['payables_paid'], 2) ?></td>
+                  </tr>
+                  <tr>
+                    <td>Outstanding</td>
+                    <td class="text-end text-danger">₱<?= number_format($summary['payables_outstanding'], 2) ?></td>
+                  </tr>
+                </table>
+                <a href="<?= base_url('print/ap-invoices') ?>" class="btn btn-sm btn-outline-danger w-100" target="_blank">
+                  📄 Export AP Report
+                </a>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Stock Movement Value -->
+        <div class="card mb-4">
+          <div class="card-header bg-info text-white">
+            <h6 class="mb-0">Inventory Movement Value (<?= date('M d', strtotime($startDate)) ?> - <?= date('M d, Y', strtotime($endDate)) ?>)</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-success">Stock In Value</h6>
+                <h3>₱<?= number_format($summary['stock_in_value'], 2) ?></h3>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-danger">Stock Out Value</h6>
+                <h3>₱<?= number_format($summary['stock_out_value'], 2) ?></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Trends Chart -->
+        <div class="card">
+          <div class="card-header bg-dark text-white">
+            <h6 class="mb-0">6-Month Financial Trends</h6>
+          </div>
+          <div class="card-body">
+            <canvas id="financialTrendsChart" height="80"></canvas>
           </div>
         </div>
 
@@ -211,5 +284,63 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Financial Trends Chart
+const trendsData = <?= json_encode($monthlyTrends) ?>;
+
+const ctx = document.getElementById('financialTrendsChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: trendsData.map(t => t.month),
+        datasets: [
+            {
+                label: 'Receivables',
+                data: trendsData.map(t => t.receivables),
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Payables',
+                data: trendsData.map(t => t.payables),
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Net Position',
+                data: trendsData.map(t => t.net_position),
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '₱' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
 </body>
 </html>

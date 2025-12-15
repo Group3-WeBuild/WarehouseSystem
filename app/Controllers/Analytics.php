@@ -332,29 +332,84 @@ class Analytics extends BaseController
     }
 
     /**
-     * Export Analytics Report
+     * Export Analytics Report as PDF
      */
     public function exportReport($type = 'summary')
     {
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        $reportData = match($type) {
-            'inventory_kpis' => $this->analytics->inventoryTurnoverRatio(),
-            'abc_analysis' => $this->analytics->abcAnalysis(),
-            'warehouse' => $this->analytics->warehousePerformance(),
-            'financial' => $this->analytics->financialKPIs(30),
-            'reorder' => $this->analytics->calculateReorderPoints(),
-            default => $this->analytics->getAnalyticsSummary()
-        };
-
-        $this->audit->logReportGeneration("Analytics Report: {$type}", 'JSON');
-
-        $filename = "analytics_{$type}_" . date('Y-m-d_His') . '.json';
+        $pdf = new \App\Libraries\PdfService();
         
-        return $this->response
-            ->setHeader('Content-Type', 'application/json')
-            ->setHeader('Content-Disposition', "attachment; filename=\"{$filename}\"")
-            ->setBody(json_encode($reportData, JSON_PRETTY_PRINT));
+        switch ($type) {
+            case 'inventory':
+                $inventoryModel = new \App\Models\InventoryModel();
+                $inventory = $inventoryModel->where('status', 'Active')->findAll();
+                $html = $pdf->inventoryReport($inventory);
+                break;
+                
+            case 'inventory_kpis':
+                $data = $this->analytics->inventoryTurnoverRatio();
+                $headers = ['Product', 'SKU', 'Turnover Ratio', 'Days of Supply', 'Status'];
+                $rows = [];
+                foreach ($data as $item) {
+                    $status = $item['turnover_ratio'] >= 6 ? 'Fast Moving' : ($item['turnover_ratio'] >= 2 ? 'Normal' : 'Slow Moving');
+                    $rows[] = [
+                        esc($item['product_name']),
+                        esc($item['sku']),
+                        number_format($item['turnover_ratio'], 2),
+                        $item['days_of_supply'] == 999 ? '∞' : number_format($item['days_of_supply'], 0),
+                        $status
+                    ];
+                }
+                $html = $pdf->setTitle('Inventory KPIs Report')->buildReportHtml(
+                    'Inventory Turnover Analysis',
+                    'KPI metrics for inventory performance',
+                    $headers, $rows, []
+                );
+                break;
+                
+            case 'low_stock':
+            case 'reorder':
+                $data = $this->analytics->calculateReorderPoints();
+                $lowStock = array_filter($data, fn($item) => $item['needs_reorder']);
+                $html = $pdf->lowStockReport($lowStock);
+                break;
+                
+            case 'warehouse':
+                $data = $this->analytics->warehousePerformance();
+                $headers = ['Warehouse', 'Location', 'Items', 'Utilization %', 'Total Value'];
+                $rows = [];
+                foreach ($data['warehouses'] ?? [] as $wh) {
+                    $rows[] = [
+                        esc($wh['name']),
+                        esc($wh['location']),
+                        number_format($wh['item_count']),
+                        number_format($wh['utilization'], 1) . '%',
+                        '₱' . number_format($wh['total_value'], 2)
+                    ];
+                }
+                $html = $pdf->setTitle('Warehouse Performance Report')->buildReportHtml(
+                    'Warehouse Performance Report',
+                    'Performance metrics by warehouse',
+                    $headers, $rows, 
+                    ['summary' => ['Total Warehouses' => count($data['warehouses'] ?? [])]]
+                );
+                break;
+                
+            case 'financial':
+                $data = $this->analytics->financialKPIs(30);
+                $html = $pdf->analyticsReport($data);
+                break;
+                
+            default: // summary
+                $data = $this->analytics->getAnalyticsSummary();
+                $html = $pdf->analyticsReport($data);
+                break;
+        }
+
+        $this->audit->logReportGeneration("Analytics Report: {$type}", 'PDF');
+
+        return $pdf->generateFromHtml($html, "analytics_{$type}_" . date('Y-m-d'));
     }
 }

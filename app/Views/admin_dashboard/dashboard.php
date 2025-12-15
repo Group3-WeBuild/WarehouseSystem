@@ -29,7 +29,7 @@ HOW DATA FLOWS (MVC Pattern):
    
 4. VIEW (THIS FILE - dashboard.php)
    - Receives data from controller
-   - Displays data using PHP: <?= $variable ?>
+   - Displays data using PHP: $variable
    - Shows HTML/CSS to user
    
 5. USER INTERACTION (JavaScript/AJAX)
