@@ -53,7 +53,7 @@ class AddBarcodeFieldsToInventory extends Migration
         ]);
 
         // Add index for barcode lookup
-        $this->forge->addKey('barcode_number', false, false, 'idx_barcode', 'inventory');
+        $this->forge->addKey('barcode_number', false);
     }
 
     public function down()
