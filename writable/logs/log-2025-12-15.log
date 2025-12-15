@@ -5140,3 +5140,17 @@ ERROR - 2025-12-15 17:14:29 --> Warehouse Staff Dashboard Error: Undefined array
 ERROR - 2025-12-15 17:14:35 --> Warehouse Staff Dashboard Error: Undefined array key "type"
 ERROR - 2025-12-15 17:14:40 --> Warehouse Staff Dashboard Error: Undefined array key "type"
 ERROR - 2025-12-15 17:15:01 --> Warehouse Staff Dashboard Error: Undefined array key "type"
+CRITICAL - 2025-12-15 17:22:22 --> ErrorException: Undefined array key "name"
+[Method: GET, Route: inventory-auditor/count-sessions]
+in APPPATH\Views\inventory_auditor\count_sessions.php on line 226.
+ 1 APPPATH\Views\inventory_auditor\count_sessions.php(226): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "name"', 'C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\inventory_auditor\\count_sessions.php', 226)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\WarehouseSystem\\app\\Views\\inventory_auditor\\count_sessions.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1167): CodeIgniter\View\View->render('inventory_auditor/count_sessions', [], true)
+ 5 APPPATH\Controllers\InventoryAuditor.php(127): view('inventory_auditor/count_sessions', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\InventoryAuditor->countSessions()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\InventoryAuditor))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

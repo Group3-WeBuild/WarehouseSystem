@@ -176,7 +176,7 @@
                                     <select class="form-select" name="warehouse_id">
                                         <option value="">All Warehouses</option>
                                         <?php foreach ($warehouses ?? [] as $wh): ?>
-                                        <option value="<?= $wh['id'] ?>"><?= esc($wh['name']) ?></option>
+                                        <option value="<?= $wh['id'] ?>"><?= esc($wh['warehouse_name'] ?? $wh['name'] ?? 'Unknown') ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

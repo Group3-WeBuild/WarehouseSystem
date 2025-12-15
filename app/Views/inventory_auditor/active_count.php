@@ -145,7 +145,7 @@
                                 <select class="form-select" id="filterCategory" onchange="filterItems()">
                                     <option value="">All Categories</option>
                                     <?php foreach ($categories ?? [] as $cat): ?>
-                                    <option value="<?= $cat['id'] ?>"><?= esc($cat['name']) ?></option>
+                                    <option value="<?= $cat['id'] ?? '' ?>"><?= esc($cat['category_name'] ?? $cat['name'] ?? 'Unknown') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
