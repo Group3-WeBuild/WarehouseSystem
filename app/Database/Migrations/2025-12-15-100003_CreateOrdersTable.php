@@ -44,11 +44,6 @@ class CreateOrdersTable extends Migration
                 'null' => true,
                 'comment' => 'Contact phone'
             ],
-            'items' => [
-                'type' => 'TEXT',
-                'null' => true,
-                'comment' => 'JSON array of order items'
-            ],
             'total_amount' => [
                 'type' => 'DECIMAL',
                 'constraint' => '12,2',

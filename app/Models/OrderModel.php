@@ -31,7 +31,6 @@ class OrderModel extends Model
         'customer_name',
         'customer_email',
         'customer_phone',
-        'items',
         'total_amount',
         'status',
         'priority',
@@ -302,5 +301,82 @@ class OrderModel extends Model
         $stats['total_revenue'] = $totalRevenue;
 
         return $stats;
+    }
+
+    /**
+     * =====================================================
+     * RELATIONSHIP: Get Order Items
+     * =====================================================
+     * 
+     * PURPOSE: Get all line items for an order (normalized)
+     * 
+     * BUSINESS LOGIC:
+     * - Replaces JSON items column with proper normalization
+     * - Joins with inventory for product details
+     * 
+     * PARAMETER: $orderId - Order ID
+     * RETURNS: Array of order items with product details
+     * =====================================================
+     */
+    public function getOrderItems($orderId)
+    {
+        $orderItemModel = new OrderItemModel();
+        return $orderItemModel->getOrderItemsWithDetails($orderId);
+    }
+
+    /**
+     * =====================================================
+     * RELATIONSHIP: Get Order with Items
+     * =====================================================
+     * 
+     * PURPOSE: Get complete order information including line items
+     * 
+     * PARAMETER: $orderId - Order ID
+     * RETURNS: Array with order and items
+     * =====================================================
+     */
+    public function getOrderWithItems($orderId)
+    {
+        $order = $this->find($orderId);
+        if ($order) {
+            $order['items'] = $this->getOrderItems($orderId);
+        }
+        return $order;
+    }
+
+    /**
+     * =====================================================
+     * BUSINESS LOGIC: Create Order with Items
+     * =====================================================
+     * 
+     * PURPOSE: Create order and add line items atomically
+     * 
+     * PARAMETERS:
+     * - $orderData: Order information
+     * - $items: Array of order items
+     * 
+     * RETURNS: Order ID or false
+     * =====================================================
+     */
+    public function createOrderWithItems($orderData, $items)
+    {
+        $this->db->transStart();
+        
+        // Create order
+        $orderId = $this->insert($orderData);
+        
+        if ($orderId) {
+            // Add order items
+            $orderItemModel = new OrderItemModel();
+            $orderItemModel->addOrderItems($orderId, $items);
+            
+            // Update order total
+            $total = $orderItemModel->getOrderTotal($orderId);
+            $this->update($orderId, ['total_amount' => $total]);
+        }
+        
+        $this->db->transComplete();
+        
+        return $this->db->transStatus() ? $orderId : false;
     }
 }
