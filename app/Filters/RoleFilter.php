@@ -26,10 +26,17 @@ class RoleFilter implements FilterInterface
      * Defines which roles can access which route groups
      */
     protected $rolePermissions = [
-        // Warehouse Management
+        // Warehouse Management (Manager level)
         'warehouse' => [
             'Warehouse Manager',
+            'IT Administrator',
+            'Top Management'
+        ],
+        
+        // Warehouse Staff (Limited access)
+        'warehouse-staff' => [
             'Warehouse Staff',
+            'Warehouse Manager',
             'IT Administrator',
             'Top Management'
         ],
@@ -126,9 +133,14 @@ class RoleFilter implements FilterInterface
                     "User '{$session->get('username')}' with role '{$userRole}' " .
                     "attempted to access '{$requiredGroup}' restricted area");
                 
-                return redirect()->to(base_url('dashboard'))
-                    ->with('error', 'You do not have permission to access this area.');
+                log_message('error', "ACCESS DENIED - User '{$userRole}' tried to access '{$requiredGroup}'");
+                
+                // Redirect to unauthorized page instead of user dashboard to prevent loops
+                return redirect()->to(base_url('login'))
+                    ->with('error', 'You do not have permission to access this area. Please contact your administrator.');
             }
+            
+            log_message('debug', "ACCESS GRANTED - User '{$userRole}' can access '{$requiredGroup}'");
         }
 
         // Access granted - log if sensitive area

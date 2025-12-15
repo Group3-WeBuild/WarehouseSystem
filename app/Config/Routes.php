@@ -25,6 +25,9 @@ $routes->get('login', 'Auth::login');
 $routes->post('login', 'Auth::login');
 $routes->get('logout', 'Auth::logout');
 
+// Generic dashboard route - redirects to role-specific dashboard
+$routes->get('dashboard', 'Auth::redirectToDashboard');
+
 // Role-based dashboard routes
 $routes->get('/', 'Home::index');
 
@@ -156,6 +159,20 @@ $routes->group('warehouse-manager', function($routes) {
     $routes->post('approve-batch/(:num)', 'WarehouseManager::approveBatch/$1');
     $routes->post('reject-batch/(:num)', 'WarehouseManager::rejectBatch/$1');
     $routes->get('batches-expiring', 'WarehouseManager::getBatchesExpiring');
+});
+
+// Warehouse Staff routes (limited access)
+// BACKEND: Warehouse staff with read-only and basic operations
+$routes->group('warehouse-staff', function($routes) {
+    // VIEW ROUTES - Load HTML pages
+    $routes->get('dashboard', 'WarehouseManager::staffDashboard');
+    $routes->get('inventory', 'WarehouseManager::staffInventory');
+    $routes->get('stock-movements', 'WarehouseManager::staffStockMovements');
+    $routes->get('orders', 'WarehouseManager::staffOrders');
+    
+    // Limited AJAX ENDPOINTS - Basic operations only
+    $routes->post('update-order-status/(:num)', 'WarehouseManager::updateOrderStatus/$1');
+    $routes->get('view-item/(:num)', 'WarehouseManager::viewItem/$1');
 });
 
 // Warehouse routes (legacy - redirects to warehouse-manager)

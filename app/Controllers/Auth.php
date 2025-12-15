@@ -99,7 +99,7 @@ class Auth extends BaseController
             'Accounts Payable Clerk' => 'accounts-payable/dashboard',
             'Accounts Receivable Clerk' => 'accounts-receivable/dashboard',
             'Warehouse Manager' => 'warehouse-manager/dashboard',
-            'Warehouse Staff' => 'warehouse-manager/dashboard',
+            'Warehouse Staff' => 'warehouse-staff/dashboard',
             'Inventory Auditor' => 'inventory-auditor/dashboard',
             'Procurement Officer' => 'procurement/dashboard',
             'IT Administrator' => 'admin/dashboard',

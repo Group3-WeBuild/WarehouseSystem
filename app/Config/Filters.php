@@ -111,7 +111,8 @@ class Filters extends BaseFilters
      */
     public array $filters = [
         // Role-based access control for protected routes
-        'role:warehouse' => ['before' => ['warehouse/*']],
+        'role:warehouse' => ['before' => ['warehouse/*', 'warehouse-manager/*']],
+        'role:warehouse-staff' => ['before' => ['warehouse-staff/*']],
         'role:inventory-auditor' => ['before' => ['inventory-auditor/*', 'auditor/*']],
         'role:procurement' => ['before' => ['procurement/*']],
         'role:accounts-payable' => ['before' => ['accounts-payable/*']],
@@ -123,6 +124,8 @@ class Filters extends BaseFilters
         // Audit logging for all sensitive routes
         'audit' => ['after' => [
             'warehouse/*',
+            'warehouse-manager/*',
+            'warehouse-staff/*',
             'inventory-auditor/*',
             'procurement/*',
             'accounts-payable/*',

@@ -82,6 +82,28 @@ class WarehouseManager extends BaseController
     }
 
     /**
+     * Check authentication for Warehouse Staff routes
+     * Allows Warehouse Staff, Warehouse Manager, IT Administrator
+     */
+    private function checkStaffAuth()
+    {
+        if (!$this->session->get('isLoggedIn')) {
+            $this->session->setFlashdata('error', 'Please login to access this page.');
+            return redirect()->to(base_url('login'));
+        }
+
+        $userRole = $this->session->get('role');
+        $allowedRoles = ['Warehouse Staff', 'Warehouse Manager', 'IT Administrator'];
+        
+        if (!in_array($userRole, $allowedRoles)) {
+            $this->session->setFlashdata('error', 'You do not have permission to access this page.');
+            return redirect()->to(base_url('login'));
+        }
+
+        return null;
+    }
+
+    /**
      * =====================================================
      * VIEW: Warehouse Manager Dashboard (Main Page)
      * =====================================================
@@ -1440,5 +1462,204 @@ class WarehouseManager extends BaseController
         $html = $pdf->lowStockReport($lowStockItems);
         
         return $pdf->generateFromHtml($html, 'low_stock_report_' . date('Y-m-d'));
+    }
+
+    /**
+     * =====================================================
+     * WAREHOUSE STAFF METHODS (Limited Access)
+     * =====================================================
+     */
+    
+    public function staffDashboard()
+    {
+        $authCheck = $this->checkStaffAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            // Get read-only statistics
+            $totalItems = $this->inventoryModel->countAllResults(false);
+            $lowStockItems = $this->inventoryModel->where('quantity <=', 'reorder_level', false)->countAllResults(false);
+            
+            // Get recent movements (read-only)
+            $recentMovements = $this->stockMovementModel
+                ->orderBy('created_at', 'DESC')
+                ->limit(10)
+                ->find();
+            
+            // Get assigned orders only
+            $pendingOrders = $this->orderModel
+                ->where('status', 'Pending')
+                ->orderBy('created_at', 'DESC')
+                ->limit(10)
+                ->find();
+
+            $stats = [
+                'totalItems' => $totalItems,
+                'lowStockItems' => $lowStockItems,
+                'pendingOrders' => count($pendingOrders)
+            ];
+
+            $data = [
+                'title' => 'Warehouse Staff Dashboard',
+                'user' => [
+                    'username' => $this->session->get('username'),
+                    'name' => $this->session->get('name'),
+                    'role' => $this->session->get('role')
+                ],
+                'stats' => $stats,
+                'recentMovements' => $recentMovements ?? [],
+                'pendingOrders' => $pendingOrders ?? []
+            ];
+
+            return view('warehouse_staff/dashboard', $data);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Warehouse Staff Dashboard Error: ' . $e->getMessage());
+            return view('warehouse_staff/dashboard', [
+                'title' => 'Warehouse Staff Dashboard',
+                'user' => [
+                    'username' => $this->session->get('username'),
+                    'name' => $this->session->get('name'),
+                    'role' => $this->session->get('role')
+                ],
+                'stats' => ['totalItems' => 0, 'lowStockItems' => 0, 'pendingOrders' => 0],
+                'recentMovements' => [],
+                'pendingOrders' => []
+            ]);
+        }
+    }
+
+    public function staffInventory()
+    {
+        $authCheck = $this->checkStaffAuth();
+        if ($authCheck) return $authCheck;
+
+        // Staff can only view inventory (read-only)
+        try {
+            $inventory = $this->inventoryModel->findAll();
+            return view('warehouse_staff/inventory', [
+                'title' => 'View Inventory',
+                'inventory' => $inventory
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Staff Inventory Error: ' . $e->getMessage());
+            return view('warehouse_staff/inventory', [
+                'title' => 'View Inventory',
+                'inventory' => []
+            ]);
+        }
+    }
+
+    public function staffStockMovements()
+    {
+        $authCheck = $this->checkStaffAuth();
+        if ($authCheck) return $authCheck;
+
+        // Staff can view stock movements (read-only)
+        try {
+            $movements = $this->stockMovementModel
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+            return view('warehouse_staff/stock_movements', [
+                'title' => 'Stock Movements',
+                'movements' => $movements
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Staff Stock Movements Error: ' . $e->getMessage());
+            return view('warehouse_staff/stock_movements', [
+                'title' => 'Stock Movements',
+                'movements' => []
+            ]);
+        }
+    }
+
+    public function staffOrders()
+    {
+        $authCheck = $this->checkStaffAuth();
+        if ($authCheck) return $authCheck;
+
+        // Staff can view and update order status
+        try {
+            $orders = $this->orderModel
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+            return view('warehouse_staff/orders', [
+                'title' => 'Orders',
+                'orders' => $orders
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Staff Orders Error: ' . $e->getMessage());
+            return view('warehouse_staff/orders', [
+                'title' => 'Orders',
+                'orders' => []
+            ]);
+        }
+    }
+
+    public function updateOrderStatus($id)
+    {
+        $authCheck = $this->checkStaffAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $status = $this->request->getPost('status');
+            
+            if (!in_array($status, ['In Progress', 'Completed'])) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Invalid status'
+                ]);
+            }
+
+            $updated = $this->orderModel->update($id, ['status' => $status]);
+
+            if ($updated) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Order status updated successfully'
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to update order status'
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Update Order Status Error: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'An error occurred'
+            ]);
+        }
+    }
+
+    public function viewItem($id)
+    {
+        $authCheck = $this->checkStaffAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $item = $this->inventoryModel->find($id);
+            
+            if ($item) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'item' => $item
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Item not found'
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'View Item Error: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'An error occurred'
+            ]);
+        }
     }
 }

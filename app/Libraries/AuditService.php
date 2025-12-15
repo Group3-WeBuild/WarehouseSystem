@@ -56,7 +56,7 @@ class AuditService
             'module' => $module,
             'controller' => $request->getUri()->getSegment(1) ?? 'unknown',
             'action' => $action,
-            'table_name' => $tableName,
+            'table_name' => $tableName ?? 'general',
             'record_id' => $recordId,
             'old_values' => $oldValues ? json_encode($oldValues) : null,
             'new_values' => $newValues ? json_encode($newValues) : null,
