@@ -9,11 +9,32 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6fa; }
-        .sidebar { background: linear-gradient(180deg, #1a237e 0%, #0d47a1 100%); color: #fff; min-height: 100vh; padding-top: 20px; }
-        .sidebar h5 { text-align: center; font-weight: 700; margin-bottom: 25px; }
-        .sidebar a { display: block; color: #cfd8dc; text-decoration: none; padding: 12px 20px; border-radius: 8px; margin: 5px 10px; font-size: 14px; transition: 0.3s; }
-        .sidebar a:hover, .sidebar a.active { background-color: rgba(255,255,255,0.15); color: #fff; }
-        .sidebar a i { margin-right: 10px; width: 20px; text-align: center; }
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
         .topbar { background: #fff; padding: 15px 30px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
         .topbar h4 { margin: 0; color: #1a237e; }
         .main-content { padding: 30px; }
@@ -29,17 +50,21 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2 sidebar">
-            <h5><i class="bi bi-graph-up-arrow"></i> Analytics</h5>
-            <a href="<?= base_url('analytics/dashboard') ?>"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a href="<?= base_url('analytics/forecasting') ?>"><i class="bi bi-graph-up"></i> Demand Forecasting</a>
-            <a href="<?= base_url('analytics/inventory-kpis') ?>"><i class="bi bi-box-seam"></i> Inventory KPIs</a>
-            <a href="<?= base_url('analytics/warehouse-performance') ?>" class="active"><i class="bi bi-building"></i> Warehouse Performance</a>
-            <a href="<?= base_url('analytics/financial-kpis') ?>"><i class="bi bi-currency-dollar"></i> Financial KPIs</a>
-            <a href="<?= base_url('analytics/trends') ?>"><i class="bi bi-bar-chart-line"></i> Trend Analysis</a>
-            <a href="<?= base_url('analytics/reorder-recommendations') ?>"><i class="bi bi-cart-check"></i> Reorder Recommendations</a>
-            <hr style="border-color: rgba(255,255,255,0.2);">
-            <a href="<?= base_url('dashboard') ?>"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        <!-- Sidebar -->
+        <div class="col-md-2 px-0 sidebar">
+            <div class="text-center py-4">
+                <h5 class="text-white mb-1">WITMS</h5>
+                <small class="text-white-50">Analytics</small>
+            </div>
+            <nav class="nav flex-column">
+                <a class="nav-link" href="<?= base_url('analytics/dashboard') ?>"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a class="nav-link" href="<?= base_url('analytics/inventory-kpis') ?>"><i class="bi bi-boxes"></i> Inventory KPIs</a>
+                <a class="nav-link" href="<?= base_url('analytics/financial-kpis') ?>"><i class="bi bi-currency-dollar"></i> Financial KPIs</a>
+                <a class="nav-link active" href="<?= base_url('analytics/warehouse-performance') ?>"><i class="bi bi-building"></i> Warehouse Performance</a>
+                <a class="nav-link" href="<?= base_url('analytics/trends') ?>"><i class="bi bi-graph-up"></i> Trends</a>
+                <a class="nav-link" href="<?= base_url('analytics/forecasting') ?>"><i class="bi bi-graph-up-arrow"></i> Forecasting</a>
+                <a class="nav-link" href="<?= base_url('analytics/reorder-recommendations') ?>"><i class="bi bi-cart-check"></i> Reorder Recommendations</a>
+            </nav>
         </div>
 
         <div class="col-md-10">

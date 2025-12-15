@@ -7,11 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #F3F4F6; color: #1F2937; }
-        .left-panel { background-color: #1E3A8A; color: white; display: flex; justify-content: center; align-items: center; flex-direction: column; padding: 40px; }
+        .left-panel { background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%); color: white; display: flex; justify-content: center; align-items: center; flex-direction: column; padding: 40px; }
         .login-form { max-width: 400px; margin: auto; }
-        .btn-login { background-color: #3B82F6; color: white; border: none; }
-        .btn-login:hover { background-color: #2563EB; color: white; }
-        a { color: #3B82F6; text-decoration: none; }
+        .btn-login { background-color: #2c3e50; color: white; border: none; }
+        .btn-login:hover { background-color: #34495e; color: white; }
+        a { color: #2c3e50; text-decoration: none; }
         a:hover { text-decoration: underline; }
         .alert { margin-bottom: 20px; }
         .company-logo { 
@@ -32,11 +32,11 @@
     <div class="row h-100">
         <div class="col-md-4 left-panel">
             <div class="company-logo">
-                🏗️
+                🏢
             </div>
-            <h3>WeBuild</h3>
-            <p>Construction Company</p>
-            <small class="text-light">Accounts Payable System</small>
+            <h3>WITMS</h3>
+            <p>Warehouse Inventory & Tracking</p>
+            <small class="text-light">Management System</small>
         </div>
         <div class="col-md-8 d-flex justify-content-center align-items-center">
             <div class="login-form w-100">

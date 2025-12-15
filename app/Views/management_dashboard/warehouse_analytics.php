@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Warehouse Analytics | Top Management | WeBuild</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
     body {
@@ -16,31 +17,21 @@
 
     /* Sidebar */
     .sidebar {
-      background-color: #0d47a1;
-      color: #fff;
       min-height: 100vh;
-      padding-top: 20px;
+      background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
     }
-    .sidebar h5 {
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 25px;
-    }
-    .sidebar a {
-      display: block;
-      color: #cfd8dc;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+    .sidebar .nav-link {
+      color: #ecf0f1;
+      padding: 12px 20px;
       margin: 5px 10px;
-      font-size: 15px;
-      transition: 0.3s;
+      border-radius: 8px;
+      transition: all 0.3s;
     }
-    .sidebar a:hover,
-    .sidebar a.active {
-      background-color: #1565c0;
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: rgba(255,255,255,0.1);
       color: #fff;
     }
+    .sidebar .nav-link i { margin-right: 10px; }
 
     /* Topbar */
     .topbar {
@@ -103,15 +94,20 @@
 <div class="container-fluid">
   <div class="row">
     <!-- Sidebar -->
-    <div class="col-md-2 sidebar">
-      <h5>WeBuild</h5>
-      <a href="<?= base_url('management/dashboard') ?>">Dashboard</a>
-      <a href="<?= base_url('management/financial-reports') ?>">Financial Reports</a>
-      <a href="<?= base_url('management/inventory-overview') ?>">Inventory Overview</a>
-      <a href="<?= base_url('management/warehouse-analytics') ?>" class="active">Warehouse Analytics</a>
-      <a href="<?= base_url('management/forecasting') ?>">Forecasting</a>
-      <a href="<?= base_url('management/performance-kpis') ?>">Performance KPIs</a>
-      <a href="<?= base_url('management/executive-reports') ?>">Executive Reports</a>
+    <div class="col-md-2 px-0 sidebar">
+      <div class="text-center py-4">
+        <h5 class="text-white mb-1">WITMS</h5>
+        <small class="text-white-50">Top Management</small>
+      </div>
+      <nav class="nav flex-column">
+        <a class="nav-link" href="<?= base_url('management/dashboard') ?>"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="nav-link" href="<?= base_url('management/financial-reports') ?>"><i class="bi bi-graph-up"></i> Financial Reports</a>
+        <a class="nav-link" href="<?= base_url('management/inventory-overview') ?>"><i class="bi bi-boxes"></i> Inventory Overview</a>
+        <a class="nav-link active" href="<?= base_url('management/warehouse-analytics') ?>"><i class="bi bi-bar-chart"></i> Warehouse Analytics</a>
+        <a class="nav-link" href="<?= base_url('management/forecasting') ?>"><i class="bi bi-graph-up-arrow"></i> Forecasting</a>
+        <a class="nav-link" href="<?= base_url('management/performance-kpis') ?>"><i class="bi bi-speedometer"></i> Performance KPIs</a>
+        <a class="nav-link" href="<?= base_url('management/executive-reports') ?>"><i class="bi bi-file-earmark-text"></i> Executive Reports</a>
+      </nav>
     </div>
 
     <!-- Main Content -->

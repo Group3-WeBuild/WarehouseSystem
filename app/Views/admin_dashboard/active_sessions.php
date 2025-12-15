@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Active Sessions | IT Administrator | WeBuild</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
     body {
@@ -16,14 +17,21 @@
 
     /* Sidebar */
     .sidebar {
-      background-color: #0d47a1;
-      color: #fff;
       min-height: 100vh;
-      padding-top: 20px;
+      background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
     }
-    .sidebar h5 { text-align: center; font-weight: 600; margin-bottom: 25px; }
-    .sidebar a { display: block; color: #cfd8dc; text-decoration: none; padding: 10px 20px; border-radius: 5px; margin: 5px 10px; font-size: 15px; transition: 0.3s; }
-    .sidebar a:hover, .sidebar a.active { background-color: #1565c0; color: #fff; }
+    .sidebar .nav-link {
+      color: #ecf0f1;
+      padding: 12px 20px;
+      margin: 5px 10px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    .sidebar .nav-link i { margin-right: 10px; }
 
     /* Topbar */
     .topbar { background-color: #e9ecef; border-bottom: 1px solid #ccc; padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; }
@@ -57,18 +65,23 @@
 <div class="container-fluid">
   <div class="row">
     <!-- Sidebar -->
-    <div class="col-md-2 sidebar">
-      <h5>WeBuild</h5>
-      <a href="<?= base_url('admin/dashboard') ?>">Dashboard</a>
-      <a href="<?= base_url('admin/user-accounts') ?>">User Accounts</a>
-      <a href="<?= base_url('admin/roles-permissions') ?>">Roles & Permissions</a>
-      <a href="<?= base_url('admin/active-sessions') ?>" class="active">Active Sessions</a>
-      <a href="<?= base_url('admin/security-policies') ?>">Security Policies</a>
-      <a href="<?= base_url('admin/audit-logs') ?>">Audit Logs</a>
-      <a href="<?= base_url('admin/system-health') ?>">System Health</a>
-      <a href="<?= base_url('admin/database-management') ?>">Database Management</a>
-      <a href="<?= base_url('admin/backup-recovery') ?>">Backup & Recovery</a>
-      <a href="<?= base_url('admin/settings') ?>">Settings</a>
+    <div class="col-md-2 px-0 sidebar">
+      <div class="text-center py-4">
+        <h5 class="text-white mb-1">WITMS</h5>
+        <small class="text-white-50">System Administrator</small>
+      </div>
+      <nav class="nav flex-column">
+        <a class="nav-link" href="<?= base_url('admin/dashboard') ?>"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="nav-link" href="<?= base_url('admin/user-accounts') ?>"><i class="bi bi-people"></i> User Accounts</a>
+        <a class="nav-link" href="<?= base_url('admin/roles-permissions') ?>"><i class="bi bi-shield-lock"></i> Roles & Permissions</a>
+        <a class="nav-link active" href="<?= base_url('admin/active-sessions') ?>"><i class="bi bi-person-check"></i> Active Sessions</a>
+        <a class="nav-link" href="<?= base_url('admin/security-policies') ?>"><i class="bi bi-file-earmark-lock"></i> Security Policies</a>
+        <a class="nav-link" href="<?= base_url('admin/audit-logs') ?>"><i class="bi bi-journal-text"></i> Audit Logs</a>
+        <a class="nav-link" href="<?= base_url('admin/system-health') ?>"><i class="bi bi-heart-pulse"></i> System Health</a>
+        <a class="nav-link" href="<?= base_url('admin/database-management') ?>"><i class="bi bi-database"></i> Database Management</a>
+        <a class="nav-link" href="<?= base_url('admin/backup-recovery') ?>"><i class="bi bi-cloud-arrow-up"></i> Backup & Recovery</a>
+        <a class="nav-link" href="<?= base_url('admin/settings') ?>"><i class="bi bi-gear"></i> Settings</a>
+      </nav>
     </div>
 
     <!-- Main Content -->

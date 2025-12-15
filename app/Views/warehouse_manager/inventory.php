@@ -3,103 +3,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= esc($title ?? 'Inventory Management') ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><?= esc($title ?? 'Inventory Management') ?> | WITMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        }
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .sidebar .nav-link i { margin-right: 10px; }
+        .main-content { background: #f8f9fa; min-height: 100vh; }
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 15px 25px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-radius: 10px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .table th { background-color: #f8f9fa; font-weight: 600; }
+    </style>
 </head>
 <body>
-    <div class="container-fluid p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2><i class="bi bi-box-seam"></i> Inventory Management</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?= base_url('warehouse-manager/dashboard') ?>">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Inventory</li>
-                    </ol>
-                </nav>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 px-0 sidebar">
+            <div class="text-center py-4">
+                <h5 class="text-white mb-1">WITMS</h5>
+                <small class="text-white-50">Warehouse Manager</small>
             </div>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                <i class="bi bi-plus-circle"></i> Add New Item
-            </button>
+            <nav class="nav flex-column">
+                <a class="nav-link" href="<?= base_url('warehouse-manager/dashboard') ?>">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a class="nav-link active" href="<?= base_url('warehouse-manager/inventory') ?>">
+                    <i class="bi bi-box-seam"></i> Inventory
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/stock-movements') ?>">
+                    <i class="bi bi-arrow-left-right"></i> Stock Movements
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/orders') ?>">
+                    <i class="bi bi-cart"></i> Orders
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/batch-tracking') ?>">
+                    <i class="bi bi-upc-scan"></i> Batch Tracking
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/reports') ?>">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Reports
+                </a>
+                <hr class="mx-3 my-2" style="border-color: rgba(255,255,255,0.2);">
+                <a class="nav-link text-danger" href="<?= base_url('logout') ?>">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </nav>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="inventoryTable" class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>SKU</th>
-                                <th>Product Name</th>
-                                <th>Category</th>
-                                <th>Quantity</th>
-                                <th>Unit Price</th>
-                                <th>Reorder Level</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (!empty($inventory)): ?>
-                                <?php foreach ($inventory as $item): ?>
+        <!-- Main Content -->
+        <div class="col-md-10 px-0 main-content">
+            <div class="topbar d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0"><i class="bi bi-box-seam text-primary"></i> Inventory Management</h5>
+                </div>
+                <div>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                        <i class="bi bi-plus-lg"></i> Add New Item
+                    </button>
+                    <a href="<?= base_url('print/inventory') ?>" target="_blank" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-printer"></i> Print
+                    </a>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <!-- Stats Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card bg-primary">
+                            <h3><?= number_format(count($inventory ?? [])) ?></h3>
+                            <small>Total Items</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-success">
+                            <h3><?= number_format(count(array_filter($inventory ?? [], fn($i) => ($i['quantity'] ?? 0) > ($i['reorder_level'] ?? 0)))) ?></h3>
+                            <small>In Stock</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-warning">
+                            <h3><?= number_format(count(array_filter($inventory ?? [], fn($i) => ($i['quantity'] ?? 0) > 0 && ($i['quantity'] ?? 0) <= ($i['reorder_level'] ?? 0)))) ?></h3>
+                            <small>Low Stock</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-danger">
+                            <h3><?= number_format(count(array_filter($inventory ?? [], fn($i) => ($i['quantity'] ?? 0) == 0))) ?></h3>
+                            <small>Out of Stock</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters Card -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Search inventory...">
+                            </div>
+                            <div class="col-md-2">
+                                <select id="categoryFilter" class="form-select">
+                                    <option value="">All Categories</option>
+                                    <option value="Raw Materials">Raw Materials</option>
+                                    <option value="Finished Goods">Finished Goods</option>
+                                    <option value="Components">Components</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="statusFilter" class="form-select">
+                                    <option value="">All Status</option>
+                                    <option value="in-stock">In Stock</option>
+                                    <option value="low-stock">Low Stock</option>
+                                    <option value="out-of-stock">Out of Stock</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary" onclick="applyFilters()"><i class="bi bi-funnel"></i> Filter</button>
+                                <button class="btn btn-outline-secondary" onclick="resetFilters()"><i class="bi bi-x-circle"></i> Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="inventoryTable" class="table table-hover align-middle">
+                                <thead>
                                     <tr>
-                                        <td><?= esc($item['sku'] ?? '') ?></td>
-                                        <td><?= esc($item['product_name'] ?? '') ?></td>
-                                        <td><?= esc($item['category'] ?? '') ?></td>
-                                        <td>
-                                            <span class="badge bg-<?= ($item['quantity'] ?? 0) <= ($item['reorder_level'] ?? 0) ? 'danger' : 'success' ?>">
-                                                <?= number_format($item['quantity'] ?? 0) ?>
-                                            </span>
-                                        </td>
-                                        <td>₱<?= number_format($item['unit_price'] ?? 0, 2) ?></td>
-                                        <td><?= number_format($item['reorder_level'] ?? 0) ?></td>
-                                        <td>
-                                            <?php if (($item['quantity'] ?? 0) == 0): ?>
-                                                <span class="badge bg-danger">Out of Stock</span>
-                                            <?php elseif (($item['quantity'] ?? 0) <= ($item['reorder_level'] ?? 0)): ?>
-                                                <span class="badge bg-warning">Low Stock</span>
-                                            <?php else: ?>
-                                                <span class="badge bg-success">In Stock</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info" onclick="viewItem(<?= $item['id'] ?>)">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-warning" onclick="editItem(<?= $item['id'] ?>)">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteItem(<?= $item['id'] ?>)">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
+                                        <th>SKU</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Reorder Level</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="8" class="text-center">No inventory items found</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($inventory)): ?>
+                                        <?php foreach ($inventory as $item): ?>
+                                            <tr>
+                                                <td><code><?= esc($item['sku'] ?? '') ?></code></td>
+                                                <td><strong><?= esc($item['product_name'] ?? '') ?></strong></td>
+                                                <td><?= esc($item['category'] ?? '') ?></td>
+                                                <td>
+                                                    <span class="badge bg-<?= ($item['quantity'] ?? 0) <= ($item['reorder_level'] ?? 0) ? 'danger' : 'success' ?>">
+                                                        <?= number_format($item['quantity'] ?? 0) ?>
+                                                    </span>
+                                                </td>
+                                                <td>₱<?= number_format($item['unit_price'] ?? 0, 2) ?></td>
+                                                <td><?= number_format($item['reorder_level'] ?? 0) ?></td>
+                                                <td>
+                                                    <?php if (($item['quantity'] ?? 0) == 0): ?>
+                                                        <span class="badge bg-danger">Out of Stock</span>
+                                                    <?php elseif (($item['quantity'] ?? 0) <= ($item['reorder_level'] ?? 0)): ?>
+                                                        <span class="badge bg-warning text-dark">Low Stock</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-success">In Stock</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-info" onclick="viewItem(<?= $item['id'] ?? 0 ?>)" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-warning" onclick="editItem(<?= $item['id'] ?? 0 ?>)" title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-success" onclick="adjustStock(<?= $item['id'] ?? 0 ?>)" title="Adjust Stock">
+                                                            <i class="bi bi-arrow-left-right"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-danger" onclick="deleteItem(<?= $item['id'] ?? 0 ?>)" title="Delete">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="8" class="text-center py-5">
+                                                <i class="bi bi-inbox display-4 text-muted"></i>
+                                                <p class="text-muted mt-2">No inventory items found</p>
+                                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                                    <i class="bi bi-plus-lg"></i> Add First Item
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#inventoryTable').DataTable({
-                order: [[1, 'asc']],
-                pageLength: 25
-            });
+<!-- Add Item Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-plus-circle"></i> Add New Inventory Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="<?= base_url('warehouse-manager/inventory/add') ?>" method="POST">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">SKU</label>
+                            <input type="text" name="sku" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" name="product_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="Raw Materials">Raw Materials</option>
+                                <option value="Finished Goods">Finished Goods</option>
+                                <option value="Components">Components</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Unit Price (₱)</label>
+                            <input type="number" name="unit_price" class="form-control" step="0.01" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Initial Quantity</label>
+                            <input type="number" name="quantity" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Reorder Level</label>
+                            <input type="number" name="reorder_level" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Unit of Measure</label>
+                            <select name="unit" class="form-select">
+                                <option value="pcs">Pieces</option>
+                                <option value="kg">Kilograms</option>
+                                <option value="m">Meters</option>
+                                <option value="box">Boxes</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Item Modal -->
+<div class="modal fade" id="viewItemModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-eye"></i> Item Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="viewItemContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Adjust Stock Modal -->
+<div class="modal fade" id="adjustStockModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-arrow-left-right"></i> Adjust Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="<?= base_url('warehouse-manager/inventory/adjust-stock') ?>" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="item_id" id="adjustItemId">
+                    <div class="mb-3">
+                        <label class="form-label">Adjustment Type</label>
+                        <select name="type" class="form-select" required>
+                            <option value="add">Add Stock (+)</option>
+                            <option value="remove">Remove Stock (-)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea name="reason" class="form-control" rows="2" placeholder="Reason for adjustment..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Adjust</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#inventoryTable').DataTable({
+            order: [[1, 'asc']],
+            pageLength: 25,
+            language: {
+                search: "",
+                searchPlaceholder: "Search..."
+            }
         });
-    </script>
+    });
+
+    function viewItem(id) {
+        $('#viewItemContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
+        $('#viewItemModal').modal('show');
+        // In production, fetch item details via AJAX
+        $('#viewItemContent').html('<p class="text-muted">Item details for ID: ' + id + '</p>');
+    }
+
+    function editItem(id) {
+        // In production, open edit modal with item data
+        alert('Edit item: ' + id);
+    }
+
+    function adjustStock(id) {
+        $('#adjustItemId').val(id);
+        $('#adjustStockModal').modal('show');
+    }
+
+    function deleteItem(id) {
+        if (confirm('Are you sure you want to delete this item?')) {
+            window.location.href = '<?= base_url('warehouse-manager/inventory/delete/') ?>' + id;
+        }
+    }
+
+    function applyFilters() {
+        // Filter logic
+        var table = $('#inventoryTable').DataTable();
+        table.search($('#searchInput').val()).draw();
+    }
+
+    function resetFilters() {
+        $('#searchInput').val('');
+        $('#categoryFilter').val('');
+        $('#statusFilter').val('');
+        $('#inventoryTable').DataTable().search('').draw();
+    }
+</script>
 </body>
 </html>

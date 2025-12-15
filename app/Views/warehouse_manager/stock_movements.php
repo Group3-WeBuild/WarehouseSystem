@@ -4,15 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Movements | WeBuild</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6fa; }
-        .sidebar { background-color: #5c6bc0; color: #fff; min-height: 100vh; padding-top: 20px; }
-        .sidebar h5 { text-align: center; font-weight: 600; margin-bottom: 25px; }
-        .sidebar a { display: block; color: #c5cae9; text-decoration: none; padding: 12px 20px; margin: 5px 10px; border-radius: 5px; transition: 0.3s; }
-        .sidebar a:hover, .sidebar a.active { background-color: #7986cb; color: #fff; }
-        .topbar { background-color: #fff; border-bottom: 1px solid #ddd; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        }
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .main-content {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
         .card { border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-radius: 10px; }
         .card-header { background-color: #f8f9fa; font-weight: 600; }
         .stat-card { text-align: center; padding: 20px; border-radius: 10px; color: #fff; }
@@ -26,24 +39,43 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-2 sidebar">
-            <h5>🏭 Warehouse</h5>
-            <a href="<?= base_url('warehouse-manager/dashboard') ?>"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a href="<?= base_url('warehouse-manager/inventory') ?>"><i class="bi bi-box-seam"></i> Inventory</a>
-            <a href="<?= base_url('warehouse-manager/stock-movements') ?>" class="active"><i class="bi bi-arrow-left-right"></i> Stock Movements</a>
-            <a href="<?= base_url('warehouse-manager/orders') ?>"><i class="bi bi-cart"></i> Orders</a>
-            <a href="<?= base_url('warehouse-manager/batch-tracking') ?>"><i class="bi bi-upc-scan"></i> Batch Tracking</a>
-            <a href="<?= base_url('warehouse-manager/reports') ?>"><i class="bi bi-file-earmark-text"></i> Reports</a>
-            <hr style="border-color: rgba(255,255,255,0.2);">
-            <a href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        <div class="col-md-2 px-0 sidebar">
+            <div class="text-center py-4">
+                <h5 class="text-white">WITMS</h5>
+                <p class="text-white-50 small">Warehouse Manager</p>
+            </div>
+            <nav class="nav flex-column">
+                <a class="nav-link" href="<?= base_url('warehouse-manager/dashboard') ?>">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/inventory') ?>">
+                    <i class="bi bi-box-seam"></i> Inventory
+                </a>
+                <a class="nav-link active" href="<?= base_url('warehouse-manager/stock-movements') ?>">
+                    <i class="bi bi-arrow-left-right"></i> Stock Movements
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/orders') ?>">
+                    <i class="bi bi-cart"></i> Orders
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/batch-tracking') ?>">
+                    <i class="bi bi-upc-scan"></i> Batch Tracking
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/reports') ?>">
+                    <i class="bi bi-file-earmark-text"></i> Reports
+                </a>
+                <hr class="bg-light">
+                <a class="nav-link text-danger" href="<?= base_url('logout') ?>">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </nav>
         </div>
 
         <!-- Main Content -->
-        <div class="col-md-10 p-0">
-            <div class="topbar">
+        <div class="col-md-10 main-content p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <a href="<?= base_url('warehouse-manager/dashboard') ?>" class="btn btn-outline-secondary btn-sm me-2">← Back</a>
-                    <span class="fw-bold"><i class="bi bi-arrow-left-right"></i> Stock Movements</span>
+                    <span class="fw-bold fs-5"><i class="bi bi-arrow-left-right"></i> Stock Movements</span>
                 </div>
                 <div>
                     <button class="btn btn-success btn-sm me-1" data-bs-toggle="modal" data-bs-target="#stockInModal"><i class="bi bi-arrow-down-circle"></i> Stock In</button>
@@ -53,130 +85,129 @@
                 </div>
             </div>
 
-            <div class="p-4">
-                <!-- Stats Row -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <div class="stat-card bg-success">
-                            <h3><i class="bi bi-arrow-down-circle"></i> <?= $stats['stock_in'] ?? 0 ?></h3>
-                            <small>Stock In (Today)</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card bg-danger">
-                            <h3><i class="bi bi-arrow-up-circle"></i> <?= $stats['stock_out'] ?? 0 ?></h3>
-                            <small>Stock Out (Today)</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card bg-info">
-                            <h3><i class="bi bi-arrow-repeat"></i> <?= $stats['transfers'] ?? 0 ?></h3>
-                            <small>Transfers (Today)</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card bg-warning text-dark">
-                            <h3><i class="bi bi-pencil-square"></i> <?= $stats['adjustments'] ?? 0 ?></h3>
-                            <small>Adjustments (Today)</small>
-                        </div>
+            <!-- Stats Row -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card bg-success">
+                        <h3><i class="bi bi-arrow-down-circle"></i> <?= $stats['stock_in'] ?? 0 ?></h3>
+                        <small>Stock In (Today)</small>
                     </div>
                 </div>
-
-                <!-- Filters -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <form class="row g-3" method="get">
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" name="search" placeholder="Search item, reference..." value="<?= esc($_GET['search'] ?? '') ?>">
-                            </div>
-                            <div class="col-md-2">
-                                <select class="form-select" name="type">
-                                    <option value="">All Types</option>
-                                    <option value="in" <?= ($_GET['type'] ?? '') == 'in' ? 'selected' : '' ?>>Stock In</option>
-                                    <option value="out" <?= ($_GET['type'] ?? '') == 'out' ? 'selected' : '' ?>>Stock Out</option>
-                                    <option value="transfer" <?= ($_GET['type'] ?? '') == 'transfer' ? 'selected' : '' ?>>Transfer</option>
-                                    <option value="adjustment" <?= ($_GET['type'] ?? '') == 'adjustment' ? 'selected' : '' ?>>Adjustment</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <input type="date" class="form-control" name="from_date" value="<?= esc($_GET['from_date'] ?? '') ?>">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="date" class="form-control" name="to_date" value="<?= esc($_GET['to_date'] ?? '') ?>">
-                            </div>
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
-                                <a href="<?= base_url('warehouse-manager/stock-movements') ?>" class="btn btn-outline-secondary">Clear</a>
-                            </div>
-                        </form>
+                <div class="col-md-3">
+                    <div class="stat-card bg-danger">
+                        <h3><i class="bi bi-arrow-up-circle"></i> <?= $stats['stock_out'] ?? 0 ?></h3>
+                        <small>Stock Out (Today)</small>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="stat-card bg-info">
+                        <h3><i class="bi bi-arrow-repeat"></i> <?= $stats['transfers'] ?? 0 ?></h3>
+                        <small>Transfers (Today)</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card bg-warning text-dark">
+                        <h3><i class="bi bi-pencil-square"></i> <?= $stats['adjustments'] ?? 0 ?></h3>
+                        <small>Adjustments (Today)</small>
+                    </div>
+                </div>
+            </div>
 
-                <!-- Movements Table -->
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        Stock Movement History
-                        <span class="badge bg-primary"><?= count($movements ?? []) ?> records</span>
-                    </div>
-                    <div class="card-body">
-                        <?php if (!empty($movements)): ?>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Date/Time</th>
-                                        <th>Type</th>
-                                        <th>Item</th>
-                                        <th>Qty</th>
-                                        <th>Reference</th>
-                                        <th>From/To</th>
-                                        <th>User</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($movements as $m): ?>
-                                    <tr>
-                                        <td><?= date('M d, Y h:i A', strtotime($m['created_at'] ?? 'now')) ?></td>
-                                        <td>
-                                            <?php 
-                                            $type = $m['movement_type'] ?? $m['type'] ?? 'in';
-                                            $icons = ['in' => '↓', 'out' => '↑', 'transfer' => '↔', 'adjustment' => '✎'];
-                                            $classes = ['in' => 'movement-in', 'out' => 'movement-out', 'transfer' => 'movement-transfer', 'adjustment' => 'movement-adjust'];
-                                            ?>
-                                            <span class="<?= $classes[$type] ?? '' ?> fw-bold"><?= $icons[$type] ?? '' ?> <?= ucfirst($type) ?></span>
-                                        </td>
-                                        <td><?= esc($m['item_name'] ?? $m['product_name'] ?? 'Unknown') ?></td>
-                                        <td>
-                                            <span class="<?= in_array($type, ['in']) ? 'text-success' : 'text-danger' ?> fw-bold">
-                                                <?= in_array($type, ['in']) ? '+' : '-' ?><?= abs($m['quantity'] ?? 0) ?>
-                                            </span>
-                                        </td>
-                                        <td><?= esc($m['reference_number'] ?? 'N/A') ?></td>
-                                        <td>
-                                            <?php if ($type == 'transfer'): ?>
-                                            <?= esc($m['from_location'] ?? 'N/A') ?> → <?= esc($m['to_location'] ?? 'N/A') ?>
-                                            <?php else: ?>
-                                            <?= esc($m['location_name'] ?? $m['warehouse_name'] ?? 'Main') ?>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?= esc($m['user_name'] ?? 'System') ?></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(<?= $m['id'] ?? 0 ?>)"><i class="bi bi-eye"></i></button>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form class="row g-3" method="get">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" name="search" placeholder="Search item, reference..." value="<?= esc($_GET['search'] ?? '') ?>">
                         </div>
-                        <?php else: ?>
-                        <div class="text-center py-5">
-                            <i class="bi bi-arrow-left-right display-1 text-muted"></i>
-                            <h5 class="text-muted mt-3">No stock movements found</h5>
-                            <p class="text-muted">Record stock movements using the buttons above</p>
+                        <div class="col-md-2">
+                            <select class="form-select" name="type">
+                                <option value="">All Types</option>
+                                <option value="in" <?= ($_GET['type'] ?? '') == 'in' ? 'selected' : '' ?>>Stock In</option>
+                                <option value="out" <?= ($_GET['type'] ?? '') == 'out' ? 'selected' : '' ?>>Stock Out</option>
+                                <option value="transfer" <?= ($_GET['type'] ?? '') == 'transfer' ? 'selected' : '' ?>>Transfer</option>
+                                <option value="adjustment" <?= ($_GET['type'] ?? '') == 'adjustment' ? 'selected' : '' ?>>Adjustment</option>
+                            </select>
                         </div>
-                        <?php endif; ?>
+                        <div class="col-md-2">
+                            <input type="date" class="form-control" name="from_date" value="<?= esc($_GET['from_date'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" class="form-control" name="to_date" value="<?= esc($_GET['to_date'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
+                            <a href="<?= base_url('warehouse-manager/stock-movements') ?>" class="btn btn-outline-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Movements Table -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    Stock Movement History
+                    <span class="badge bg-primary"><?= count($movements ?? []) ?> records</span>
+                </div>
+                <div class="card-body">
+                    <?php if (!empty($movements)): ?>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date/Time</th>
+                                    <th>Type</th>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Reference</th>
+                                    <th>From/To</th>
+                                    <th>User</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($movements as $m): ?>
+                                <tr>
+                                    <td><?= date('M d, Y h:i A', strtotime($m['created_at'] ?? 'now')) ?></td>
+                                    <td>
+                                        <?php 
+                                        $type = $m['movement_type'] ?? $m['type'] ?? 'in';
+                                        $icons = ['in' => '↓', 'out' => '↑', 'transfer' => '↔', 'adjustment' => '✎', 'Stock In' => '↓', 'Stock Out' => '↑', 'Transfer' => '↔', 'Adjustment' => '✎', 'Return' => '↩'];
+                                        $classes = ['in' => 'movement-in', 'out' => 'movement-out', 'transfer' => 'movement-transfer', 'adjustment' => 'movement-adjust', 'Stock In' => 'movement-in', 'Stock Out' => 'movement-out', 'Transfer' => 'movement-transfer', 'Adjustment' => 'movement-adjust', 'Return' => 'movement-out'];
+                                        $badgeColors = ['in' => 'success', 'out' => 'danger', 'transfer' => 'info', 'adjustment' => 'warning', 'Stock In' => 'success', 'Stock Out' => 'danger', 'Transfer' => 'info', 'Adjustment' => 'warning', 'Return' => 'danger'];
+                                        ?>
+                                        <span class="badge bg-<?= $badgeColors[$type] ?? 'secondary' ?>"><?= ucfirst($type) ?></span>
+                                    </td>
+                                    <td><?= esc($m['item_name'] ?? $m['product_name'] ?? 'Unknown') ?></td>
+                                    <td>
+                                        <span class="<?= $classes[$type] ?? '' ?> fw-bold">
+                                            <?= ($m['quantity'] ?? 0) < 0 ? '' : (in_array($type, ['in', 'Stock In']) ? '+' : '-') ?><?= abs($m['quantity'] ?? 0) ?>
+                                        </span>
+                                    </td>
+                                    <td><?= esc($m['reference_number'] ?? 'N/A') ?></td>
+                                    <td>
+                                        <?php if ($type == 'transfer' || $type == 'Transfer'): ?>
+                                        <?= esc($m['from_location'] ?? 'N/A') ?> → <?= esc($m['to_location'] ?? 'N/A') ?>
+                                        <?php else: ?>
+                                        <?= esc($m['location_name'] ?? $m['warehouse_name'] ?? 'Main') ?>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= esc($m['user_name'] ?? 'System') ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(<?= $m['id'] ?? 0 ?>)"><i class="bi bi-eye"></i></button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
+                    <?php else: ?>
+                    <div class="text-center py-5">
+                        <i class="bi bi-arrow-left-right display-1 text-muted"></i>
+                        <h5 class="text-muted mt-3">No stock movements found</h5>
+                        <p class="text-muted">Record stock movements using the buttons above</p>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -198,7 +229,7 @@
                         <select class="form-select" name="item_id" required>
                             <option value="">Select Item</option>
                             <?php foreach ($items ?? [] as $item): ?>
-                            <option value="<?= $item['id'] ?>"><?= esc($item['name']) ?> (<?= $item['sku'] ?? '' ?>)</option>
+                            <option value="<?= $item['id'] ?>"><?= esc($item['name'] ?? $item['product_name'] ?? '') ?> (<?= $item['sku'] ?? '' ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -239,7 +270,7 @@
                         <select class="form-select" name="item_id" required>
                             <option value="">Select Item</option>
                             <?php foreach ($items ?? [] as $item): ?>
-                            <option value="<?= $item['id'] ?>"><?= esc($item['name']) ?> (Stock: <?= $item['quantity'] ?? 0 ?>)</option>
+                            <option value="<?= $item['id'] ?>"><?= esc($item['name'] ?? $item['product_name'] ?? '') ?> (Stock: <?= $item['quantity'] ?? 0 ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -285,7 +316,7 @@
                         <select class="form-select" name="item_id" required>
                             <option value="">Select Item</option>
                             <?php foreach ($items ?? [] as $item): ?>
-                            <option value="<?= $item['id'] ?>"><?= esc($item['name']) ?></option>
+                            <option value="<?= $item['id'] ?>"><?= esc($item['name'] ?? $item['product_name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -323,7 +354,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 function viewDetails(id) {
     alert('View movement details for ID: ' + id);

@@ -3,15 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audit Reports | WeBuild</title>
+    <title>Audit Reports | WITMS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6fa; }
-        .sidebar { background-color: #2e7d32; color: #fff; min-height: 100vh; padding-top: 20px; }
-        .sidebar h5 { text-align: center; font-weight: 600; margin-bottom: 25px; }
-        .sidebar a { display: block; color: #c8e6c9; text-decoration: none; padding: 12px 20px; margin: 5px 10px; border-radius: 5px; transition: 0.3s; }
-        .sidebar a:hover, .sidebar a.active { background-color: #388e3c; color: #fff; }
-        .topbar { background-color: #fff; border-bottom: 1px solid #ddd; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        }
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 12px 20px;
+            margin: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .sidebar .nav-link i { margin-right: 10px; }
+        .main-content { background: #f8f9fa; min-height: 100vh; }
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 15px 25px;
+        }
         .card { border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-radius: 10px; margin-bottom: 20px; }
         .card-header { background-color: #f8f9fa; font-weight: 600; }
         .report-card { transition: 0.3s; cursor: pointer; }
@@ -23,24 +41,38 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-2 sidebar">
-            <h5>🔍 Auditor</h5>
-            <a href="<?= base_url('inventory-auditor/dashboard') ?>">📊 Dashboard</a>
-            <a href="<?= base_url('inventory-auditor/count-sessions') ?>">📋 Count Sessions</a>
-            <a href="<?= base_url('inventory-auditor/discrepancy-review') ?>">⚠️ Discrepancies</a>
-            <a href="<?= base_url('inventory-auditor/reports') ?>" class="active">📈 Reports</a>
-            <hr style="border-color: rgba(255,255,255,0.2);">
-            <a href="<?= base_url('logout') ?>">🚪 Logout</a>
+        <div class="col-md-2 px-0 sidebar">
+            <div class="text-center py-4">
+                <h5 class="text-white mb-1">WITMS</h5>
+                <small class="text-white-50">Inventory Auditor</small>
+            </div>
+            <nav class="nav flex-column">
+                <a class="nav-link" href="<?= base_url('inventory-auditor/dashboard') ?>">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a class="nav-link" href="<?= base_url('inventory-auditor/count-sessions') ?>">
+                    <i class="bi bi-clipboard-check"></i> Count Sessions
+                </a>
+                <a class="nav-link" href="<?= base_url('inventory-auditor/discrepancy-review') ?>">
+                    <i class="bi bi-exclamation-triangle"></i> Discrepancies
+                </a>
+                <a class="nav-link active" href="<?= base_url('inventory-auditor/reports') ?>">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Reports
+                </a>
+                <hr class="mx-3 my-2" style="border-color: rgba(255,255,255,0.2);">
+                <a class="nav-link text-danger" href="<?= base_url('logout') ?>">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </nav>
         </div>
 
         <!-- Main Content -->
-        <div class="col-md-10 p-0">
-            <div class="topbar">
+        <div class="col-md-10 px-0 main-content">
+            <div class="topbar d-flex justify-content-between align-items-center">
                 <div>
-                    <a href="<?= base_url('inventory-auditor/dashboard') ?>" class="btn btn-outline-secondary btn-sm me-2">← Back</a>
-                    <span class="fw-bold">Audit Reports</span>
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-bar-graph text-primary"></i> Audit Reports</h5>
                 </div>
-                <span><?= date('M d, Y') ?></span>
+                <span class="text-muted"><?= date('M d, Y') ?></span>
             </div>
 
             <div class="p-4">
