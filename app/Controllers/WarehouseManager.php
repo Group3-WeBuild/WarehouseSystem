@@ -898,4 +898,472 @@ class WarehouseManager extends BaseController
             ]);
         }
     }
+
+    // =========================================================
+    // MULTI-WAREHOUSE MANAGEMENT METHODS (NEW)
+    // =========================================================
+
+    /**
+     * =====================================================
+     * VIEW: Inventory by Warehouse
+     * =====================================================
+     * 
+     * Shows inventory for specific warehouse
+     * RUBRIC: Multi-Warehouse Management (Midterm)
+     * =====================================================
+     */
+    public function warehouseInventory($warehouseId)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $warehouseInventoryModel = new \App\Models\WarehouseInventoryModel();
+        
+        $warehouse = $this->warehouseModel->find($warehouseId);
+        $inventory = $warehouseInventoryModel->getInventoryByWarehouse($warehouseId);
+        $lowStock = $warehouseInventoryModel->getLowStockItemsByWarehouse($warehouseId);
+        $capacity = $warehouseInventoryModel->getWarehouseCapacityUsage($warehouseId);
+        
+        $data = [
+            'title' => 'Inventory: ' . ($warehouse['warehouse_name'] ?? 'Unknown'),
+            'user' => [
+                'username' => $this->session->get('username'),
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'warehouse' => $warehouse,
+            'inventory' => $inventory,
+            'lowStock' => $lowStock,
+            'capacity' => $capacity
+        ];
+
+        return view('warehouse_manager/warehouse_inventory', $data);
+    }
+
+    /**
+     * =====================================================
+     * VIEW: Transfer Inventory Page
+     * =====================================================
+     * 
+     * Interface for transferring inventory between warehouses
+     * RUBRIC: Multi-Warehouse Management (Midterm)
+     * =====================================================
+     */
+    public function transferInventoryView()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $warehouses = $this->warehouseModel->findAll();
+        $inventory = $this->inventoryModel->where('status', 'Active')->findAll();
+        
+        $data = [
+            'title' => 'Transfer Inventory',
+            'user' => [
+                'username' => $this->session->get('username'),
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'warehouses' => $warehouses,
+            'inventory' => $inventory
+        ];
+
+        return view('warehouse_manager/transfer_inventory', $data);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Transfer Inventory Between Warehouses
+     * =====================================================
+     * 
+     * Moves stock from one warehouse to another
+     * RUBRIC: Multi-Warehouse Management (Midterm)
+     * "smooth transfers"
+     * =====================================================
+     */
+    public function transferInventory()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $fromWarehouse = $this->request->getPost('from_warehouse');
+        $toWarehouse = $this->request->getPost('to_warehouse');
+        $inventoryId = $this->request->getPost('inventory_id');
+        $quantity = (int)$this->request->getPost('quantity');
+        $userId = $this->session->get('user_id');
+
+        // Validate input
+        if (!$fromWarehouse || !$toWarehouse || !$inventoryId || $quantity <= 0) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Please fill in all required fields'
+            ]);
+        }
+
+        if ($fromWarehouse == $toWarehouse) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Source and destination warehouses must be different'
+            ]);
+        }
+
+        $warehouseInventoryModel = new \App\Models\WarehouseInventoryModel();
+        $result = $warehouseInventoryModel->transferInventory(
+            $fromWarehouse,
+            $toWarehouse,
+            $inventoryId,
+            $quantity,
+            $userId
+        );
+
+        if ($result === true) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => "Successfully transferred {$quantity} units"
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => $result ?: 'Transfer failed'
+        ]);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Get Inventory by Warehouse (JSON)
+     * =====================================================
+     */
+    public function getInventoryByWarehouse($warehouseId)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $warehouseInventoryModel = new \App\Models\WarehouseInventoryModel();
+        $inventory = $warehouseInventoryModel->getInventoryByWarehouse($warehouseId);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'inventory' => $inventory
+        ]);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Get Warehouse Capacity
+     * =====================================================
+     */
+    public function getWarehouseCapacity($warehouseId)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $warehouseInventoryModel = new \App\Models\WarehouseInventoryModel();
+        $capacity = $warehouseInventoryModel->getWarehouseCapacityUsage($warehouseId);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'capacity' => $capacity
+        ]);
+    }
+
+    // =========================================================
+    // BATCH TRACKING METHODS (NEW)
+    // =========================================================
+
+    /**
+     * =====================================================
+     * VIEW: Batch Tracking Page
+     * =====================================================
+     * 
+     * Shows all batches with expiry tracking
+     * RUBRIC: Batch and Lot Tracking (Midterm)
+     * =====================================================
+     */
+    public function batchTracking()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $batchModel = new \App\Models\BatchTrackingModel();
+        
+        $activeBatches = $batchModel->getActiveBatches();
+        $expiringBatches = $batchModel->getBatchesExpiringWithin(30);
+        $quarantined = $batchModel->getQuarantinedBatches();
+        $stats = $batchModel->getBatchStatistics();
+        
+        $data = [
+            'title' => 'Batch Tracking',
+            'user' => [
+                'username' => $this->session->get('username'),
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'activeBatches' => $activeBatches,
+            'expiringBatches' => $expiringBatches,
+            'quarantined' => $quarantined,
+            'stats' => $stats
+        ];
+
+        return view('warehouse_manager/batch_tracking', $data);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Create New Batch
+     * =====================================================
+     * 
+     * Creates batch when receiving inventory
+     * =====================================================
+     */
+    public function createBatch()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $batchModel = new \App\Models\BatchTrackingModel();
+        
+        $data = [
+            'inventory_id' => $this->request->getPost('inventory_id'),
+            'batch_number' => $batchModel->generateBatchNumber(),
+            'reference_number' => $this->request->getPost('reference_number'),
+            'manufacture_date' => $this->request->getPost('manufacture_date'),
+            'expiry_date' => $this->request->getPost('expiry_date'),
+            'quantity_received' => $this->request->getPost('quantity'),
+            'quantity_available' => $this->request->getPost('quantity'),
+            'supplier_id' => $this->request->getPost('supplier_id'),
+            'warehouse_id' => $this->request->getPost('warehouse_id'),
+            'quality_status' => 'Active',
+            'received_date' => date('Y-m-d H:i:s'),
+            'received_by' => $this->session->get('user_id')
+        ];
+
+        $result = $batchModel->insert($data);
+
+        if ($result) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Batch created successfully',
+                'batch_number' => $data['batch_number']
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Failed to create batch'
+        ]);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Approve Batch
+     * =====================================================
+     * 
+     * Approves batch after quality inspection
+     * =====================================================
+     */
+    public function approveBatch($batchId)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $batchModel = new \App\Models\BatchTrackingModel();
+        $notes = $this->request->getPost('notes') ?? '';
+        $userId = $this->session->get('user_id');
+
+        $result = $batchModel->approveBatch($batchId, $userId, $notes);
+
+        return $this->response->setJSON([
+            'success' => $result,
+            'message' => $result ? 'Batch approved' : 'Approval failed'
+        ]);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Reject Batch
+     * =====================================================
+     * 
+     * Rejects batch due to quality issues
+     * =====================================================
+     */
+    public function rejectBatch($batchId)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $batchModel = new \App\Models\BatchTrackingModel();
+        $reason = $this->request->getPost('reason') ?? '';
+        $userId = $this->session->get('user_id');
+
+        $result = $batchModel->rejectBatch($batchId, $userId, $reason);
+
+        return $this->response->setJSON([
+            'success' => $result,
+            'message' => $result ? 'Batch rejected' : 'Rejection failed'
+        ]);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Get Batches Expiring Soon
+     * =====================================================
+     */
+    public function getBatchesExpiring()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $days = $this->request->getGet('days') ?? 30;
+        $batchModel = new \App\Models\BatchTrackingModel();
+        $batches = $batchModel->getBatchesExpiringWithin($days);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'batches' => $batches
+        ]);
+    }
+
+    // =========================================================
+    // BARCODE SCANNING METHODS (NEW)
+    // =========================================================
+
+    /**
+     * =====================================================
+     * AJAX: Scan Barcode
+     * =====================================================
+     * 
+     * Processes barcode scan and returns item info
+     * RUBRIC: Barcode/QR Code Functionality (Midterm)
+     * =====================================================
+     */
+    public function scanBarcode()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $barcodeModel = new \App\Models\BarcodeModel();
+        $barcode = $this->request->getPost('barcode');
+
+        if (empty($barcode)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No barcode provided'
+            ]);
+        }
+
+        $item = $barcodeModel->scanBarcode($barcode);
+
+        if ($item) {
+            return $this->response->setJSON([
+                'success' => true,
+                'item' => $item
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Item not found for barcode: ' . $barcode
+        ]);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Generate Barcode for Item
+     * =====================================================
+     */
+    public function generateBarcode()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $barcodeModel = new \App\Models\BarcodeModel();
+        $inventoryId = $this->request->getPost('inventory_id');
+
+        $result = $barcodeModel->assignBarcode($inventoryId);
+
+        if ($result) {
+            return $this->response->setJSON([
+                'success' => true,
+                'barcode' => $result['barcode_number'],
+                'qr_data' => $result['qr_code_data']
+            ]);
+        }
+
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Failed to generate barcode'
+        ]);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Stock In via Barcode Scan
+     * =====================================================
+     * 
+     * Quick stock-in using barcode scanner
+     * =====================================================
+     */
+    public function stockInViaScan()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $barcodeModel = new \App\Models\BarcodeModel();
+        $barcode = $this->request->getPost('barcode');
+        $quantity = (int)$this->request->getPost('quantity');
+        $warehouseId = $this->request->getPost('warehouse_id');
+        $userId = $this->session->get('user_id');
+
+        $result = $barcodeModel->stockInViaScan($barcode, $quantity, $warehouseId, $userId);
+
+        return $this->response->setJSON($result);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Stock Out via Barcode Scan
+     * =====================================================
+     * 
+     * Quick stock-out using barcode scanner
+     * =====================================================
+     */
+    public function stockOutViaScan()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $barcodeModel = new \App\Models\BarcodeModel();
+        $barcode = $this->request->getPost('barcode');
+        $quantity = (int)$this->request->getPost('quantity');
+        $warehouseId = $this->request->getPost('warehouse_id');
+        $userId = $this->session->get('user_id');
+
+        $result = $barcodeModel->stockOutViaScan($barcode, $quantity, $warehouseId, $userId);
+
+        return $this->response->setJSON($result);
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Batch Generate Barcodes
+     * =====================================================
+     * 
+     * Generates barcodes for multiple items at once
+     * =====================================================
+     */
+    public function batchGenerateBarcodes()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $barcodeModel = new \App\Models\BarcodeModel();
+        $result = $barcodeModel->batchGenerateBarcodes();
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => "Generated {$result['generated']} barcodes, {$result['failed']} failed",
+            'result' => $result
+        ]);
+    }
 }

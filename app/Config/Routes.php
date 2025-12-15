@@ -124,6 +124,11 @@ $routes->group('warehouse-manager', function($routes) {
     $routes->get('orders', 'WarehouseManager::orders');
     $routes->get('reports', 'WarehouseManager::reports');
     
+    // Multi-Warehouse Views (NEW)
+    $routes->get('warehouse-inventory/(:num)', 'WarehouseManager::warehouseInventory/$1');
+    $routes->get('transfer-inventory', 'WarehouseManager::transferInventoryView');
+    $routes->get('batch-tracking', 'WarehouseManager::batchTracking');
+    
     // AJAX ENDPOINTS - Process form data and return JSON
     $routes->post('add-item', 'WarehouseManager::addItem');
     $routes->post('update-item/(:num)', 'WarehouseManager::updateItem/$1');
@@ -132,6 +137,17 @@ $routes->group('warehouse-manager', function($routes) {
     $routes->post('process-order/(:num)', 'WarehouseManager::processOrder/$1');
     $routes->post('complete-order/(:num)', 'WarehouseManager::completeOrder/$1');
     $routes->get('low-stock-alerts', 'WarehouseManager::getLowStockAlerts');
+    
+    // Multi-Warehouse AJAX Endpoints (NEW)
+    $routes->post('transfer-inventory', 'WarehouseManager::transferInventory');
+    $routes->get('inventory-by-warehouse/(:num)', 'WarehouseManager::getInventoryByWarehouse/$1');
+    $routes->get('warehouse-capacity/(:num)', 'WarehouseManager::getWarehouseCapacity/$1');
+    
+    // Batch Tracking Endpoints (NEW)
+    $routes->post('create-batch', 'WarehouseManager::createBatch');
+    $routes->post('approve-batch/(:num)', 'WarehouseManager::approveBatch/$1');
+    $routes->post('reject-batch/(:num)', 'WarehouseManager::rejectBatch/$1');
+    $routes->get('batches-expiring', 'WarehouseManager::getBatchesExpiring');
 });
 
 // Warehouse routes (legacy - keeping for compatibility)
@@ -147,9 +163,55 @@ $routes->group('inventory', function($routes) {
 });
 
 // Procurement routes
+// BACKEND: Procurement Officer module for requisitions and purchase orders
 $routes->group('procurement', function($routes) {
+    // VIEW ROUTES - Load procurement pages
     $routes->get('dashboard', 'Procurement::dashboard');
-    // Add more routes as needed
+    $routes->get('requisitions', 'Procurement::requisitions');
+    $routes->get('purchase-orders', 'Procurement::purchaseOrders');
+    $routes->get('delivery-tracking', 'Procurement::deliveryTracking');
+    $routes->get('reports', 'Procurement::reports');
+    
+    // AJAX ENDPOINTS - Purchase Requisitions
+    $routes->post('create-requisition', 'Procurement::createRequisition');
+    $routes->post('submit-requisition', 'Procurement::submitRequisition');
+    $routes->post('approve-requisition', 'Procurement::approveRequisition');
+    $routes->post('reject-requisition', 'Procurement::rejectRequisition');
+    
+    // AJAX ENDPOINTS - Purchase Orders
+    $routes->post('create-purchase-order', 'Procurement::createPurchaseOrder');
+    $routes->post('send-po', 'Procurement::sendPOToVendor');
+    $routes->post('receive-po', 'Procurement::receivePO');
+});
+
+// Inventory Auditor routes
+// BACKEND: Physical inventory counts and reconciliation
+$routes->group('inventory-auditor', function($routes) {
+    // VIEW ROUTES - Load auditor pages
+    $routes->get('dashboard', 'InventoryAuditor::dashboard');
+    $routes->get('count-sessions', 'InventoryAuditor::countSessions');
+    $routes->get('active-count/(:num)', 'InventoryAuditor::activeCount/$1');
+    $routes->get('discrepancy-review', 'InventoryAuditor::discrepancyReview');
+    $routes->get('reports', 'InventoryAuditor::reports');
+    
+    // AJAX ENDPOINTS - Process count data
+    $routes->post('start-count', 'InventoryAuditor::startCount');
+    $routes->post('record-item-count', 'InventoryAuditor::recordItemCount');
+    $routes->post('complete-count', 'InventoryAuditor::completeCount');
+    $routes->post('verify-count', 'InventoryAuditor::verifyCount');
+    $routes->post('resolve-discrepancy', 'InventoryAuditor::resolveDiscrepancy');
+    $routes->post('approve-count', 'InventoryAuditor::approveCount');
+});
+
+// Barcode/QR Scanning routes
+// BACKEND: Barcode and QR code operations
+$routes->group('barcode', function($routes) {
+    // AJAX ENDPOINTS - Barcode operations
+    $routes->post('scan', 'WarehouseManager::scanBarcode');
+    $routes->post('generate', 'WarehouseManager::generateBarcode');
+    $routes->post('stock-in-scan', 'WarehouseManager::stockInViaScan');
+    $routes->post('stock-out-scan', 'WarehouseManager::stockOutViaScan');
+    $routes->post('batch-generate', 'WarehouseManager::batchGenerateBarcodes');
 });
 
 // Management Dashboard routes
