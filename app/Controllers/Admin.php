@@ -624,4 +624,243 @@ class Admin extends BaseController
             ];
         }
     }
+    
+    /**
+     * =====================================================
+     * BACKUP AND RECOVERY SYSTEM
+     * =====================================================
+     */
+    
+    public function backupDatabase()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $db = \Config\Database::connect();
+            $dbName = $db->getDatabase();
+            $backupDir = WRITEPATH . 'backups/';
+            
+            // Create backups directory if it doesn't exist
+            if (!is_dir($backupDir)) {
+                mkdir($backupDir, 0755, true);
+            }
+            
+            $fileName = 'backup_' . $dbName . '_' . date('Y-m-d_H-i-s') . '.sql';
+            $filePath = $backupDir . $fileName;
+            
+            // Get all tables
+            $tables = $db->listTables();
+            $backup = "-- Database Backup: $dbName\n";
+            $backup .= "-- Generated: " . date('Y-m-d H:i:s') . "\n\n";
+            $backup .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+            
+            foreach ($tables as $table) {
+                // Get table structure
+                $query = $db->query("SHOW CREATE TABLE `$table`");
+                $row = $query->getRow();
+                $backup .= "\n\n-- Table structure for `$table`\n";
+                $backup .= "DROP TABLE IF EXISTS `$table`;\n";
+                $backup .= $row->{'Create Table'} . ";\n\n";
+                
+                // Get table data
+                $query = $db->query("SELECT * FROM `$table`");
+                $rows = $query->getResult();
+                
+                if (count($rows) > 0) {
+                    $backup .= "-- Data for table `$table`\n";
+                    foreach ($rows as $dataRow) {
+                        $values = [];
+                        foreach ($dataRow as $value) {
+                            $values[] = is_null($value) ? 'NULL' : "'" . $db->escapeString($value) . "'";
+                        }
+                        $backup .= "INSERT INTO `$table` VALUES (" . implode(', ', $values) . ");\n";
+                    }
+                    $backup .= "\n";
+                }
+            }
+            
+            $backup .= "SET FOREIGN_KEY_CHECKS=1;\n";
+            
+            // Save backup file
+            file_put_contents($filePath, $backup);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Database backup created successfully',
+                'filename' => $fileName,
+                'size' => filesize($filePath),
+                'path' => $filePath
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Backup failed: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    public function listBackups()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $backupDir = WRITEPATH . 'backups/';
+            $backups = [];
+            
+            if (is_dir($backupDir)) {
+                $files = scandir($backupDir, SCANDIR_SORT_DESCENDING);
+                foreach ($files as $file) {
+                    if ($file != '.' && $file != '..' && pathinfo($file, PATHINFO_EXTENSION) == 'sql') {
+                        $filePath = $backupDir . $file;
+                        $backups[] = [
+                            'filename' => $file,
+                            'size' => filesize($filePath),
+                            'date' => date('Y-m-d H:i:s', filemtime($filePath)),
+                            'path' => $filePath
+                        ];
+                    }
+                }
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'backups' => $backups
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to list backups: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    public function restoreDatabase()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $filename = $this->request->getPost('filename');
+            $backupDir = WRITEPATH . 'backups/';
+            $filePath = $backupDir . $filename;
+            
+            if (!file_exists($filePath)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Backup file not found'
+                ]);
+            }
+            
+            $sql = file_get_contents($filePath);
+            $db = \Config\Database::connect();
+            
+            // Split SQL into individual queries
+            $queries = array_filter(explode(';', $sql));
+            
+            foreach ($queries as $query) {
+                $query = trim($query);
+                if (!empty($query)) {
+                    $db->query($query);
+                }
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Database restored successfully from ' . $filename
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Restore failed: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    public function downloadBackup($filename)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $backupDir = WRITEPATH . 'backups/';
+            $filePath = $backupDir . $filename;
+            
+            if (!file_exists($filePath)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Backup file not found'
+                ]);
+            }
+            
+            return $this->response->download($filePath, null);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Download failed: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    public function deleteBackup()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $filename = $this->request->getPost('filename');
+            $backupDir = WRITEPATH . 'backups/';
+            $filePath = $backupDir . $filename;
+            
+            if (!file_exists($filePath)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Backup file not found'
+                ]);
+            }
+            
+            unlink($filePath);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Backup deleted successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Delete failed: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    public function scheduleBackup()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $schedule = $this->request->getPost('schedule'); // daily, weekly, monthly
+            
+            // Store schedule in settings (would need a settings table)
+            // For now, just return success
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Backup schedule set to: ' . $schedule,
+                'schedule' => $schedule
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to set schedule: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

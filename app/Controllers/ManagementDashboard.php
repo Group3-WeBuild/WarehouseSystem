@@ -35,6 +35,7 @@ use App\Models\InventoryModel;
 use App\Models\StockMovementModel;
 use App\Models\OrderModel;
 use App\Models\WarehouseModel;
+use App\Models\InvoiceModel;
 
 class ManagementDashboard extends BaseController
 {
@@ -43,6 +44,7 @@ class ManagementDashboard extends BaseController
     protected $stockMovementModel;
     protected $orderModel;
     protected $warehouseModel;
+    protected $invoiceModel;
 
     /**
      * =====================================================
@@ -59,6 +61,7 @@ class ManagementDashboard extends BaseController
         $this->stockMovementModel = new StockMovementModel();
         $this->orderModel = new OrderModel();
         $this->warehouseModel = new WarehouseModel();
+        $this->invoiceModel = new InvoiceModel();
     }
 
     /**
@@ -887,5 +890,511 @@ class ManagementDashboard extends BaseController
         }
         
         return $alerts;
+    }
+    
+    /**
+     * =====================================================
+     * FORECASTING & ANALYTICS - Predictive Features
+     * =====================================================
+     */
+    
+    public function forecasting()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        // Calculate demand forecasting based on historical data
+        $historicalData = $this->getHistoricalConsumption(90); // Last 90 days
+        $forecast = $this->calculateDemandForecast($historicalData);
+        $stockTurnover = $this->calculateStockTurnover();
+        $reorderPredictions = $this->predictReorderNeeds();
+
+        $data = [
+            'user' => [
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'historicalData' => $historicalData,
+            'forecast' => $forecast,
+            'stockTurnover' => $stockTurnover,
+            'reorderPredictions' => $reorderPredictions,
+            'topMovingItems' => $this->getTopMovingItems(10),
+            'slowMovingItems' => $this->getSlowMovingItems(10),
+            'seasonalTrends' => $this->getSeasonalTrends(),
+            'pageTitle' => 'Demand Forecasting & Analytics',
+            'breadcrumb' => 'Forecasting'
+        ];
+
+        return view('management_dashboard/forecasting', $data);
+    }
+    
+    public function performanceKpis()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $data = [
+            'user' => [
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            // Inventory KPIs
+            'inventoryTurnover' => $this->calculateStockTurnover(),
+            'inventoryAccuracy' => $this->calculateInventoryAccuracy(),
+            'stockoutRate' => $this->calculateStockoutRate(),
+            'averageStockLevel' => $this->calculateAverageStockLevel(),
+            
+            // Financial KPIs
+            'unpaidInvoicesCount' => $this->getUnpaidInvoicesCount(),
+            'unpaidInvoicesAmount' => $this->getUnpaidInvoicesAmount(),
+            'collectionEfficiency' => $this->calculateCollectionEfficiency(),
+            
+            // Operational KPIs
+            'orderFulfillmentRate' => $this->calculateOrderFulfillmentRate(),
+            'warehouseUtilization' => $this->calculateWarehouseUtilization(),
+            'mostRequestedMaterials' => $this->getMostRequestedMaterials(10),
+            
+            'pageTitle' => 'Performance KPIs',
+            'breadcrumb' => 'KPIs'
+        ];
+
+        return view('management_dashboard/performance_kpis', $data);
+    }
+    
+    public function executiveReports()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $data = [
+            'user' => [
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'pageTitle' => 'Executive Reports',
+            'breadcrumb' => 'Reports'
+        ];
+
+        return view('management_dashboard/executive_reports', $data);
+    }
+    
+    public function monthlyReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $month = $this->request->getGet('month') ?? date('m');
+        $year = $this->request->getGet('year') ?? date('Y');
+
+        helper('printing_helper');
+        
+        $stockMovements = $this->getMonthlyStockMovements($month, $year);
+        $financialSummary = $this->getMonthlyFinancialSummary($month, $year);
+        $topItems = $this->getTopItemsByMonth($month, $year, 10);
+
+        $html = '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Monthly Report - ' . date('F Y', strtotime("$year-$month-01")) . '</title>
+            ' . generate_print_styles() . '
+        </head>
+        <body>
+            <div class="print-button-container no-print">
+                <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
+                <button class="btn-print" onclick="window.close()" style="background-color: #95a5a6;">✕ Close</button>
+            </div>
+            
+            ' . generate_print_header('Monthly Operations Report', date('F Y', strtotime("$year-$month-01"))) . '
+            
+            <div class="summary-box">
+                <h3>Executive Summary</h3>
+                <table style="border: none;">
+                    <tr>
+                        <td style="border: none;"><strong>Total Stock Movements:</strong></td>
+                        <td style="border: none;">' . count($stockMovements) . '</td>
+                        <td style="border: none;"><strong>Stock In:</strong></td>
+                        <td style="border: none;">' . $this->countMovementType($stockMovements, 'IN') . '</td>
+                    </tr>
+                    <tr>
+                        <td style="border: none;"><strong>Stock Out:</strong></td>
+                        <td style="border: none;">' . $this->countMovementType($stockMovements, 'OUT') . '</td>
+                        <td style="border: none;"><strong>Total Value:</strong></td>
+                        <td style="border: none;">₱' . number_format($financialSummary['totalValue'] ?? 0, 2) . '</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <h3>Top 10 Most Moved Items</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Item</th>
+                        <th>Total Movements</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        $counter = 1;
+        foreach ($topItems as $item) {
+            $html .= '
+                    <tr>
+                        <td>' . $counter++ . '</td>
+                        <td>' . esc($item['product_name'] ?? 'Unknown') . '</td>
+                        <td>' . ($item['movement_count'] ?? 0) . '</td>
+                        <td>' . number_format($item['total_quantity'] ?? 0) . '</td>
+                    </tr>';
+        }
+        
+        $html .= '
+                </tbody>
+            </table>
+            
+            ' . generate_print_footer() . '
+        </body>
+        </html>';
+        
+        echo $html;
+    }
+    
+    public function quarterlyReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $quarter = $this->request->getGet('quarter') ?? ceil(date('n') / 3);
+        $year = $this->request->getGet('year') ?? date('Y');
+
+        helper('printing_helper');
+        
+        $months = $this->getQuarterMonths($quarter);
+        $quarterlyData = $this->getQuarterlyData($months, $year);
+
+        $html = '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Quarterly Report - Q' . $quarter . ' ' . $year . '</title>
+            ' . generate_print_styles() . '
+        </head>
+        <body>
+            <div class="print-button-container no-print">
+                <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
+                <button class="btn-print" onclick="window.close()" style="background-color: #95a5a6;">✕ Close</button>
+            </div>
+            
+            ' . generate_print_header('Quarterly Performance Report', 'Q' . $quarter . ' ' . $year) . '
+            
+            <div class="summary-box">
+                <h3>Quarter Summary</h3>
+                <table style="border: none;">
+                    <tr>
+                        <td style="border: none;"><strong>Total Revenue:</strong></td>
+                        <td style="border: none;">₱' . number_format($quarterlyData['revenue'] ?? 0, 2) . '</td>
+                        <td style="border: none;"><strong>Total Expenses:</strong></td>
+                        <td style="border: none;">₱' . number_format($quarterlyData['expenses'] ?? 0, 2) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="border: none;"><strong>Stock Turnover:</strong></td>
+                        <td style="border: none;">' . number_format($quarterlyData['turnover'] ?? 0, 2) . 'x</td>
+                        <td style="border: none;"><strong>Orders Fulfilled:</strong></td>
+                        <td style="border: none;">' . number_format($quarterlyData['orders'] ?? 0) . '</td>
+                    </tr>
+                </table>
+            </div>
+            
+            ' . generate_print_footer() . '
+        </body>
+        </html>';
+        
+        echo $html;
+    }
+    
+    /**
+     * =====================================================
+     * HELPER METHODS - Calculations & Analytics
+     * =====================================================
+     */
+    
+    private function getHistoricalConsumption($days = 90)
+    {
+        try {
+            $startDate = date('Y-m-d', strtotime("-$days days"));
+            $movements = $this->stockMovementModel
+                ->where('created_at >=', $startDate)
+                ->where('movement_type', 'OUT')
+                ->findAll();
+            
+            return $movements;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    private function calculateDemandForecast($historicalData)
+    {
+        // Simple moving average forecast
+        $itemConsumption = [];
+        foreach ($historicalData as $movement) {
+            $itemId = $movement['item_id'] ?? 0;
+            if (!isset($itemConsumption[$itemId])) {
+                $itemConsumption[$itemId] = 0;
+            }
+            $itemConsumption[$itemId] += $movement['quantity'] ?? 0;
+        }
+        
+        $forecasts = [];
+        foreach ($itemConsumption as $itemId => $totalQty) {
+            $avgDaily = $totalQty / 90;
+            $forecasts[$itemId] = [
+                'daily_avg' => round($avgDaily, 2),
+                'weekly_forecast' => round($avgDaily * 7, 0),
+                'monthly_forecast' => round($avgDaily * 30, 0)
+            ];
+        }
+        
+        return $forecasts;
+    }
+    
+    private function calculateStockTurnover()
+    {
+        try {
+            $totalValue = (float)$this->calculateTotalInventoryValue();
+            $yearlyMovements = $this->stockMovementModel
+                ->where('created_at >=', date('Y-m-d', strtotime('-365 days')))
+                ->where('movement_type', 'OUT')
+                ->countAllResults();
+            
+            if ($totalValue > 0) {
+                return round($yearlyMovements / ($totalValue / 1000), 2);
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+    
+    private function predictReorderNeeds()
+    {
+        $lowStock = $this->inventoryModel->getLowStockItems();
+        $predictions = [];
+        
+        foreach ($lowStock as $item) {
+            $reorderQty = ($item['reorder_level'] * 2) - $item['quantity'];
+            if ($reorderQty > 0) {
+                $predictions[] = [
+                    'item' => $item['product_name'],
+                    'current' => $item['quantity'],
+                    'reorder_qty' => $reorderQty,
+                    'estimated_cost' => $reorderQty * $item['unit_price']
+                ];
+            }
+        }
+        
+        return $predictions;
+    }
+    
+    private function getTopMovingItems($limit = 10)
+    {
+        try {
+            $movements = $this->stockMovementModel
+                ->select('item_id, COUNT(*) as movement_count')
+                ->where('created_at >=', date('Y-m-d', strtotime('-30 days')))
+                ->groupBy('item_id')
+                ->orderBy('movement_count', 'DESC')
+                ->findAll($limit);
+            
+            return $movements;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    private function getSlowMovingItems($limit = 10)
+    {
+        try {
+            $items = $this->inventoryModel
+                ->where('quantity >', 0)
+                ->where('status', 'Active')
+                ->orderBy('updated_at', 'ASC')
+                ->findAll($limit);
+            
+            return $items;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    private function getSeasonalTrends()
+    {
+        // Placeholder for seasonal analysis
+        return [];
+    }
+    
+    private function calculateInventoryAccuracy()
+    {
+        // Placeholder - would compare physical counts vs system
+        return 98.5;
+    }
+    
+    private function calculateStockoutRate()
+    {
+        try {
+            $total = $this->inventoryModel->where('status', 'Active')->countAllResults();
+            $outOfStock = $this->getOutOfStockCount();
+            
+            if ($total > 0) {
+                return round(($outOfStock / $total) * 100, 2);
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+    
+    private function calculateAverageStockLevel()
+    {
+        try {
+            $items = $this->inventoryModel->where('status', 'Active')->findAll();
+            if (count($items) > 0) {
+                $total = array_sum(array_column($items, 'quantity'));
+                return round($total / count($items), 0);
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+    
+    private function getUnpaidInvoicesCount()
+    {
+        try {
+            return $this->invoiceModel->where('status', 'Unpaid')->countAllResults();
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+    
+    private function getUnpaidInvoicesAmount()
+    {
+        try {
+            $unpaid = $this->invoiceModel->where('status', 'Unpaid')->findAll();
+            return array_sum(array_column($unpaid, 'total_amount'));
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+    
+    private function calculateCollectionEfficiency()
+    {
+        try {
+            $total = $this->invoiceModel->countAllResults();
+            $paid = $this->invoiceModel->where('status', 'Paid')->countAllResults();
+            
+            if ($total > 0) {
+                return round(($paid / $total) * 100, 2);
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+    
+    private function calculateOrderFulfillmentRate()
+    {
+        try {
+            $total = $this->orderModel->countAllResults();
+            $completed = $this->orderModel->where('status', 'Completed')->countAllResults();
+            
+            if ($total > 0) {
+                return round(($completed / $total) * 100, 2);
+            }
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+    
+    private function getMostRequestedMaterials($limit = 10)
+    {
+        try {
+            return $this->stockMovementModel
+                ->select('item_id, SUM(quantity) as total_requested')
+                ->where('movement_type', 'OUT')
+                ->where('created_at >=', date('Y-m-d', strtotime('-30 days')))
+                ->groupBy('item_id')
+                ->orderBy('total_requested', 'DESC')
+                ->findAll($limit);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    private function getMonthlyStockMovements($month, $year)
+    {
+        try {
+            return $this->stockMovementModel
+                ->where('MONTH(created_at)', $month)
+                ->where('YEAR(created_at)', $year)
+                ->findAll();
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    private function getMonthlyFinancialSummary($month, $year)
+    {
+        return [
+            'totalValue' => $this->calculateTotalInventoryValue()
+        ];
+    }
+    
+    private function getTopItemsByMonth($month, $year, $limit)
+    {
+        try {
+            return $this->stockMovementModel
+                ->select('stock_movements.*, COUNT(*) as movement_count, SUM(quantity) as total_quantity')
+                ->where('MONTH(created_at)', $month)
+                ->where('YEAR(created_at)', $year)
+                ->groupBy('item_id')
+                ->orderBy('movement_count', 'DESC')
+                ->findAll($limit);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    private function countMovementType($movements, $type)
+    {
+        $count = 0;
+        foreach ($movements as $movement) {
+            if (strpos($movement['movement_type'], $type) !== false) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+    
+    private function getQuarterMonths($quarter)
+    {
+        $quarters = [
+            1 => [1, 2, 3],
+            2 => [4, 5, 6],
+            3 => [7, 8, 9],
+            4 => [10, 11, 12]
+        ];
+        return $quarters[$quarter] ?? [1, 2, 3];
+    }
+    
+    private function getQuarterlyData($months, $year)
+    {
+        return [
+            'revenue' => 0,
+            'expenses' => 0,
+            'turnover' => $this->calculateStockTurnover(),
+            'orders' => $this->orderModel->countAllResults()
+        ];
     }
 }

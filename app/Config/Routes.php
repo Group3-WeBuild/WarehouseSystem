@@ -76,6 +76,14 @@ $routes->group('admin', function($routes) {
     $routes->post('update-user/(:num)', 'Admin::updateUser/$1');
     $routes->post('delete-user/(:num)', 'Admin::deleteUser/$1');
     $routes->post('toggle-user-status/(:num)', 'Admin::toggleUserStatus/$1');
+    
+    // NEW ROUTES - Backup & Recovery (WeBuild Requirements)
+    $routes->post('backup-database', 'Admin::backupDatabase');
+    $routes->get('list-backups', 'Admin::listBackups');
+    $routes->post('restore-database', 'Admin::restoreDatabase');
+    $routes->get('download-backup/(:any)', 'Admin::downloadBackup/$1');
+    $routes->post('delete-backup', 'Admin::deleteBackup');
+    $routes->post('schedule-backup', 'Admin::scheduleBackup');
 });
 
 // Accounts Payable routes
@@ -150,16 +158,26 @@ $routes->group('warehouse-manager', function($routes) {
     $routes->get('batches-expiring', 'WarehouseManager::getBatchesExpiring');
 });
 
-// Warehouse routes (legacy - keeping for compatibility)
+// Warehouse routes (legacy - redirects to warehouse-manager)
 $routes->group('warehouse', function($routes) {
-    $routes->get('dashboard', 'Warehouse::dashboard');
-    // Add more routes as needed
+    $routes->get('dashboard', 'WarehouseManager::dashboard');
+    $routes->get('inventory', 'WarehouseManager::inventory');
+    $routes->get('stock-movements', 'WarehouseManager::stockMovements');
+    $routes->get('orders', 'WarehouseManager::orders');
+    $routes->get('reports', 'WarehouseManager::reports');
+    $routes->post('add-item', 'WarehouseManager::addItem');
+    $routes->post('update-item/(:num)', 'WarehouseManager::updateItem/$1');
+    $routes->post('delete-item/(:num)', 'WarehouseManager::deleteItem/$1');
+    $routes->post('adjust-stock', 'WarehouseManager::adjustStock');
 });
 
-// Inventory routes
+// Inventory routes (redirects to warehouse-manager for inventory auditor)
 $routes->group('inventory', function($routes) {
-    $routes->get('dashboard', 'Inventory::dashboard');
-    // Add more routes as needed
+    $routes->get('dashboard', 'InventoryAuditor::dashboard');
+    $routes->get('count-sessions', 'InventoryAuditor::countSessions');
+    $routes->get('active-count/(:num)', 'InventoryAuditor::activeCount/$1');
+    $routes->get('discrepancy-review', 'InventoryAuditor::discrepancyReview');
+    $routes->get('reports', 'InventoryAuditor::reports');
 });
 
 // Procurement routes
@@ -221,6 +239,13 @@ $routes->group('management', function($routes) {
     $routes->get('dashboard', 'ManagementDashboard::index');
     $routes->get('inventory-overview', 'ManagementDashboard::inventoryOverview');
     $routes->get('warehouse-analytics', 'ManagementDashboard::warehouseAnalytics');
+    
+    // NEW ROUTES - Forecasting & Analytics (WeBuild Requirements)
+    $routes->get('forecasting', 'ManagementDashboard::forecasting');
+    $routes->get('performance-kpis', 'ManagementDashboard::performanceKpis');
+    $routes->get('executive-reports', 'ManagementDashboard::executiveReports');
+    $routes->get('monthly-report', 'ManagementDashboard::monthlyReport');
+    $routes->get('quarterly-report', 'ManagementDashboard::quarterlyReport');
     
     // AJAX API ENDPOINTS - Real-time data for charts and widgets
     $routes->get('api/inventory-stats', 'ManagementDashboard::getInventoryStats');
