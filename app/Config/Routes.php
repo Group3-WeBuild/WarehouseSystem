@@ -227,3 +227,19 @@ $routes->group('management', function($routes) {
     $routes->get('api/warehouse-performance', 'ManagementDashboard::getWarehousePerformanceData');
     $routes->get('api/inventory-trend', 'ManagementDashboard::getInventoryTrendData');
 });
+
+// Print Report Routes
+$routes->group('print', function($routes) {
+    // Warehouse Manager Reports
+    $routes->get('inventory', 'WarehouseManager::printInventoryReport');
+    $routes->get('stock-movements', 'WarehouseManager::printStockMovementReport');
+    $routes->get('low-stock', 'WarehouseManager::printLowStockReport');
+    
+    // Accounts Receivable Reports
+    $routes->get('ar-invoices', 'AccountsReceivable::printInvoiceReport');
+    $routes->get('ar-aging', 'AccountsReceivable::printAgingReport');
+    
+    // Accounts Payable Reports
+    $routes->get('ap-invoices', 'AccountsPayable::printInvoiceReport');
+    $routes->get('ap-overdue', 'AccountsPayable::printOverdueReport');
+});

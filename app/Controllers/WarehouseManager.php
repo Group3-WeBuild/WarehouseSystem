@@ -851,6 +851,20 @@ class WarehouseManager extends BaseController
             return '0.00';
         }
     }
+    
+    /**
+     * Helper function to get low stock count
+     */
+    private function getLowStockCount()
+    {
+        try {
+            return $this->inventoryModel->where('quantity <=', 'reorder_level', false)
+                        ->where('status', 'Active')
+                        ->countAllResults();
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 
     /**
      * Log stock movement to database
@@ -1365,5 +1379,165 @@ class WarehouseManager extends BaseController
             'message' => "Generated {$result['generated']} barcodes, {$result['failed']} failed",
             'result' => $result
         ]);
+    }
+
+    /**
+     * =====================================================
+     * PRINT REPORTS - Generate Printable HTML
+     * =====================================================
+     */
+    
+    public function printInventoryReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        helper('printing_helper');
+        
+        // Get all inventory items
+        $inventory = $this->inventoryModel->where('status', 'Active')->findAll();
+        
+        // Calculate stats
+        $stats = [
+            'totalItems' => count($inventory),
+            'totalValue' => $this->inventoryModel->getTotalInventoryValue(),
+            'inStock' => $this->inventoryModel->where('quantity >', 0)->where('status', 'Active')->countAllResults(),
+            'lowStock' => $this->getLowStockCount()
+        ];
+        
+        // Generate and return HTML
+        echo generate_inventory_report_html($inventory, $stats);
+    }
+    
+    public function printStockMovementReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        helper('printing_helper');
+        
+        $movements = $this->stockMovementModel
+            ->orderBy('created_at', 'DESC')
+            ->findAll(100); // Last 100 movements
+        
+        $html = '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Stock Movement Report</title>
+            ' . generate_print_styles() . '
+        </head>
+        <body>
+            <div class="print-button-container no-print">
+                <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
+                <button class="btn-print" onclick="window.close()" style="background-color: #95a5a6;">✕ Close</button>
+            </div>
+            
+            ' . generate_print_header('Stock Movement Report', 'Last 100 Transactions') . '
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Reference</th>
+                        <th>Type</th>
+                        <th>Quantity</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        $counter = 1;
+        foreach ($movements as $movement) {
+            $html .= '
+                    <tr>
+                        <td>' . $counter++ . '</td>
+                        <td>' . date('M d, Y', strtotime($movement['created_at'] ?? 'now')) . '</td>
+                        <td>' . esc($movement['reference_number'] ?? '') . '</td>
+                        <td>' . esc($movement['movement_type'] ?? '') . '</td>
+                        <td>' . number_format($movement['quantity'] ?? 0) . '</td>
+                        <td>' . esc($movement['notes'] ?? '') . '</td>
+                    </tr>';
+        }
+        
+        $html .= '
+                </tbody>
+            </table>
+            
+            ' . generate_print_footer() . '
+        </body>
+        </html>';
+        
+        echo $html;
+    }
+    
+    public function printLowStockReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        helper('printing_helper');
+        
+        $lowStockItems = $this->inventoryModel->getLowStockItems();
+        
+        $html = '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Low Stock Alert Report</title>
+            ' . generate_print_styles() . '
+        </head>
+        <body>
+            <div class="print-button-container no-print">
+                <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
+                <button class="btn-print" onclick="window.close()" style="background-color: #95a5a6;">✕ Close</button>
+            </div>
+            
+            ' . generate_print_header('Low Stock Alert Report', 'Items Requiring Reorder') . '
+            
+            <div class="summary-box">
+                <h3>⚠️ URGENT: ' . count($lowStockItems) . ' Items Need Attention</h3>
+                <p>These items are at or below their reorder levels and require immediate restocking.</p>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>SKU</th>
+                        <th>Product Name</th>
+                        <th>Current Qty</th>
+                        <th>Reorder Level</th>
+                        <th>Shortage</th>
+                        <th>Unit Price</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        $counter = 1;
+        foreach ($lowStockItems as $item) {
+            $shortage = ($item['reorder_level'] ?? 0) - ($item['quantity'] ?? 0);
+            $html .= '
+                    <tr>
+                        <td>' . $counter++ . '</td>
+                        <td>' . esc($item['sku'] ?? '') . '</td>
+                        <td>' . esc($item['product_name'] ?? '') . '</td>
+                        <td style="color: red; font-weight: bold;">' . number_format($item['quantity'] ?? 0) . '</td>
+                        <td>' . number_format($item['reorder_level'] ?? 0) . '</td>
+                        <td>' . number_format($shortage) . '</td>
+                        <td>₱' . number_format($item['unit_price'] ?? 0, 2) . '</td>
+                    </tr>';
+        }
+        
+        $html .= '
+                </tbody>
+            </table>
+            
+            ' . generate_print_footer() . '
+        </body>
+        </html>';
+        
+        echo $html;
     }
 }
