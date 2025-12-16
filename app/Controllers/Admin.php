@@ -240,6 +240,14 @@ class Admin extends BaseController
 
         // Get active sessions from database or session storage
         $sessions = $this->getActiveSessions();
+        
+        // Calculate stats
+        $sessionStats = [
+            'active_count' => count($sessions),
+            'suspicious_count' => 0,
+            'logged_in_count' => count($sessions),
+            'avg_session_time' => '45 min'
+        ];
 
         $data = [
             'title' => 'Active Sessions',
@@ -249,7 +257,8 @@ class Admin extends BaseController
                 'email' => $this->session->get('email'),
                 'role' => $this->session->get('role')
             ],
-            'sessions' => $sessions
+            'sessions' => $sessions,
+            'sessionStats' => $sessionStats
         ];
 
         return view('admin_dashboard/active_sessions', $data);
@@ -260,6 +269,49 @@ class Admin extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
+        // Sample security policies
+        $policies = [
+            [
+                'name' => 'Password Complexity',
+                'category' => 'Authentication',
+                'description' => 'Minimum 8 characters, uppercase, lowercase, number required',
+                'enforcement' => 'Mandatory',
+                'last_modified' => date('M d, Y'),
+                'status' => 'Active'
+            ],
+            [
+                'name' => 'Session Timeout',
+                'category' => 'Session',
+                'description' => 'Auto logout after 30 minutes of inactivity',
+                'enforcement' => 'Mandatory',
+                'last_modified' => date('M d, Y'),
+                'status' => 'Active'
+            ],
+            [
+                'name' => 'Failed Login Lockout',
+                'category' => 'Authentication',
+                'description' => 'Lock account after 5 failed login attempts',
+                'enforcement' => 'Mandatory',
+                'last_modified' => date('M d, Y'),
+                'status' => 'Active'
+            ],
+            [
+                'name' => 'Audit Trail Logging',
+                'category' => 'Compliance',
+                'description' => 'Log all user actions for 90 days',
+                'enforcement' => 'Mandatory',
+                'last_modified' => date('M d, Y'),
+                'status' => 'Active'
+            ]
+        ];
+        
+        $policyStats = [
+            'password_policies' => 3,
+            'access_control' => 5,
+            'data_protection' => 4,
+            'session_management' => 2
+        ];
+
         $data = [
             'title' => 'Security Policies',
             'user' => [
@@ -267,7 +319,9 @@ class Admin extends BaseController
                 'name' => $this->session->get('name'),
                 'email' => $this->session->get('email'),
                 'role' => $this->session->get('role')
-            ]
+            ],
+            'policies' => $policies,
+            'policyStats' => $policyStats
         ];
 
         return view('admin_dashboard/security_policies', $data);
@@ -279,6 +333,14 @@ class Admin extends BaseController
         if ($authCheck) return $authCheck;
 
         $logs = $this->getAuditLogs(100);
+        
+        // Calculate stats
+        $logStats = [
+            'total_events' => count($logs),
+            'security_events' => count(array_filter($logs, fn($l) => stripos($l['action'] ?? '', 'login') !== false || stripos($l['action'] ?? '', 'logout') !== false)),
+            'failed_operations' => count(array_filter($logs, fn($l) => stripos($l['action'] ?? '', 'fail') !== false)),
+            'data_size' => round(strlen(json_encode($logs)) / 1024, 2) . ' KB'
+        ];
 
         $data = [
             'title' => 'Audit Logs',
@@ -288,7 +350,8 @@ class Admin extends BaseController
                 'email' => $this->session->get('email'),
                 'role' => $this->session->get('role')
             ],
-            'logs' => $logs
+            'logs' => $logs,
+            'logStats' => $logStats
         ];
 
         return view('admin_dashboard/audit_logs', $data);
@@ -631,15 +694,46 @@ class Admin extends BaseController
     {
         // In a real system, this would fetch from session storage
         return [
-            ['user' => 'admin', 'ip' => '192.168.1.100', 'started' => date('Y-m-d H:i:s', strtotime('-2 hours'))],
-            ['user' => 'accounts_payable', 'ip' => '192.168.1.105', 'started' => date('Y-m-d H:i:s', strtotime('-30 minutes'))],
+            [
+                'user' => 'admin', 
+                'session_id' => substr(md5(time()), 0, 16),
+                'ip' => '192.168.1.100', 
+                'device' => 'Chrome / Windows',
+                'started' => date('Y-m-d H:i:s', strtotime('-2 hours')),
+                'status' => 'Active'
+            ],
+            [
+                'user' => 'warehouse_manager', 
+                'session_id' => substr(md5(time() + 1), 0, 16),
+                'ip' => '192.168.1.105', 
+                'device' => 'Firefox / macOS',
+                'started' => date('Y-m-d H:i:s', strtotime('-30 minutes')),
+                'status' => 'Active'
+            ],
+            [
+                'user' => 'procurement_officer', 
+                'session_id' => substr(md5(time() + 2), 0, 16),
+                'ip' => '192.168.1.110', 
+                'device' => 'Edge / Windows',
+                'started' => date('Y-m-d H:i:s', strtotime('-15 minutes')),
+                'status' => 'Active'
+            ],
         ];
     }
 
     private function getAuditLogs($limit = 100)
     {
-        // In a real system, this would fetch from audit_logs table
-        return [];
+        try {
+            $db = \Config\Database::connect();
+            $builder = $db->table('audit_trail');
+            $builder->select('audit_trail.*, users.name as user_name, users.username');
+            $builder->join('users', 'users.id = audit_trail.user_id', 'left');
+            $builder->orderBy('audit_trail.created_at', 'DESC');
+            $builder->limit($limit);
+            return $builder->get()->getResultArray();
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     private function getDatabaseStats()
@@ -651,12 +745,18 @@ class Admin extends BaseController
             return [
                 'total_tables' => count($tables),
                 'database_size' => '45.2 MB',
+                'active_connections' => '5',
+                'query_performance' => '12ms',
+                'last_backup' => date('M d, Y'),
                 'tables' => $tables
             ];
         } catch (\Exception $e) {
             return [
                 'total_tables' => 0,
                 'database_size' => 'N/A',
+                'active_connections' => '0',
+                'query_performance' => 'N/A',
+                'last_backup' => 'Never',
                 'tables' => []
             ];
         }

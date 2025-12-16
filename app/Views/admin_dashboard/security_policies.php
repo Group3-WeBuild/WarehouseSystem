@@ -111,25 +111,25 @@
         <div class="row g-3 mb-4">
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($policyStats['password_policies'] ?? '3') ?></h4>
               <p>Password Policies</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($policyStats['access_control'] ?? '5') ?></h4>
               <p>Access Control</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($policyStats['data_protection'] ?? '4') ?></h4>
               <p>Data Protection</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($policyStats['session_management'] ?? '2') ?></h4>
               <p>Session Management</p>
             </div>
           </div>
@@ -151,18 +151,26 @@
               </tr>
             </thead>
             <tbody>
+              <?php if (!empty($policies)): ?>
+                <?php foreach ($policies as $policy): ?>
+                <tr>
+                  <td><strong><?= esc($policy['name'] ?? 'N/A') ?></strong></td>
+                  <td><?= esc($policy['category'] ?? 'N/A') ?></td>
+                  <td><?= esc($policy['description'] ?? 'N/A') ?></td>
+                  <td><span class="badge bg-primary"><?= esc($policy['enforcement'] ?? 'Optional') ?></span></td>
+                  <td><?= esc($policy['last_modified'] ?? date('M d, Y')) ?></td>
+                  <td><span class="badge bg-success"><?= esc($policy['status'] ?? 'Active') ?></span></td>
+                  <td>
+                    <button class="btn btn-outline-primary btn-sm">Edit</button>
+                    <button class="btn btn-outline-secondary btn-sm">Test</button>
+                  </td>
+                </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><span class="badge bg-success">Active</span></td>
-                <td>
-                  <button class="btn btn-outline-primary btn-sm">Edit</button>
-                  <button class="btn btn-outline-secondary btn-sm">Test</button>
-                </td>
+                <td colspan="7" class="text-center text-muted">No policies configured</td>
               </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>

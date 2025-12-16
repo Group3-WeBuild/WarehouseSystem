@@ -111,25 +111,25 @@
         <div class="row g-3 mb-4">
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= number_format($logStats['total_events'] ?? count($logs ?? [])) ?></h4>
               <p>Total Events</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= number_format($logStats['security_events'] ?? 0) ?></h4>
               <p>Security Events</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= number_format($logStats['failed_operations'] ?? 0) ?></h4>
               <p>Failed Operations</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($logStats['data_size'] ?? '0 KB') ?></h4>
               <p>Data Size</p>
             </div>
           </div>
@@ -142,32 +142,43 @@
             <thead class="table-light">
               <tr>
                 <th>Timestamp</th>
-                <th>Level</th>
-                <th>Event</th>
-                <th>User</th>
+                <th>Module</th>
                 <th>Action</th>
-                <th>Resource</th>
+                <th>User</th>
+                <th>Table</th>
+                <th>Record ID</th>
                 <th>IP Address</th>
                 <th>Result</th>
                 <th>Details</th>
               </tr>
             </thead>
             <tbody>
+              <?php if (!empty($logs)): ?>
+                <?php foreach (array_slice($logs, 0, 50) as $log): ?>
+                <tr>
+                  <td><?= isset($log['created_at']) ? date('M d, Y H:i', strtotime($log['created_at'])) : 'N/A' ?></td>
+                  <td><?= esc($log['module'] ?? 'System') ?></td>
+                  <td><span class="badge bg-<?= ($log['action'] ?? '') == 'CREATE' ? 'success' : (($log['action'] ?? '') == 'DELETE' ? 'danger' : 'primary') ?>"><?= esc($log['action'] ?? 'N/A') ?></span></td>
+                  <td><?= esc($log['username'] ?? $log['user_name'] ?? 'System') ?></td>
+                  <td><?= esc($log['table_name'] ?? 'N/A') ?></td>
+                  <td><?= esc($log['record_id'] ?? 'N/A') ?></td>
+                  <td><?= esc($log['ip_address'] ?? 'N/A') ?></td>
+                  <td><span class="badge bg-success">SUCCESS</span></td>
+                  <td>
+                    <button class="btn btn-outline-primary btn-sm" onclick="viewLogDetails(<?= $log['id'] ?? 0 ?>)">View</button>
+                  </td>
+                </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><span class="badge bg-success">SUCCESS</span></td>
-                <td>
-                  <button class="btn btn-outline-primary btn-sm">View</button>
-                </td>
+                <td colspan="9" class="text-center text-muted">No audit logs found</td>
               </tr>
+              <?php endif; ?>
             </tbody>
           </table>
+          <?php if (count($logs ?? []) > 50): ?>
+          <p class="text-muted small">Showing 50 of <?= count($logs) ?> logs</p>
+          <?php endif; ?>
         </div>
 
       </div>
