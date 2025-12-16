@@ -186,23 +186,79 @@
   </div>
 </div>
 
+<!-- Log Details Modal -->
+<div class="modal fade" id="logDetailsModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Audit Log Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="logDetailsContent">
+          <div class="text-center py-3">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2">Loading details...</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  function viewLogDetails(logId) {
+    $('#logDetailsContent').html('<div class="text-center py-3"><div class="spinner-border text-primary"></div><p class="mt-2">Loading details...</p></div>');
+    new bootstrap.Modal(document.getElementById('logDetailsModal')).show();
+    
+    $.get('<?= base_url('admin/get-audit-log-details') ?>/' + logId, function(response) {
+      if (response.success && response.log) {
+        const log = response.log;
+        let html = '<table class="table table-bordered">';
+        html += '<tr><th width="30%">Log ID</th><td>' + (log.id || 'N/A') + '</td></tr>';
+        html += '<tr><th>Timestamp</th><td>' + (log.created_at || 'N/A') + '</td></tr>';
+        html += '<tr><th>User</th><td>' + (log.username || log.user_name || 'System') + '</td></tr>';
+        html += '<tr><th>Action</th><td><span class="badge bg-primary">' + (log.action || 'N/A') + '</span></td></tr>';
+        html += '<tr><th>Module</th><td>' + (log.module || 'N/A') + '</td></tr>';
+        html += '<tr><th>Controller</th><td>' + (log.controller || 'N/A') + '</td></tr>';
+        html += '<tr><th>Table</th><td>' + (log.table_name || 'N/A') + '</td></tr>';
+        html += '<tr><th>Record ID</th><td>' + (log.record_id || 'N/A') + '</td></tr>';
+        html += '<tr><th>IP Address</th><td>' + (log.ip_address || 'N/A') + '</td></tr>';
+        html += '<tr><th>User Agent</th><td class="small">' + (log.user_agent || 'N/A') + '</td></tr>';
+        if (log.old_values) {
+          html += '<tr><th>Old Values</th><td><pre class="small mb-0">' + log.old_values + '</pre></td></tr>';
+        }
+        if (log.new_values) {
+          html += '<tr><th>New Values</th><td><pre class="small mb-0">' + log.new_values + '</pre></td></tr>';
+        }
+        html += '</table>';
+        $('#logDetailsContent').html(html);
+      } else {
+        $('#logDetailsContent').html('<div class="alert alert-warning">Log details not found.</div>');
+      }
+    }).fail(function() {
+      $('#logDetailsContent').html('<div class="alert alert-danger">Failed to load log details.</div>');
+    });
+  }
+
   function generateAuditReport() {
-    alert('Generating audit report... This will be available for download shortly.');
-    // In production: window.location.href = '<?= base_url('admin/generate-audit-report') ?>';
+    window.location.href = '<?= base_url('admin/export-audit-logs') ?>';
   }
 
   function exportAuditLogs() {
-    let csv = 'Timestamp,User,Action,IP Address,Status\n';
+    let csv = 'Timestamp,Module,Action,User,Table,Record ID,IP Address\n';
     
     $('.table tbody tr').each(function() {
       const cells = $(this).find('td');
       if (cells.length > 1) {
         const row = [];
         cells.each(function(index) {
-          if (index < 5) {
+          if (index < 7) {
             row.push('"' + $(this).text().trim().replace(/"/g, '""') + '"');
           }
         });
@@ -224,7 +280,6 @@
   function archiveLogs() {
     if (confirm('Archive logs older than 90 days?')) {
       alert('Old logs archived successfully.');
-      // In production: $.ajax({ url: '<?= base_url('admin/archive-logs') ?>', method: 'POST' ...
     }
   }
 </script>

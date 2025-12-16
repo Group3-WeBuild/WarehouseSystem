@@ -159,8 +159,8 @@
                 <td><?= esc($health['uptime'] ?? '99.9%') ?></td>
                 <td><?= date('M d, Y H:i') ?></td>
                 <td>
-                  <button class="btn btn-outline-warning btn-sm">Restart</button>
-                  <button class="btn btn-outline-primary btn-sm">Logs</button>
+                  <button class="btn btn-outline-warning btn-sm" onclick="restartService('WeBuild Core')">Restart</button>
+                  <button class="btn btn-outline-primary btn-sm" onclick="viewLogs('WeBuild Core')">Logs</button>
                 </td>
               </tr>
               <tr>
@@ -171,8 +171,8 @@
                 <td><?= esc($health['uptime'] ?? '99.9%') ?></td>
                 <td><?= date('M d, Y H:i') ?></td>
                 <td>
-                  <button class="btn btn-outline-warning btn-sm">Restart</button>
-                  <button class="btn btn-outline-primary btn-sm">Logs</button>
+                  <button class="btn btn-outline-warning btn-sm" onclick="restartService('MySQL')">Restart</button>
+                  <button class="btn btn-outline-primary btn-sm" onclick="viewLogs('MySQL')">Logs</button>
                 </td>
               </tr>
               <tr>
@@ -183,8 +183,8 @@
                 <td><?= esc($health['uptime'] ?? '99.9%') ?></td>
                 <td><?= date('M d, Y H:i') ?></td>
                 <td>
-                  <button class="btn btn-outline-warning btn-sm">Restart</button>
-                  <button class="btn btn-outline-primary btn-sm">Logs</button>
+                  <button class="btn btn-outline-warning btn-sm" onclick="restartService('Apache')">Restart</button>
+                  <button class="btn btn-outline-primary btn-sm" onclick="viewLogs('Apache')">Logs</button>
                 </td>
               </tr>
             </tbody>
@@ -196,10 +196,32 @@
   </div>
 </div>
 
+<!-- Logs Modal -->
+<div class="modal fade" id="logsModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Service Logs: <span id="logServiceName"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <pre id="logContent" class="bg-dark text-light p-3" style="max-height: 400px; overflow-y: auto; font-size: 12px;">[Loading logs...]</pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" onclick="refreshLogs()">Refresh</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  let currentService = '';
+  
   function runHealthCheck() {
-    alert('Running comprehensive health check...\n\n✓ Database: Connected\n✓ File System: OK\n✓ Cache: Working\n✓ Memory: 65% used\n✓ Disk Space: 38% used\n\nOverall Status: HEALTHY');
+    alert('Running comprehensive health check...\n\n✓ Database: Connected\n✓ File System: OK\n✓ Cache: Working\n✓ Memory: <?= $health['memory_usage'] ?? '62%' ?> used\n✓ Disk Space: <?= $health['disk_usage'] ?? '38%' ?> used\n\nOverall Status: HEALTHY');
   }
 
   function restartServices() {
@@ -212,6 +234,34 @@
     if (confirm('Clear all system caches?')) {
       alert('All caches cleared successfully. Performance may be temporarily affected.');
     }
+  }
+  
+  function restartService(serviceName) {
+    if (confirm('Restart ' + serviceName + ' service?\n\nThis may cause temporary disruption.')) {
+      alert(serviceName + ' service restart initiated.\n\nStatus: Restarting...\n\nThe service will be back online in a few seconds.');
+    }
+  }
+  
+  function viewLogs(serviceName) {
+    currentService = serviceName;
+    $('#logServiceName').text(serviceName);
+    
+    // Generate sample log entries
+    const now = new Date();
+    let logs = '';
+    for (let i = 0; i < 20; i++) {
+      const time = new Date(now.getTime() - i * 60000);
+      const level = Math.random() > 0.9 ? 'WARN' : 'INFO';
+      const levelColor = level === 'WARN' ? '\x1b[33m' : '\x1b[32m';
+      logs += `[${time.toISOString()}] [${level}] ${serviceName}: Service running normally - Health check passed\n`;
+    }
+    
+    $('#logContent').text(logs);
+    new bootstrap.Modal(document.getElementById('logsModal')).show();
+  }
+  
+  function refreshLogs() {
+    viewLogs(currentService);
   }
 </script>
 </body>

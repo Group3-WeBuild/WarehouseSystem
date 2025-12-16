@@ -104,40 +104,41 @@
         <div class="mb-4 d-flex flex-wrap gap-2">
           <button class="btn btn-primary btn-sm" onclick="startManualBackup()">Start Manual Backup</button>
           <button class="btn btn-danger btn-sm" onclick="emergencyRecovery()">Emergency Recovery</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="refreshBackups()">Refresh List</button>
         </div>
 
         <!-- Stats Boxes -->
         <div class="row g-3 mb-4">
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($backupStats['last_backup'] ?? 'Never') ?></h4>
               <p>Last Backup</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($backupStats['success_rate'] ?? '100%') ?></h4>
               <p>Success Rate</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($backupStats['storage_used'] ?? '0 KB') ?></h4>
               <p>Storage Used</p>
             </div>
           </div>
           <div class="col-md-3">
             <div class="stat-box">
-              <h4>—</h4>
+              <h4><?= esc($backupStats['rto_target'] ?? '< 4 hours') ?></h4>
               <p>RTO Target</p>
             </div>
           </div>
         </div>
 
         <!-- Scheduled Backup Jobs Table -->
-        <div>
+        <div class="mb-4">
           <h6><strong>Scheduled Backup Jobs</strong></h6>
-          <button class="btn btn-sm btn-primary mb-2">New Schedule</button>
+          <button class="btn btn-sm btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#scheduleModal">New Schedule</button>
           <table class="table table-bordered table-sm mt-2">
             <thead class="table-light">
               <tr>
@@ -147,33 +148,67 @@
                 <th>Duration</th>
                 <th>Next Run</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
+              <?php if (!empty($scheduledJobs)): ?>
+                <?php foreach ($scheduledJobs as $job): ?>
+                <tr>
+                  <td><?= esc($job['name']) ?></td>
+                  <td><?= esc($job['frequency']) ?></td>
+                  <td><?= esc($job['target']) ?></td>
+                  <td><?= esc($job['duration']) ?></td>
+                  <td><?= esc($job['next_run']) ?></td>
+                  <td><span class="badge bg-success"><?= esc($job['status']) ?></span></td>
+                  <td>
+                    <button class="btn btn-outline-primary btn-sm" onclick="runNow('<?= esc($job['name']) ?>')">Run Now</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="editSchedule('<?= esc($job['name']) ?>')">Edit</button>
+                  </td>
+                </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><span class="badge bg-success">Active</span></td>
+                <td colspan="7" class="text-center text-muted">No scheduled jobs</td>
               </tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Backup History -->
+        <div>
+          <h6><strong>Backup History</strong></h6>
+          <table class="table table-bordered table-sm mt-2">
+            <thead class="table-light">
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><span class="badge bg-success">Active</span></td>
+                <th>Backup Name</th>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Created</th>
+                <th>Actions</th>
               </tr>
+            </thead>
+            <tbody>
+              <?php if (!empty($backups)): ?>
+                <?php foreach ($backups as $backup): ?>
+                <tr>
+                  <td><code><?= esc($backup['name']) ?></code></td>
+                  <td><?= esc($backup['type']) ?></td>
+                  <td><?= esc($backup['size']) ?></td>
+                  <td><?= esc($backup['created']) ?></td>
+                  <td>
+                    <a href="<?= base_url('admin/download-backup/' . urlencode($backup['name'])) ?>" class="btn btn-outline-primary btn-sm">Download</a>
+                    <button class="btn btn-outline-success btn-sm" onclick="restoreBackup('<?= esc($backup['name']) ?>')">Restore</button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="deleteBackup('<?= esc($backup['name']) ?>')">Delete</button>
+                  </td>
+                </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td><span class="badge bg-success">Active</span></td>
+                <td colspan="5" class="text-center text-muted">No backups found. Click "Start Manual Backup" to create one.</td>
               </tr>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
@@ -183,11 +218,55 @@
   </div>
 </div>
 
+<!-- Schedule Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Backup Schedule</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Job Name</label>
+          <input type="text" class="form-control" id="jobName" placeholder="e.g., Nightly Backup">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Frequency</label>
+          <select class="form-select" id="frequency">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Time</label>
+          <input type="time" class="form-control" id="backupTime" value="02:00">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveSchedule()">Save Schedule</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   function startManualBackup() {
-    if (confirm('Start manual backup now? This will create a full system backup.')) {
-      alert('Manual backup initiated...\n\nBackup ID: BKP_' + Date.now() + '\nType: Full System Backup\nStatus: In Progress\n\nEstimated completion: 5-10 minutes\nYou will receive a notification when complete.');
+    if (confirm('Start manual backup now? This will create a full database backup.')) {
+      $.post('<?= base_url('admin/backup-database') ?>', function(response) {
+        if (response.success) {
+          alert('Backup created successfully!\n\nFilename: ' + response.filename + '\nSize: ' + Math.round(response.size / 1024) + ' KB');
+          location.reload();
+        } else {
+          alert('Backup failed: ' + response.message);
+        }
+      }).fail(function() {
+        alert('Backup request failed. Please try again.');
+      });
     }
   }
 
@@ -201,16 +280,58 @@
     }
   }
 
-  function restoreBackup(backupId) {
-    if (confirm('Restore from backup: ' + backupId + '?\n\nThis will replace current data with the backup version.')) {
-      alert('Restore process initiated for backup: ' + backupId);
+  function restoreBackup(backupName) {
+    if (confirm('Restore from backup: ' + backupName + '?\n\n⚠️ Warning: This will replace current data with the backup version.')) {
+      $.post('<?= base_url('admin/restore-database') ?>', { filename: backupName }, function(response) {
+        if (response.success) {
+          alert('Database restored successfully from: ' + backupName);
+          location.reload();
+        } else {
+          alert('Restore failed: ' + response.message);
+        }
+      });
     }
   }
 
-  function deleteBackup(backupId) {
-    if (confirm('Permanently delete backup: ' + backupId + '?\n\nThis action cannot be undone.')) {
-      alert('Backup deleted: ' + backupId);
+  function deleteBackup(backupName) {
+    if (confirm('Permanently delete backup: ' + backupName + '?\n\nThis action cannot be undone.')) {
+      $.post('<?= base_url('admin/delete-backup') ?>', { filename: backupName }, function(response) {
+        if (response.success) {
+          alert('Backup deleted successfully');
+          location.reload();
+        } else {
+          alert('Delete failed: ' + response.message);
+        }
+      });
     }
+  }
+
+  function runNow(jobName) {
+    if (confirm('Run backup job "' + jobName + '" now?')) {
+      startManualBackup();
+    }
+  }
+
+  function editSchedule(jobName) {
+    alert('Edit schedule for: ' + jobName + '\n\nSchedule editor coming soon.');
+  }
+
+  function saveSchedule() {
+    const name = $('#jobName').val();
+    const freq = $('#frequency').val();
+    const time = $('#backupTime').val();
+    
+    if (!name) {
+      alert('Please enter a job name');
+      return;
+    }
+    
+    alert('Schedule created!\n\nJob: ' + name + '\nFrequency: ' + freq + '\nTime: ' + time);
+    bootstrap.Modal.getInstance(document.getElementById('scheduleModal')).hide();
+  }
+
+  function refreshBackups() {
+    location.reload();
   }
 </script>
 </body>

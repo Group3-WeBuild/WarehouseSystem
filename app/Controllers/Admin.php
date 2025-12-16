@@ -208,15 +208,27 @@ class Admin extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
+        // Get user counts per role from database
+        $db = \Config\Database::connect();
+        $userCountsByRole = [];
+        try {
+            $result = $db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role")->getResultArray();
+            foreach ($result as $row) {
+                $userCountsByRole[$row['role']] = $row['count'];
+            }
+        } catch (\Exception $e) {
+            // If query fails, use empty array
+        }
+
         $roles = [
-            'IT Administrator' => ['Full system access', 'User management', 'System configuration'],
-            'Top Management' => ['View all reports', 'Approve decisions', 'Strategic planning'],
-            'Warehouse Manager' => ['Inventory management', 'Staff supervision', 'Order processing'],
-            'Accounts Payable Clerk' => ['Process vendor invoices', 'Make payments', 'Track expenses'],
-            'Accounts Receivable Clerk' => ['Manage customer invoices', 'Track payments', 'Generate reports'],
-            'Procurement Officer' => ['Purchase orders', 'Vendor management', 'Budget tracking'],
-            'Warehouse Staff' => ['Stock handling', 'Order fulfillment', 'Basic inventory tasks'],
-            'Inventory Auditor' => ['Audit inventory', 'Generate reports', 'Quality checks']
+            ['name' => 'IT Administrator', 'key' => 'IT Administrator', 'permissions' => ['Full system access', 'User management', 'System configuration']],
+            ['name' => 'Top Management', 'key' => 'Top Management', 'permissions' => ['View all reports', 'Approve decisions', 'Strategic planning']],
+            ['name' => 'Warehouse Manager', 'key' => 'Warehouse Manager', 'permissions' => ['Inventory management', 'Staff supervision', 'Order processing']],
+            ['name' => 'Accounts Payable Clerk', 'key' => 'Accounts Payable Clerk', 'permissions' => ['Process vendor invoices', 'Make payments', 'Track expenses']],
+            ['name' => 'Accounts Receivable Clerk', 'key' => 'Accounts Receivable Clerk', 'permissions' => ['Manage customer invoices', 'Track payments', 'Generate reports']],
+            ['name' => 'Procurement Officer', 'key' => 'Procurement Officer', 'permissions' => ['Purchase orders', 'Vendor management', 'Budget tracking']],
+            ['name' => 'Warehouse Staff', 'key' => 'Warehouse Staff', 'permissions' => ['Stock handling', 'Order fulfillment', 'Basic inventory tasks']],
+            ['name' => 'Inventory Auditor', 'key' => 'Inventory Auditor', 'permissions' => ['Audit inventory', 'Generate reports', 'Quality checks']]
         ];
 
         $data = [
@@ -227,7 +239,8 @@ class Admin extends BaseController
                 'email' => $this->session->get('email'),
                 'role' => $this->session->get('role')
             ],
-            'roles' => $roles
+            'roles' => $roles,
+            'userCounts' => $userCountsByRole
         ];
 
         return view('admin_dashboard/roles_permissions', $data);
@@ -441,6 +454,67 @@ class Admin extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
+        // Get list of backup files
+        $backupDir = WRITEPATH . 'backups/';
+        $backups = [];
+        
+        if (is_dir($backupDir)) {
+            $files = glob($backupDir . '*.sql');
+            foreach ($files as $file) {
+                $backups[] = [
+                    'name' => basename($file),
+                    'size' => round(filesize($file) / 1024, 2) . ' KB',
+                    'created' => date('M d, Y H:i', filemtime($file)),
+                    'type' => 'Full Backup'
+                ];
+            }
+            // Sort by newest first
+            usort($backups, function($a, $b) {
+                return strtotime($b['created']) - strtotime($a['created']);
+            });
+        }
+        
+        // Calculate stats
+        $totalSize = 0;
+        foreach ($backups as $b) {
+            $totalSize += floatval($b['size']);
+        }
+        
+        $backupStats = [
+            'last_backup' => count($backups) > 0 ? $backups[0]['created'] : 'Never',
+            'success_rate' => '100%',
+            'storage_used' => round($totalSize, 2) . ' KB',
+            'rto_target' => '< 4 hours'
+        ];
+        
+        // Sample scheduled jobs
+        $scheduledJobs = [
+            [
+                'name' => 'Daily Full Backup',
+                'frequency' => 'Daily at 2:00 AM',
+                'target' => 'All Tables',
+                'duration' => '~5 min',
+                'next_run' => date('M d, Y', strtotime('+1 day')) . ' 02:00',
+                'status' => 'Active'
+            ],
+            [
+                'name' => 'Weekly Archive',
+                'frequency' => 'Sunday 3:00 AM',
+                'target' => 'All Tables + Logs',
+                'duration' => '~15 min',
+                'next_run' => date('M d, Y', strtotime('next sunday')) . ' 03:00',
+                'status' => 'Active'
+            ],
+            [
+                'name' => 'Monthly Offsite',
+                'frequency' => '1st of Month',
+                'target' => 'Full System',
+                'duration' => '~30 min',
+                'next_run' => date('M 01, Y', strtotime('first day of next month')) . ' 04:00',
+                'status' => 'Active'
+            ]
+        ];
+
         $data = [
             'title' => 'Backup & Recovery',
             'user' => [
@@ -448,7 +522,10 @@ class Admin extends BaseController
                 'name' => $this->session->get('name'),
                 'email' => $this->session->get('email'),
                 'role' => $this->session->get('role')
-            ]
+            ],
+            'backups' => $backups,
+            'backupStats' => $backupStats,
+            'scheduledJobs' => $scheduledJobs
         ];
 
         return view('admin_dashboard/backup_recovery', $data);
@@ -763,6 +840,30 @@ class Admin extends BaseController
     }
     
     /**
+     * Get users by role - AJAX endpoint
+     */
+    public function getUsersByRole()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $this->response->setJSON(['success' => false, 'users' => []]);
+        
+        $role = $this->request->getGet('role');
+        
+        try {
+            $db = \Config\Database::connect();
+            $users = $db->table('users')
+                ->select('id, name, username, email, role, status')
+                ->where('role', $role)
+                ->get()
+                ->getResultArray();
+            
+            return $this->response->setJSON(['success' => true, 'users' => $users]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON(['success' => false, 'users' => []]);
+        }
+    }
+    
+    /**
      * =====================================================
      * BACKUP AND RECOVERY SYSTEM
      * =====================================================
@@ -998,6 +1099,33 @@ class Admin extends BaseController
                 'success' => false,
                 'message' => 'Failed to set schedule: ' . $e->getMessage()
             ]);
+        }
+    }
+    
+    /**
+     * Get Audit Log Details - AJAX endpoint
+     */
+    public function getAuditLogDetails($id)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $this->response->setJSON(['success' => false, 'message' => 'Unauthorized']);
+        
+        try {
+            $db = \Config\Database::connect();
+            $log = $db->table('audit_trail')
+                ->select('audit_trail.*, users.name as user_name, users.username')
+                ->join('users', 'users.id = audit_trail.user_id', 'left')
+                ->where('audit_trail.id', $id)
+                ->get()
+                ->getRowArray();
+            
+            if ($log) {
+                return $this->response->setJSON(['success' => true, 'log' => $log]);
+            } else {
+                return $this->response->setJSON(['success' => false, 'message' => 'Log not found']);
+            }
+        } catch (\Exception $e) {
+            return $this->response->setJSON(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 }

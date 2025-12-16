@@ -79,6 +79,8 @@ $routes->group('admin', function($routes) {
     $routes->post('update-user/(:num)', 'Admin::updateUser/$1');
     $routes->post('delete-user/(:num)', 'Admin::deleteUser/$1');
     $routes->post('toggle-user-status/(:num)', 'Admin::toggleUserStatus/$1');
+    $routes->get('get-users-by-role', 'Admin::getUsersByRole');
+    $routes->get('get-audit-log-details/(:num)', 'Admin::getAuditLogDetails/$1');
     
     // NEW ROUTES - Backup & Recovery (WeBuild Requirements)
     $routes->post('backup-database', 'Admin::backupDatabase');
