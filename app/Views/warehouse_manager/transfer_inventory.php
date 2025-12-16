@@ -97,7 +97,7 @@
                                         <select class="form-select" name="from_warehouse_id" id="fromWarehouse" required onchange="loadSourceInventory()">
                                             <option value="">Select Source Warehouse</option>
                                             <?php foreach ($warehouses ?? [] as $wh): ?>
-                                            <option value="<?= $wh['id'] ?>" <?= ($sourceWarehouse['id'] ?? '') == $wh['id'] ? 'selected' : '' ?>><?= esc($wh['name']) ?></option>
+                                            <option value="<?= $wh['id'] ?>" <?= ($sourceWarehouse['id'] ?? '') == $wh['id'] ? 'selected' : '' ?>><?= esc($wh['warehouse_name'] ?? $wh['name'] ?? 'Unknown') ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -124,7 +124,7 @@
                                         <select class="form-select" name="to_warehouse_id" id="toWarehouse" required>
                                             <option value="">Select Destination Warehouse</option>
                                             <?php foreach ($warehouses ?? [] as $wh): ?>
-                                            <option value="<?= $wh['id'] ?>"><?= esc($wh['name']) ?></option>
+                                            <option value="<?= $wh['id'] ?>"><?= esc($wh['warehouse_name'] ?? $wh['name'] ?? 'Unknown') ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -161,7 +161,7 @@
                                                 <select class="form-select item-select" name="items[0][item_id]" onchange="updateAvailable(this)">
                                                     <option value="">Select Item</option>
                                                     <?php foreach ($items ?? [] as $item): ?>
-                                                    <option value="<?= $item['id'] ?>" data-quantity="<?= $item['quantity'] ?? 0 ?>"><?= esc($item['name']) ?> (<?= $item['sku'] ?? '' ?>)</option>
+                                                    <option value="<?= $item['id'] ?>" data-quantity="<?= $item['quantity'] ?? 0 ?>"><?= esc($item['product_name'] ?? $item['name'] ?? 'Unknown') ?> (<?= $item['sku'] ?? '' ?>)</option>
                                                     <?php endforeach; ?>
                                                 </select>
                                             </td>
@@ -242,7 +242,7 @@ function addItem() {
             <select class="form-select item-select" name="items[${itemIndex}][item_id]" onchange="updateAvailable(this)">
                 <option value="">Select Item</option>
                 <?php foreach ($items ?? [] as $item): ?>
-                <option value="<?= $item['id'] ?>" data-quantity="<?= $item['quantity'] ?? 0 ?>"><?= esc($item['name']) ?> (<?= $item['sku'] ?? '' ?>)</option>
+                <option value="<?= $item['id'] ?>" data-quantity="<?= $item['quantity'] ?? 0 ?>"><?= esc($item['product_name'] ?? $item['name'] ?? 'Unknown') ?> (<?= $item['sku'] ?? '' ?>)</option>
                 <?php endforeach; ?>
             </select>
         </td>

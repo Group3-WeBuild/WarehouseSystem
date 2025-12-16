@@ -219,15 +219,15 @@
                         
                         <h6>Accuracy by Category</h6>
                         <?php 
-                        $categories = $accuracy['by_category'] ?? [
-                            ['name' => 'Raw Materials', 'accuracy' => 98],
-                            ['name' => 'Finished Goods', 'accuracy' => 94],
-                            ['name' => 'Packaging', 'accuracy' => 97],
-                            ['name' => 'Supplies', 'accuracy' => 91],
+                        $categoryAccuracy = $accuracy['by_category'] ?? [
+                            ['category_name' => 'Raw Materials', 'accuracy' => 98],
+                            ['category_name' => 'Finished Goods', 'accuracy' => 94],
+                            ['category_name' => 'Packaging', 'accuracy' => 97],
+                            ['category_name' => 'Supplies', 'accuracy' => 91],
                         ];
-                        foreach ($categories as $cat): ?>
+                        foreach ($categoryAccuracy as $cat): ?>
                         <div class="row align-items-center mb-2">
-                            <div class="col-md-3"><?= esc($cat['name']) ?></div>
+                            <div class="col-md-3"><?= esc($cat['category_name'] ?? $cat['name'] ?? 'Unknown') ?></div>
                             <div class="col-md-7">
                                 <div class="progress" style="height: 20px;">
                                     <div class="progress-bar bg-<?= $cat['accuracy'] >= 95 ? 'success' : ($cat['accuracy'] >= 90 ? 'warning' : 'danger') ?>" style="width: <?= $cat['accuracy'] ?>%"></div>

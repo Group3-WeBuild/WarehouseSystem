@@ -181,7 +181,7 @@
                                     <select class="form-select" name="category">
                                         <option value="">All Categories</option>
                                         <?php foreach ($categories ?? [] as $cat): ?>
-                                        <option value="<?= $cat['id'] ?>"><?= esc($cat['name']) ?></option>
+                                        <option value="<?= $cat['id'] ?>"><?= esc($cat['category_name'] ?? $cat['name'] ?? 'Unknown') ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -215,7 +215,7 @@
                             <tbody>
                                 <?php foreach ($recentReports as $report): ?>
                                 <tr>
-                                    <td><?= esc($report['name'] ?? 'Report') ?></td>
+                                    <td><?= esc($report['report_name'] ?? $report['name'] ?? 'Report') ?></td>
                                     <td><span class="badge bg-secondary"><?= ucfirst($report['type'] ?? 'General') ?></span></td>
                                     <td><?= date('M d, Y h:i A', strtotime($report['created_at'] ?? 'now')) ?></td>
                                     <td><?= esc($report['user_name'] ?? 'System') ?></td>

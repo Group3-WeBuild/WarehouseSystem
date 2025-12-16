@@ -118,7 +118,7 @@
                                     <div class="card-custom warehouse-card">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <div>
-                                                <h6 class="mb-1"><?= esc($warehouse['name']) ?></h6>
+                                                <h6 class="mb-1"><?= esc($warehouse['warehouse_name'] ?? $warehouse['name'] ?? 'Unknown') ?></h6>
                                                 <small class="text-muted"><?= esc($warehouse['location']) ?></small>
                                             </div>
                                             <span class="badge bg-<?= $warehouse['status'] == 'Active' ? 'success' : 'secondary' ?>">
@@ -185,7 +185,7 @@
         data: {
             labels: [<?php 
                 if (!empty($performance['warehouses'])) {
-                    echo implode(',', array_map(fn($w) => "'" . esc($w['name']) . "'", $performance['warehouses']));
+                    echo implode(',', array_map(fn($w) => "'" . esc($w['warehouse_name'] ?? $w['name'] ?? 'Unknown') . "'", $performance['warehouses']));
                 }
             ?>],
             datasets: [

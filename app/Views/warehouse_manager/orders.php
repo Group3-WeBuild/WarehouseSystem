@@ -225,7 +225,7 @@
                             <select class="form-select" name="customer_id" required>
                                 <option value="">Select Customer</option>
                                 <?php foreach ($customers ?? [] as $c): ?>
-                                <option value="<?= $c['id'] ?>"><?= esc($c['name']) ?></option>
+                                <option value="<?= $c['id'] ?>"><?= esc($c['client_name'] ?? $c['name'] ?? 'Unknown') ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

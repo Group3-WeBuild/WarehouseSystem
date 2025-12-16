@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
             'ClientSeeder',            // Clients/Customers
             'StockMovementSeeder',     // Stock movements (references inventory, warehouses, users)
             'OrderSeeder',             // Orders and order items (references inventory)
+            'AccountsPayableSeeder',   // Vendor invoices and payments
+            'AccountsReceivableSeeder', // Client invoices and payments
         ];
 
         foreach ($seeders as $seeder) {

@@ -77,7 +77,7 @@
         <div class="col-md-10 px-0 main-content">
             <div class="topbar d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-0"><i class="bi bi-building text-primary"></i> <?= esc($warehouse['name'] ?? 'Warehouse') ?> Inventory</h5>
+                    <h5 class="mb-0"><i class="bi bi-building text-primary"></i> <?= esc($warehouse['warehouse_name'] ?? $warehouse['name'] ?? 'Warehouse') ?> Inventory</h5>
                 </div>
                 <div>
                     <a href="<?= base_url('warehouse-manager/transfer-inventory/' . ($warehouse['id'] ?? 0)) ?>" class="btn btn-info btn-sm"><i class="bi bi-arrow-repeat"></i> Transfer Stock</a>
@@ -92,7 +92,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <strong>Warehouse:</strong><br>
-                                <?= esc($warehouse['name'] ?? 'Main Warehouse') ?>
+                                <?= esc($warehouse['warehouse_name'] ?? $warehouse['name'] ?? 'Main Warehouse') ?>
                             </div>
                             <div class="col-md-3">
                                 <strong>Location:</strong><br>
@@ -149,7 +149,7 @@
                                 <select class="form-select" name="category">
                                     <option value="">All Categories</option>
                                     <?php foreach ($categories ?? [] as $cat): ?>
-                                    <option value="<?= $cat['id'] ?>" <?= ($_GET['category'] ?? '') == $cat['id'] ? 'selected' : '' ?>><?= esc($cat['name']) ?></option>
+                                    <option value="<?= $cat['id'] ?>" <?= ($_GET['category'] ?? '') == $cat['id'] ? 'selected' : '' ?>><?= esc($cat['category_name'] ?? $cat['name'] ?? 'Unknown') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -202,8 +202,8 @@
                                     ?>
                                     <tr class="<?= $rowClass ?>">
                                         <td><code><?= esc($item['sku'] ?? 'N/A') ?></code></td>
-                                        <td><strong><?= esc($item['name'] ?? 'Unknown') ?></strong></td>
-                                        <td><?= esc($item['category_name'] ?? 'N/A') ?></td>
+                                        <td><strong><?= esc($item['product_name'] ?? $item['name'] ?? 'Unknown') ?></strong></td>
+                                        <td><?= esc($item['category_name'] ?? $item['category'] ?? 'N/A') ?></td>
                                         <td><?= esc($item['bin_location'] ?? 'N/A') ?></td>
                                         <td>
                                             <span class="badge bg-<?= $qty <= 0 ? 'danger' : ($qty <= $reorderPoint ? 'warning' : 'success') ?>">

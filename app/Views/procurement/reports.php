@@ -182,7 +182,7 @@
                                     <select class="form-select" name="vendor_id">
                                         <option value="">All Vendors</option>
                                         <?php foreach ($vendors ?? [] as $v): ?>
-                                        <option value="<?= $v['id'] ?>"><?= esc($v['name']) ?></option>
+                                        <option value="<?= $v['id'] ?>"><?= esc($v['vendor_name'] ?? $v['name'] ?? 'Unknown') ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -243,7 +243,7 @@
                                 ?>
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between">
-                                        <span><?= esc($v['name']) ?></span>
+                                        <span><?= esc($v['vendor_name'] ?? $v['name'] ?? 'Unknown') ?></span>
                                         <span class="text-muted">₱<?= number_format($v['amount'], 0) ?></span>
                                     </div>
                                     <div class="progress" style="height: 8px;">
