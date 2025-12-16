@@ -41,7 +41,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white">WITMS</h5>
+                <h5 class="text-white">WeBuild</h5>
                 <p class="text-white-50 small">Warehouse Manager</p>
             </div>
             <nav class="nav flex-column">
@@ -50,6 +50,9 @@
                 </a>
                 <a class="nav-link" href="<?= base_url('warehouse-manager/inventory') ?>">
                     <i class="bi bi-box-seam"></i> Inventory
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/barcode-scanner') ?>">
+                    <i class="bi bi-qr-code-scan"></i> Barcode Scanner
                 </a>
                 <a class="nav-link active" href="<?= base_url('warehouse-manager/stock-movements') ?>">
                     <i class="bi bi-arrow-left-right"></i> Stock Movements
@@ -123,10 +126,11 @@
                         <div class="col-md-2">
                             <select class="form-select" name="type">
                                 <option value="">All Types</option>
-                                <option value="in" <?= ($_GET['type'] ?? '') == 'in' ? 'selected' : '' ?>>Stock In</option>
-                                <option value="out" <?= ($_GET['type'] ?? '') == 'out' ? 'selected' : '' ?>>Stock Out</option>
-                                <option value="transfer" <?= ($_GET['type'] ?? '') == 'transfer' ? 'selected' : '' ?>>Transfer</option>
-                                <option value="adjustment" <?= ($_GET['type'] ?? '') == 'adjustment' ? 'selected' : '' ?>>Adjustment</option>
+                                <option value="Stock In" <?= ($_GET['type'] ?? '') == 'Stock In' ? 'selected' : '' ?>>Stock In</option>
+                                <option value="Stock Out" <?= ($_GET['type'] ?? '') == 'Stock Out' ? 'selected' : '' ?>>Stock Out</option>
+                                <option value="Transfer" <?= ($_GET['type'] ?? '') == 'Transfer' ? 'selected' : '' ?>>Transfer</option>
+                                <option value="Adjustment" <?= ($_GET['type'] ?? '') == 'Adjustment' ? 'selected' : '' ?>>Adjustment</option>
+                                <option value="Return" <?= ($_GET['type'] ?? '') == 'Return' ? 'selected' : '' ?>>Return</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -192,9 +196,12 @@
                                         <?= esc($m['location_name'] ?? $m['warehouse_name'] ?? 'Main') ?>
                                         <?php endif; ?>
                                     </td>
-                                    <td><?= esc($m['user_name'] ?? 'System') ?></td>
+                                    <td><?= esc($m['user_name'] ?? $m['username'] ?? 'System') ?></td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(<?= $m['id'] ?? 0 ?>)"><i class="bi bi-eye"></i></button>
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                            onclick="viewDetails(<?= $m['id'] ?? 0 ?>, '<?= esc($m['product_name'] ?? $m['item_name'] ?? 'Unknown') ?>', '<?= esc($m['sku'] ?? 'N/A') ?>', '<?= esc($m['movement_type'] ?? 'N/A') ?>', <?= $m['quantity'] ?? 0 ?>, '<?= esc($m['reference_number'] ?? 'N/A') ?>', '<?= esc($m['notes'] ?? '') ?>', '<?= esc($m['created_at'] ?? '') ?>', '<?= esc($m['username'] ?? 'System') ?>')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -354,10 +361,55 @@
     </div>
 </div>
 
+<!-- View Movement Details Modal -->
+<div class="modal fade" id="viewDetailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-eye"></i> Movement Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="movementDetailsContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="mt-2">Loading details...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function viewDetails(id) {
-    alert('View movement details for ID: ' + id);
+function viewDetails(id, productName, sku, type, quantity, reference, notes, createdAt, username) {
+    var typeColors = {
+        'Stock In': 'success',
+        'Stock Out': 'danger', 
+        'Transfer': 'info',
+        'Adjustment': 'warning',
+        'Return': 'danger'
+    };
+    var badgeColor = typeColors[type] || 'secondary';
+    
+    var html = '<table class="table table-borderless">';
+    html += '<tr><th width="35%">Product:</th><td>' + productName + '</td></tr>';
+    html += '<tr><th>SKU:</th><td>' + sku + '</td></tr>';
+    html += '<tr><th>Movement Type:</th><td><span class="badge bg-' + badgeColor + '">' + type + '</span></td></tr>';
+    html += '<tr><th>Quantity:</th><td class="fw-bold">' + (quantity > 0 && type == 'Stock In' ? '+' : '') + quantity + '</td></tr>';
+    html += '<tr><th>Reference #:</th><td>' + reference + '</td></tr>';
+    html += '<tr><th>Performed By:</th><td>' + username + '</td></tr>';
+    html += '<tr><th>Date/Time:</th><td>' + (createdAt ? new Date(createdAt).toLocaleString() : 'N/A') + '</td></tr>';
+    if (notes) {
+        html += '<tr><th>Notes:</th><td>' + notes + '</td></tr>';
+    }
+    html += '</table>';
+    
+    document.getElementById('movementDetailsContent').innerHTML = html;
+    var modal = new bootstrap.Modal(document.getElementById('viewDetailsModal'));
+    modal.show();
 }
 </script>
 </body>

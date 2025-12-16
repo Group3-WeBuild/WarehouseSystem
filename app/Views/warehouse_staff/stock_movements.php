@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Movements | WITMS</title>
+    <title>Stock Movements | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -45,7 +45,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Warehouse Staff</small>
             </div>
             <nav class="nav flex-column">
@@ -54,6 +54,9 @@
                 </a>
                 <a class="nav-link" href="<?= base_url('warehouse-staff/inventory') ?>">
                     <i class="bi bi-box-seam"></i> View Inventory
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-staff/barcode-scanner') ?>">
+                    <i class="bi bi-qr-code-scan"></i> Barcode Scanner
                 </a>
                 <a class="nav-link active" href="<?= base_url('warehouse-staff/stock-movements') ?>">
                     <i class="bi bi-arrow-left-right"></i> Stock Movements
@@ -127,8 +130,11 @@
                             <div class="col-md-3">
                                 <select id="typeFilter" class="form-select">
                                     <option value="">All Types</option>
-                                    <option value="IN">Stock In</option>
-                                    <option value="OUT">Stock Out</option>
+                                    <option value="Stock In">Stock In</option>
+                                    <option value="Stock Out">Stock Out</option>
+                                    <option value="Transfer">Transfer</option>
+                                    <option value="Adjustment">Adjustment</option>
+                                    <option value="Return">Return</option>
                                 </select>
                             </div>
                             <div class="col-md-3">

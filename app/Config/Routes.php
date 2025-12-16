@@ -134,6 +134,7 @@ $routes->group('warehouse-manager', function($routes) {
     $routes->get('stock-movements', 'WarehouseManager::stockMovements');
     $routes->get('orders', 'WarehouseManager::orders');
     $routes->get('reports', 'WarehouseManager::reports');
+    $routes->get('barcode-scanner', 'WarehouseManager::barcodeScanner');
     
     // Multi-Warehouse Views (NEW)
     $routes->get('warehouse-inventory/(:num)', 'WarehouseManager::warehouseInventory/$1');
@@ -144,6 +145,7 @@ $routes->group('warehouse-manager', function($routes) {
     $routes->post('add-item', 'WarehouseManager::addItem');
     $routes->post('update-item/(:num)', 'WarehouseManager::updateItem/$1');
     $routes->post('delete-item/(:num)', 'WarehouseManager::deleteItem/$1');
+    $routes->get('view-item/(:num)', 'WarehouseManager::viewItem/$1');
     $routes->post('adjust-stock', 'WarehouseManager::adjustStock');
     $routes->post('process-order/(:num)', 'WarehouseManager::processOrder/$1');
     $routes->post('complete-order/(:num)', 'WarehouseManager::completeOrder/$1');
@@ -169,6 +171,7 @@ $routes->group('warehouse-staff', function($routes) {
     $routes->get('inventory', 'WarehouseManager::staffInventory');
     $routes->get('stock-movements', 'WarehouseManager::staffStockMovements');
     $routes->get('orders', 'WarehouseManager::staffOrders');
+    $routes->get('barcode-scanner', 'WarehouseManager::staffBarcodeScanner');
     
     // Limited AJAX ENDPOINTS - Basic operations only
     $routes->post('update-order-status/(:num)', 'WarehouseManager::updateOrderStatus/$1');
@@ -221,6 +224,7 @@ $routes->group('procurement', function($routes) {
     
     // AJAX ENDPOINTS - Vendors
     $routes->post('create-vendor', 'Procurement::createVendor');
+    $routes->get('get-vendor/(:num)', 'Procurement::getVendor/$1');
     $routes->post('update-vendor/(:num)', 'Procurement::updateVendor/$1');
 });
 
@@ -326,6 +330,9 @@ $routes->group('print', function($routes) {
     $routes->get('inventory', 'WarehouseManager::printInventoryReport');
     $routes->get('stock-movements', 'WarehouseManager::printStockMovementReport');
     $routes->get('low-stock', 'WarehouseManager::printLowStockReport');
+    $routes->get('orders', 'WarehouseManager::printOrdersReport');
+    $routes->get('batch-expiry', 'WarehouseManager::printBatchExpiryReport');
+    $routes->get('valuation', 'WarehouseManager::printValuationReport');
     
     // Accounts Receivable Reports
     $routes->get('ar-invoices', 'AccountsReceivable::printInvoiceReport');

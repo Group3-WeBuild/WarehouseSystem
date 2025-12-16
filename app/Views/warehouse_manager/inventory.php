@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= esc($title ?? 'Inventory Management') ?> | WITMS</title>
+    <title><?= esc($title ?? 'Inventory Management') ?> | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Warehouse Manager</small>
             </div>
             <nav class="nav flex-column">
@@ -61,6 +61,9 @@
                 </a>
                 <a class="nav-link active" href="<?= base_url('warehouse-manager/inventory') ?>">
                     <i class="bi bi-box-seam"></i> Inventory
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/barcode-scanner') ?>">
+                    <i class="bi bi-qr-code-scan"></i> Barcode Scanner
                 </a>
                 <a class="nav-link" href="<?= base_url('warehouse-manager/stock-movements') ?>">
                     <i class="bi bi-arrow-left-right"></i> Stock Movements
@@ -136,9 +139,15 @@
                             <div class="col-md-2">
                                 <select id="categoryFilter" class="form-select">
                                     <option value="">All Categories</option>
-                                    <option value="Raw Materials">Raw Materials</option>
-                                    <option value="Finished Goods">Finished Goods</option>
-                                    <option value="Components">Components</option>
+                                    <option value="Cement & Concrete">Cement & Concrete</option>
+                                    <option value="Steel & Metal">Steel & Metal</option>
+                                    <option value="Wood & Plywood">Wood & Plywood</option>
+                                    <option value="Paint & Coatings">Paint & Coatings</option>
+                                    <option value="Hardware & Fasteners">Hardware & Fasteners</option>
+                                    <option value="Plumbing Supplies">Plumbing Supplies</option>
+                                    <option value="Electrical Supplies">Electrical Supplies</option>
+                                    <option value="Tools & Equipment">Tools & Equipment</option>
+                                    <option value="Safety Equipment">Safety Equipment</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -259,9 +268,15 @@
                             <label class="form-label">Category</label>
                             <select name="category" class="form-select" required>
                                 <option value="">Select Category</option>
-                                <option value="Raw Materials">Raw Materials</option>
-                                <option value="Finished Goods">Finished Goods</option>
-                                <option value="Components">Components</option>
+                                <option value="Cement & Concrete">Cement & Concrete</option>
+                                <option value="Steel & Metal">Steel & Metal</option>
+                                <option value="Wood & Plywood">Wood & Plywood</option>
+                                <option value="Paint & Coatings">Paint & Coatings</option>
+                                <option value="Hardware & Fasteners">Hardware & Fasteners</option>
+                                <option value="Plumbing Supplies">Plumbing Supplies</option>
+                                <option value="Electrical Supplies">Electrical Supplies</option>
+                                <option value="Tools & Equipment">Tools & Equipment</option>
+                                <option value="Safety Equipment">Safety Equipment</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -280,9 +295,16 @@
                             <label class="form-label">Unit of Measure</label>
                             <select name="unit" class="form-select">
                                 <option value="pcs">Pieces</option>
+                                <option value="pieces">Pieces</option>
+                                <option value="bags">Bags</option>
                                 <option value="kg">Kilograms</option>
                                 <option value="m">Meters</option>
                                 <option value="box">Boxes</option>
+                                <option value="sheets">Sheets</option>
+                                <option value="cans">Cans</option>
+                                <option value="rolls">Rolls</option>
+                                <option value="sets">Sets</option>
+                                <option value="pairs">Pairs</option>
                             </select>
                         </div>
                         <div class="col-12">
@@ -356,6 +378,85 @@
     </div>
 </div>
 
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pencil"></i> Edit Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editItemForm">
+                <div class="modal-body">
+                    <input type="hidden" name="item_id" id="editItemId">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">SKU <small class="text-muted">(Read Only)</small></label>
+                            <input type="text" id="editSku" class="form-control" readonly disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Product Name *</label>
+                            <input type="text" name="product_name" id="editProductName" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Category *</label>
+                            <select name="category" id="editCategory" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="Cement & Concrete">Cement & Concrete</option>
+                                <option value="Steel & Metal">Steel & Metal</option>
+                                <option value="Wood & Plywood">Wood & Plywood</option>
+                                <option value="Paint & Coatings">Paint & Coatings</option>
+                                <option value="Hardware & Fasteners">Hardware & Fasteners</option>
+                                <option value="Plumbing Supplies">Plumbing Supplies</option>
+                                <option value="Electrical Supplies">Electrical Supplies</option>
+                                <option value="Tools & Equipment">Tools & Equipment</option>
+                                <option value="Safety Equipment">Safety Equipment</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Unit of Measure *</label>
+                            <select name="unit" id="editUnit" class="form-select" required>
+                                <option value="pcs">Pieces</option>
+                                <option value="kg">Kilograms</option>
+                                <option value="m">Meters</option>
+                                <option value="box">Boxes</option>
+                                <option value="bag">Bags</option>
+                                <option value="gallon">Gallons</option>
+                                <option value="liter">Liters</option>
+                                <option value="roll">Rolls</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Unit Price *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₱</span>
+                                <input type="number" step="0.01" name="unit_price" id="editUnitPrice" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Reorder Level *</label>
+                            <input type="number" name="reorder_level" id="editReorderLevel" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Location *</label>
+                            <input type="text" name="location" id="editLocation" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" id="editDescription" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div id="editItemError" class="alert alert-danger mt-3 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -375,14 +476,84 @@
     function viewItem(id) {
         $('#viewItemContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
         $('#viewItemModal').modal('show');
-        // In production, fetch item details via AJAX
-        $('#viewItemContent').html('<p class="text-muted">Item details for ID: ' + id + '</p>');
+        
+        // Fetch item details via AJAX
+        $.get('<?= base_url('warehouse-manager/view-item/') ?>' + id, function(response) {
+            if (response.success && response.item) {
+                var item = response.item;
+                var html = '<table class="table table-borderless">';
+                html += '<tr><th>SKU:</th><td>' + (item.sku || 'N/A') + '</td></tr>';
+                html += '<tr><th>Product Name:</th><td>' + (item.product_name || 'N/A') + '</td></tr>';
+                html += '<tr><th>Category:</th><td>' + (item.category || 'N/A') + '</td></tr>';
+                html += '<tr><th>Quantity:</th><td>' + (item.quantity || '0') + ' ' + (item.unit || '') + '</td></tr>';
+                html += '<tr><th>Unit Price:</th><td>₱' + parseFloat(item.unit_price || 0).toFixed(2) + '</td></tr>';
+                html += '<tr><th>Reorder Level:</th><td>' + (item.reorder_level || 'N/A') + '</td></tr>';
+                html += '<tr><th>Location:</th><td>' + (item.location || 'N/A') + '</td></tr>';
+                html += '<tr><th>Description:</th><td>' + (item.description || 'No description') + '</td></tr>';
+                html += '</table>';
+                $('#viewItemContent').html(html);
+            } else {
+                $('#viewItemContent').html('<div class="alert alert-danger">Failed to load item details.</div>');
+            }
+        }).fail(function() {
+            $('#viewItemContent').html('<div class="alert alert-danger">Error loading item details.</div>');
+        });
     }
 
     function editItem(id) {
-        // In production, open edit modal with item data
-        alert('Edit item: ' + id);
+        // Show loading state and modal
+        $('#editItemError').addClass('d-none');
+        $('#editItemModal').modal('show');
+        
+        // Fetch item details via AJAX
+        $.get('<?= base_url('warehouse-manager/view-item/') ?>' + id, function(response) {
+            if (response.success && response.item) {
+                var item = response.item;
+                $('#editItemId').val(item.id);
+                $('#editSku').val(item.sku || '');
+                $('#editProductName').val(item.product_name || '');
+                $('#editCategory').val(item.category || '');
+                $('#editUnit').val(item.unit || 'pcs');
+                $('#editUnitPrice').val(item.unit_price || 0);
+                $('#editReorderLevel').val(item.reorder_level || 0);
+                $('#editLocation').val(item.location || '');
+                $('#editDescription').val(item.description || '');
+            } else {
+                $('#editItemError').text('Failed to load item details.').removeClass('d-none');
+            }
+        }).fail(function() {
+            $('#editItemError').text('Error loading item details.').removeClass('d-none');
+        });
     }
+
+    // Handle edit form submission
+    $('#editItemForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var itemId = $('#editItemId').val();
+        var formData = {
+            product_name: $('#editProductName').val(),
+            category: $('#editCategory').val(),
+            unit: $('#editUnit').val(),
+            unit_price: $('#editUnitPrice').val(),
+            reorder_level: $('#editReorderLevel').val(),
+            location: $('#editLocation').val(),
+            description: $('#editDescription').val()
+        };
+        
+        $.post('<?= base_url('warehouse-manager/update-item/') ?>' + itemId, formData, function(response) {
+            if (response.success) {
+                $('#editItemModal').modal('hide');
+                // Show success message and reload
+                alert('Item updated successfully!');
+                location.reload();
+            } else {
+                $('#editItemError').text(response.message || 'Failed to update item.').removeClass('d-none');
+            }
+        }).fail(function() {
+            $('#editItemError').text('Error updating item.').removeClass('d-none');
+        });
+    });
 
     function adjustStock(id) {
         $('#adjustItemId').val(id);
@@ -396,16 +567,31 @@
     }
 
     function applyFilters() {
-        // Filter logic
         var table = $('#inventoryTable').DataTable();
-        table.search($('#searchInput').val()).draw();
+        
+        // Apply search filter
+        table.search($('#searchInput').val());
+        
+        // Apply category filter (column 2)
+        var categoryVal = $('#categoryFilter').val();
+        table.column(2).search(categoryVal);
+        
+        // Apply status filter (column 6)
+        var statusVal = $('#statusFilter').val();
+        table.column(6).search(statusVal);
+        
+        table.draw();
     }
 
     function resetFilters() {
         $('#searchInput').val('');
         $('#categoryFilter').val('');
         $('#statusFilter').val('');
-        $('#inventoryTable').DataTable().search('').draw();
+        var table = $('#inventoryTable').DataTable();
+        table.search('');
+        table.column(2).search('');
+        table.column(6).search('');
+        table.draw();
     }
 </script>
 </body>

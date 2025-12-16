@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warehouse Reports | WITMS</title>
+    <title>Warehouse Reports | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -42,7 +42,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Warehouse Manager</small>
             </div>
             <nav class="nav flex-column">
@@ -51,6 +51,9 @@
                 </a>
                 <a class="nav-link" href="<?= base_url('warehouse-manager/inventory') ?>">
                     <i class="bi bi-box-seam"></i> Inventory
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/barcode-scanner') ?>">
+                    <i class="bi bi-qr-code-scan"></i> Barcode Scanner
                 </a>
                 <a class="nav-link" href="<?= base_url('warehouse-manager/stock-movements') ?>">
                     <i class="bi bi-arrow-left-right"></i> Stock Movements

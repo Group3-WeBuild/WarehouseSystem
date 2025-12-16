@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Count Sessions | WITMS</title>
+    <title>Count Sessions | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -41,7 +41,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Inventory Auditor</small>
             </div>
             <nav class="nav flex-column">
@@ -115,9 +115,11 @@
                             <div class="col-md-2">
                                 <select class="form-select" name="status">
                                     <option value="">All Status</option>
-                                    <option value="scheduled" <?= ($_GET['status'] ?? '') == 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
-                                    <option value="in_progress" <?= ($_GET['status'] ?? '') == 'in_progress' ? 'selected' : '' ?>>In Progress</option>
-                                    <option value="completed" <?= ($_GET['status'] ?? '') == 'completed' ? 'selected' : '' ?>>Completed</option>
+                                    <option value="Scheduled" <?= ($_GET['status'] ?? '') == 'Scheduled' ? 'selected' : '' ?>>Scheduled</option>
+                                    <option value="In Progress" <?= ($_GET['status'] ?? '') == 'In Progress' ? 'selected' : '' ?>>In Progress</option>
+                                    <option value="Completed" <?= ($_GET['status'] ?? '') == 'Completed' ? 'selected' : '' ?>>Completed</option>
+                                    <option value="Discrepancies" <?= ($_GET['status'] ?? '') == 'Discrepancies' ? 'selected' : '' ?>>Discrepancies</option>
+                                    <option value="Verified" <?= ($_GET['status'] ?? '') == 'Verified' ? 'selected' : '' ?>>Verified</option>
                                 </select>
                             </div>
                             <div class="col-md-2">

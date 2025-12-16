@@ -18,7 +18,7 @@ if (!function_exists('generate_print_header')) {
     {
         $html = '
         <div class="print-header" style="text-align: center; border-bottom: 3px solid #2c3e50; padding-bottom: 20px; margin-bottom: 30px;">
-            ' . ($logo ? '<div class="logo" style="font-size: 32px; font-weight: bold; color: #2c3e50; margin-bottom: 10px;">WITMS</div>' : '') . '
+            ' . ($logo ? '<div class="logo" style="font-size: 32px; font-weight: bold; color: #2c3e50; margin-bottom: 10px;">WeBuild</div>' : '') . '
             <h1 style="margin: 10px 0; color: #34495e; font-size: 28px;">' . esc($title) . '</h1>
             ' . ($subtitle ? '<h3 style="margin: 5px 0; color: #7f8c8d; font-size: 18px;">' . esc($subtitle) . '</h3>' : '') . '
             <p style="margin: 10px 0; color: #95a5a6;">Generated on: ' . date('F d, Y h:i A') . '</p>
@@ -36,9 +36,9 @@ if (!function_exists('generate_print_footer')) {
     {
         $html = '
         <div class="print-footer" style="text-align: center; border-top: 2px solid #ecf0f1; padding-top: 15px; margin-top: 30px; font-size: 12px; color: #7f8c8d;">
-            <p>WeBuild Warehouse Inventory and Monitoring System (WITMS)</p>
+            <p>WeBuild Warehouse Inventory and Monitoring System (WeBuild)</p>
             ' . ($page_number ? '<p>Page ' . $page_number . '</p>' : '') . '
-            <p>&copy; ' . date('Y') . ' WITMS. All Rights Reserved.</p>
+            <p>&copy; ' . date('Y') . ' WeBuild. All Rights Reserved.</p>
         </div>';
         
         return $html;

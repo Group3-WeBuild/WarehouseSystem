@@ -99,7 +99,7 @@
       <!-- Sidebar -->
       <div class="col-md-2 px-0 sidebar">
         <div class="text-center py-4">
-          <h5 class="text-white mb-1">WITMS</h5>
+          <h5 class="text-white mb-1">WeBuild</h5>
           <small class="text-white-50">System Administrator</small>
         </div>
         <nav class="nav flex-column">
@@ -136,7 +136,7 @@
         <!-- Page Content -->
         <div class="page-container">
           <h5><strong>User Management</strong></h5>
-          <p class="text-muted mb-4">Manage user accounts, roles, and permissions across the WITMS system</p>
+          <p class="text-muted mb-4">Manage user accounts, roles, and permissions across the WeBuild system</p>
 
           <!-- Quick Actions -->
           <div class="mb-4 d-flex flex-wrap gap-2">

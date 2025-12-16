@@ -34,7 +34,7 @@
             <div class="company-logo">
                 🏢
             </div>
-            <h3>WITMS</h3>
+            <h3>WeBuild</h3>
             <p>Warehouse Inventory & Tracking</p>
             <small class="text-light">Management System</small>
         </div>

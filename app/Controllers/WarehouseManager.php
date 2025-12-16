@@ -240,11 +240,56 @@ class WarehouseManager extends BaseController
         if ($authCheck) return $authCheck;
 
         try {
-            $movements = $this->stockMovementModel
-                ->orderBy('created_at', 'DESC')
-                ->findAll();
+            // Get filter parameters
+            $search = $this->request->getGet('search');
+            $type = $this->request->getGet('type');
+            $fromDate = $this->request->getGet('from_date');
+            $toDate = $this->request->getGet('to_date');
+
+            // Build query with filters
+            $db = \Config\Database::connect();
+            $builder = $db->table('stock_movements sm')
+                ->select('sm.*, inventory.product_name, inventory.sku, users.username')
+                ->join('inventory', 'inventory.id = sm.item_id', 'left')
+                ->join('users', 'users.id = sm.user_id', 'left')
+                ->orderBy('sm.created_at', 'DESC');
+
+            // Apply search filter
+            if (!empty($search)) {
+                $builder->groupStart()
+                    ->like('inventory.product_name', $search)
+                    ->orLike('inventory.sku', $search)
+                    ->orLike('sm.reference_number', $search)
+                ->groupEnd();
+            }
+
+            // Apply type filter
+            if (!empty($type)) {
+                $builder->where('sm.movement_type', $type);
+            }
+
+            // Apply date range filter
+            if (!empty($fromDate)) {
+                $builder->where('DATE(sm.created_at) >=', $fromDate);
+            }
+            if (!empty($toDate)) {
+                $builder->where('DATE(sm.created_at) <=', $toDate);
+            }
+
+            $movements = $builder->limit(500)->get()->getResultArray();
+
+            // Get today's stats
+            $today = date('Y-m-d');
+            $stats = [
+                'stock_in' => $db->table('stock_movements')->where('movement_type', 'Stock In')->where('DATE(created_at)', $today)->countAllResults(),
+                'stock_out' => $db->table('stock_movements')->where('movement_type', 'Stock Out')->where('DATE(created_at)', $today)->countAllResults(),
+                'transfers' => $db->table('stock_movements')->where('movement_type', 'Transfer')->where('DATE(created_at)', $today)->countAllResults(),
+                'adjustments' => $db->table('stock_movements')->where('movement_type', 'Adjustment')->where('DATE(created_at)', $today)->countAllResults(),
+            ];
         } catch (\Exception $e) {
+            log_message('error', 'Stock Movements Error: ' . $e->getMessage());
             $movements = [];
+            $stats = ['stock_in' => 0, 'stock_out' => 0, 'transfers' => 0, 'adjustments' => 0];
         }
 
         $data = [
@@ -254,7 +299,8 @@ class WarehouseManager extends BaseController
                 'name' => $this->session->get('name'),
                 'role' => $this->session->get('role')
             ],
-            'movements' => $movements
+            'movements' => $movements,
+            'stats' => $stats
         ];
 
         return view('warehouse_manager/stock_movements', $data);
@@ -276,11 +322,50 @@ class WarehouseManager extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $status = $this->request->getGet('status');
+        $fromDate = $this->request->getGet('from_date');
+        $toDate = $this->request->getGet('to_date');
+
         try {
-            $orders = $this->orderModel->orderBy('created_at', 'DESC')->findAll();
+            // Build query with filters
+            $db = \Config\Database::connect();
+            $builder = $db->table('orders')
+                ->orderBy('created_at', 'DESC');
+
+            // Apply search filter
+            if (!empty($search)) {
+                $builder->groupStart()
+                    ->like('order_number', $search)
+                    ->orLike('customer_name', $search)
+                ->groupEnd();
+            }
+
+            // Apply status filter
+            if (!empty($status)) {
+                $builder->where('status', $status);
+            }
+
+            // Apply date range filter
+            if (!empty($fromDate)) {
+                $builder->where('DATE(created_at) >=', $fromDate);
+            }
+            if (!empty($toDate)) {
+                $builder->where('DATE(created_at) <=', $toDate);
+            }
+
+            $orders = $builder->get()->getResultArray();
         } catch (\Exception $e) {
             $orders = [];
         }
+
+        // Calculate stats
+        $stats = [
+            'pending' => count(array_filter($orders, fn($o) => ($o['status'] ?? '') === 'Pending')),
+            'processing' => count(array_filter($orders, fn($o) => ($o['status'] ?? '') === 'Processing')),
+            'completed' => count(array_filter($orders, fn($o) => ($o['status'] ?? '') === 'Completed'))
+        ];
 
         $data = [
             'title' => 'Order Processing',
@@ -289,7 +374,8 @@ class WarehouseManager extends BaseController
                 'name' => $this->session->get('name'),
                 'role' => $this->session->get('role')
             ],
-            'orders' => $orders
+            'orders' => $orders,
+            'stats' => $stats
         ];
 
         return view('warehouse_manager/orders', $data);
@@ -1146,6 +1232,35 @@ class WarehouseManager extends BaseController
 
     /**
      * =====================================================
+     * Barcode/QR Code Scanner Page
+     * =====================================================
+     * 
+     * Interactive scanner page for quick inventory lookup
+     * RUBRIC: Barcode/QR Code Functionality (Midterm)
+     * =====================================================
+     */
+    public function barcodeScanner()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $inventoryModel = new \App\Models\InventoryModel();
+        
+        $data = [
+            'title' => 'Barcode/QR Scanner',
+            'user' => [
+                'username' => $this->session->get('username'),
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'inventory' => $inventoryModel->where('status', 'Active')->findAll()
+        ];
+
+        return view('warehouse_manager/barcode_scanner', $data);
+    }
+
+    /**
+     * =====================================================
      * AJAX: Create New Batch
      * =====================================================
      * 
@@ -1293,7 +1408,7 @@ class WarehouseManager extends BaseController
         if ($item) {
             return $this->response->setJSON([
                 'success' => true,
-                'item' => $item
+                'data' => $item
             ]);
         }
 
@@ -1438,7 +1553,7 @@ class WarehouseManager extends BaseController
             SELECT sm.*, i.product_name, u.name as performed_by_name
             FROM stock_movements sm
             LEFT JOIN inventory i ON sm.item_id = i.id
-            LEFT JOIN users u ON sm.performed_by = u.id
+            LEFT JOIN users u ON sm.user_id = u.id
             ORDER BY sm.created_at DESC
             LIMIT 100
         ")->getResultArray();
@@ -1462,6 +1577,155 @@ class WarehouseManager extends BaseController
         $html = $pdf->lowStockReport($lowStockItems);
         
         return $pdf->generateFromHtml($html, 'low_stock_report_' . date('Y-m-d'));
+    }
+
+    /**
+     * =====================================================
+     * PRINT: Orders Report
+     * =====================================================
+     * Route: /print/orders
+     * Generates PDF report of all orders
+     * =====================================================
+     */
+    public function printOrdersReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $pdf = new \App\Libraries\PdfService();
+        
+        // Get orders with customer information
+        $db = \Config\Database::connect();
+        $orders = $db->query("
+            SELECT o.*, c.name as customer_name
+            FROM orders o
+            LEFT JOIN customers c ON o.customer_id = c.id
+            ORDER BY o.created_at DESC
+            LIMIT 100
+        ")->getResultArray();
+        
+        // Build HTML for PDF
+        $headers = ['Order #', 'Customer', 'Date', 'Status', 'Total'];
+        $data = [];
+        foreach ($orders as $order) {
+            $data[] = [
+                $order['order_number'] ?? 'N/A',
+                $order['customer_name'] ?? 'N/A',
+                date('M d, Y', strtotime($order['created_at'] ?? 'now')),
+                ucfirst($order['status'] ?? 'pending'),
+                '₱' . number_format($order['total_amount'] ?? 0, 2)
+            ];
+        }
+        
+        $html = $pdf->buildReportHtml('Orders Report', 'All Orders Summary', $headers, $data, []);
+        
+        return $pdf->generateFromHtml($html, 'orders_report_' . date('Y-m-d'));
+    }
+
+    /**
+     * =====================================================
+     * PRINT: Batch Expiry Report
+     * =====================================================
+     * Route: /print/batch-expiry
+     * Generates PDF report of batches nearing expiry
+     * =====================================================
+     */
+    public function printBatchExpiryReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $pdf = new \App\Libraries\PdfService();
+        
+        // Get batches with expiry info
+        $db = \Config\Database::connect();
+        $batches = $db->query("
+            SELECT bt.*, i.product_name, i.sku
+            FROM batch_tracking bt
+            LEFT JOIN inventory i ON bt.item_id = i.id
+            WHERE bt.expiry_date IS NOT NULL
+            ORDER BY bt.expiry_date ASC
+            LIMIT 100
+        ")->getResultArray();
+        
+        // Build HTML for PDF
+        $headers = ['Batch #', 'Product', 'SKU', 'Expiry Date', 'Quantity', 'Status'];
+        $data = [];
+        foreach ($batches as $batch) {
+            $expiryDate = $batch['expiry_date'] ?? null;
+            $status = 'Active';
+            if ($expiryDate) {
+                $daysUntilExpiry = (strtotime($expiryDate) - time()) / 86400;
+                if ($daysUntilExpiry < 0) {
+                    $status = 'Expired';
+                } elseif ($daysUntilExpiry <= 30) {
+                    $status = 'Expiring Soon';
+                }
+            }
+            
+            $data[] = [
+                $batch['batch_number'] ?? 'N/A',
+                $batch['product_name'] ?? 'N/A',
+                $batch['sku'] ?? 'N/A',
+                $expiryDate ? date('M d, Y', strtotime($expiryDate)) : 'N/A',
+                $batch['quantity'] ?? 0,
+                $status
+            ];
+        }
+        
+        $html = $pdf->buildReportHtml('Batch Expiry Report', 'Items by Expiration Date', $headers, $data, []);
+        
+        return $pdf->generateFromHtml($html, 'batch_expiry_report_' . date('Y-m-d'));
+    }
+
+    /**
+     * =====================================================
+     * PRINT: Inventory Valuation Report
+     * =====================================================
+     * Route: /print/valuation
+     * Generates PDF report of inventory value
+     * =====================================================
+     */
+    public function printValuationReport()
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        $pdf = new \App\Libraries\PdfService();
+        
+        // Get inventory with valuation
+        $db = \Config\Database::connect();
+        $items = $db->query("
+            SELECT id, sku, product_name, category, quantity, unit_price,
+                   (quantity * unit_price) as total_value
+            FROM inventory
+            WHERE quantity > 0
+            ORDER BY total_value DESC
+        ")->getResultArray();
+        
+        // Calculate totals
+        $totalValue = array_sum(array_column($items, 'total_value'));
+        
+        // Build HTML for PDF
+        $headers = ['SKU', 'Product Name', 'Category', 'Qty', 'Unit Price', 'Total Value'];
+        $data = [];
+        foreach ($items as $item) {
+            $data[] = [
+                $item['sku'] ?? 'N/A',
+                $item['product_name'] ?? 'N/A',
+                $item['category'] ?? 'N/A',
+                $item['quantity'] ?? 0,
+                '₱' . number_format($item['unit_price'] ?? 0, 2),
+                '₱' . number_format($item['total_value'] ?? 0, 2)
+            ];
+        }
+        
+        // Add summary row
+        $data[] = ['', '', '', '', 'TOTAL:', '₱' . number_format($totalValue, 2)];
+        
+        $html = $pdf->buildReportHtml('Inventory Valuation Report', 'Current Stock Value: ₱' . number_format($totalValue, 2), $headers, $data, []);
+        
+        return $pdf->generateFromHtml($html, 'inventory_valuation_report_' . date('Y-m-d'));
     }
 
     /**
@@ -1557,9 +1821,8 @@ class WarehouseManager extends BaseController
 
         // Staff can view stock movements (read-only)
         try {
-            $movements = $this->stockMovementModel
-                ->orderBy('created_at', 'DESC')
-                ->findAll();
+            // Use getRecentMovementsWithDetails() to get product names via JOIN
+            $movements = $this->stockMovementModel->getRecentMovementsWithDetails(500);
             return view('warehouse_staff/stock_movements', [
                 'title' => 'Stock Movements',
                 'movements' => $movements
@@ -1594,6 +1857,29 @@ class WarehouseManager extends BaseController
                 'orders' => []
             ]);
         }
+    }
+
+    /**
+     * Barcode Scanner for Warehouse Staff
+     */
+    public function staffBarcodeScanner()
+    {
+        $authCheck = $this->checkStaffAuth();
+        if ($authCheck) return $authCheck;
+
+        $inventoryModel = new \App\Models\InventoryModel();
+        
+        $data = [
+            'title' => 'Barcode/QR Scanner',
+            'user' => [
+                'username' => $this->session->get('username'),
+                'name' => $this->session->get('name'),
+                'role' => $this->session->get('role')
+            ],
+            'inventory' => $inventoryModel->where('status', 'Active')->findAll()
+        ];
+
+        return view('warehouse_staff/barcode_scanner', $data);
     }
 
     public function updateOrderStatus($id)

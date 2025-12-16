@@ -148,7 +148,7 @@ DATA AVAILABLE in this view:
     <!-- Sidebar -->
     <div class="col-md-2 px-0 sidebar">
       <div class="text-center py-4">
-        <h5 class="text-white mb-1">WITMS</h5>
+        <h5 class="text-white mb-1">WeBuild</h5>
         <small class="text-white-50">System Administrator</small>
       </div>
       <nav class="nav flex-column">
@@ -179,7 +179,7 @@ DATA AVAILABLE in this view:
       <!-- Page Content -->
       <div class="page-container">
         <h5><strong>IT Administrator Dashboard</strong></h5>
-        <p class="text-muted mb-4">Monitor and manage WITMS system security, users, and maintenance</p>
+        <p class="text-muted mb-4">Monitor and manage WeBuild system security, users, and maintenance</p>
 
         <!-- Stats Boxes -->
         <div class="row g-3 mb-4">

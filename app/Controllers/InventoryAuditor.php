@@ -110,7 +110,39 @@ class InventoryAuditor extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        $counts = $this->physicalCountModel->getAllCountsWithDetails();
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $status = $this->request->getGet('status');
+        $fromDate = $this->request->getGet('from_date');
+        $toDate = $this->request->getGet('to_date');
+
+        // Build query with filters
+        $db = \Config\Database::connect();
+        $builder = $db->table('physical_counts pc')
+            ->select('pc.*, warehouses.name as warehouse_name, users.name as counted_by_name')
+            ->join('warehouses', 'warehouses.id = pc.warehouse_id', 'left')
+            ->join('users', 'users.id = pc.counted_by', 'left')
+            ->orderBy('pc.created_at', 'DESC');
+
+        // Apply search filter
+        if (!empty($search)) {
+            $builder->like('pc.count_number', $search);
+        }
+
+        // Apply status filter
+        if (!empty($status)) {
+            $builder->where('pc.status', $status);
+        }
+
+        // Apply date range filter
+        if (!empty($fromDate)) {
+            $builder->where('DATE(pc.created_at) >=', $fromDate);
+        }
+        if (!empty($toDate)) {
+            $builder->where('DATE(pc.created_at) <=', $toDate);
+        }
+
+        $countSessions = $builder->get()->getResultArray();
         $warehouses = $this->warehouseModel->findAll();
         
         $data = [
@@ -120,7 +152,8 @@ class InventoryAuditor extends BaseController
                 'name' => $this->session->get('name'),
                 'role' => $this->session->get('role')
             ],
-            'counts' => $counts,
+            'countSessions' => $countSessions,
+            'counts' => $countSessions,
             'warehouses' => $warehouses
         ];
 
@@ -182,6 +215,11 @@ class InventoryAuditor extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $status = $this->request->getGet('status');
+        $varianceType = $this->request->getGet('variance_type');
+
         $countsWithDiscrepancies = $this->physicalCountModel->getCountsWithDiscrepancies();
         
         $allDiscrepancies = [];
@@ -193,6 +231,48 @@ class InventoryAuditor extends BaseController
             }
         }
         
+        // Apply filters to discrepancies
+        if (!empty($search)) {
+            $allDiscrepancies = array_filter($allDiscrepancies, function($d) use ($search) {
+                return stripos($d['item_name'] ?? $d['product_name'] ?? '', $search) !== false ||
+                       stripos($d['count_number'] ?? '', $search) !== false ||
+                       stripos($d['sku'] ?? '', $search) !== false;
+            });
+        }
+        
+        if (!empty($status)) {
+            $allDiscrepancies = array_filter($allDiscrepancies, function($d) use ($status) {
+                return strtolower($d['status'] ?? 'pending') === strtolower($status);
+            });
+        }
+        
+        if (!empty($varianceType)) {
+            $allDiscrepancies = array_filter($allDiscrepancies, function($d) use ($varianceType) {
+                $variance = ($d['actual_quantity'] ?? $d['counted_qty'] ?? 0) - ($d['system_quantity'] ?? $d['expected_qty'] ?? 0);
+                if ($varianceType === 'shortage') {
+                    return $variance < 0;
+                } else if ($varianceType === 'overage') {
+                    return $variance > 0;
+                }
+                return true;
+            });
+        }
+        
+        // Re-index array after filtering
+        $allDiscrepancies = array_values($allDiscrepancies);
+        
+        // Calculate stats
+        $stats = [
+            'pending' => count(array_filter($allDiscrepancies, fn($d) => strtolower($d['status'] ?? 'pending') === 'pending')),
+            'under_investigation' => count(array_filter($allDiscrepancies, fn($d) => strtolower($d['status'] ?? '') === 'investigating')),
+            'resolved' => count(array_filter($allDiscrepancies, fn($d) => strtolower($d['status'] ?? '') === 'resolved')),
+            'total_variance_value' => array_sum(array_map(function($d) {
+                $variance = abs(($d['actual_quantity'] ?? $d['counted_qty'] ?? 0) - ($d['system_quantity'] ?? $d['expected_qty'] ?? 0));
+                $price = $d['unit_price'] ?? $d['price'] ?? 0;
+                return $variance * $price;
+            }, $allDiscrepancies))
+        ];
+        
         $data = [
             'title' => 'Discrepancy Review',
             'user' => [
@@ -201,7 +281,8 @@ class InventoryAuditor extends BaseController
                 'role' => $this->session->get('role')
             ],
             'discrepancies' => $allDiscrepancies,
-            'pendingCounts' => $countsWithDiscrepancies
+            'pendingCounts' => $countsWithDiscrepancies,
+            'stats' => $stats
         ];
 
         return view('inventory_auditor/discrepancy_review', $data);

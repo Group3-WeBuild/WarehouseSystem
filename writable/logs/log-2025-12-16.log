@@ -1,0 +1,486 @@
+ERROR - 2025-12-16 01:42:05 --> mysqli_sql_exception: Unknown column 'sm.performed_by' in 'on clause' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('\r\n            S...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('\r\n            S...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('\r\n            S...')
+#3 C:\xampp\htdocs\WarehouseSystem\app\Controllers\WarehouseManager.php(1437): CodeIgniter\Database\BaseConnection->query('\r\n            S...')
+#4 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+#5 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+#6 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#7 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#8 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#9 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#10 {main}
+CRITICAL - 2025-12-16 01:42:05 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'sm.performed_by' in 'on clause'
+[Method: GET, Route: print/stock-movements]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 APPPATH\Controllers\WarehouseManager.php(1437): CodeIgniter\Database\BaseConnection->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:42:05 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'sm.performed_by' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 3 APPPATH\Controllers\WarehouseManager.php(1437): CodeIgniter\Database\BaseConnection->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:42:05 --> [Caused by] mysqli_sql_exception: Unknown column 'sm.performed_by' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 4 APPPATH\Controllers\WarehouseManager.php(1437): CodeIgniter\Database\BaseConnection->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-16 01:55:51 --> mysqli_sql_exception: Unknown column 'inventory.barcode_number' in 'where clause' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `invento...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `invento...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `invento...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `invento...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\app\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WarehouseSystem\app\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+#6 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+#7 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-12-16 01:55:51 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'inventory.barcode_number' in 'where clause'
+[Method: POST, Route: barcode/scan]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 2 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:55:51 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'inventory.barcode_number' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 4 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:55:51 --> [Caused by] mysqli_sql_exception: Unknown column 'inventory.barcode_number' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 5 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-16 01:56:05 --> mysqli_sql_exception: Unknown column 'inventory.barcode_number' in 'where clause' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `invento...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `invento...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `invento...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `invento...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\app\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WarehouseSystem\app\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+#6 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+#7 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-12-16 01:56:05 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'inventory.barcode_number' in 'where clause'
+[Method: POST, Route: barcode/scan]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 2 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:56:05 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'inventory.barcode_number' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 4 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:56:05 --> [Caused by] mysqli_sql_exception: Unknown column 'inventory.barcode_number' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 5 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\WarehouseManager.php(1320): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-16 01:56:49 --> mysqli_sql_exception: Unknown column 'sm.performed_by' in 'on clause' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('\r\n            S...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('\r\n            S...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('\r\n            S...')
+#3 C:\xampp\htdocs\WarehouseSystem\app\Controllers\WarehouseManager.php(1466): CodeIgniter\Database\BaseConnection->query('\r\n            S...')
+#4 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+#5 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+#6 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#7 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#8 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#9 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#10 {main}
+CRITICAL - 2025-12-16 01:56:49 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'sm.performed_by' in 'on clause'
+[Method: GET, Route: print/stock-movements]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 APPPATH\Controllers\WarehouseManager.php(1466): CodeIgniter\Database\BaseConnection->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:56:49 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'sm.performed_by' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 3 APPPATH\Controllers\WarehouseManager.php(1466): CodeIgniter\Database\BaseConnection->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 01:56:49 --> [Caused by] mysqli_sql_exception: Unknown column 'sm.performed_by' in 'on clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 4 APPPATH\Controllers\WarehouseManager.php(1466): CodeIgniter\Database\BaseConnection->query('
+            SELECT sm.*, i.product_name, u.name as performed_by_name
+            FROM stock_movements sm
+            LEFT JOIN inventory i ON sm.item_id = i.id
+            LEFT JOIN users u ON sm.performed_by = u.id
+            ORDER BY sm.created_at DESC
+            LIMIT 100
+        ')
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->printStockMovementReport()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-12-16 02:21:02 --> mysqli_sql_exception: Unknown column 'inventory.barcode_number' in 'where clause' in C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\WarehouseSystem\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `invento...', 0)
+#1 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `invento...')
+#2 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `invento...')
+#3 C:\xampp\htdocs\WarehouseSystem\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `invento...', Array, false)
+#4 C:\xampp\htdocs\WarehouseSystem\app\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\WarehouseSystem\app\Controllers\WarehouseManager.php(1319): App\Models\BarcodeModel->scanBarcode('CEM-001')
+#6 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+#7 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+#8 C:\xampp\htdocs\WarehouseSystem\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\WarehouseSystem\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\WarehouseSystem\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2025-12-16 02:21:02 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'inventory.barcode_number' in 'where clause'
+[Method: POST, Route: barcode/scan]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 2 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\WarehouseManager.php(1319): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 02:21:02 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'inventory.barcode_number' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 4 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\WarehouseManager.php(1319): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-12-16 02:21:02 --> [Caused by] mysqli_sql_exception: Unknown column 'inventory.barcode_number' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = \'CEM-001\'
+AND `inventory`.`status` = \'Active\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `inventory`.*, `warehouses`.`warehouse_name`
+FROM `inventory`
+LEFT JOIN `warehouse_inventory` ON `warehouse_inventory`.`inventory_id` = `inventory`.`id`
+LEFT JOIN `warehouses` ON `warehouses`.`id` = `warehouse_inventory`.`warehouse_id`
+WHERE `inventory`.`barcode_number` = :inventory.barcode_number:
+AND `inventory`.`status` = :inventory.status:', [...], false)
+ 5 APPPATH\Models\BarcodeModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\WarehouseManager.php(1319): App\Models\BarcodeModel->scanBarcode('CEM-001')
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\WarehouseManager->scanBarcode()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\WarehouseManager))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

@@ -110,7 +110,39 @@ class Procurement extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        $requisitions = $this->requisitionModel->getAllWithDetails();
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $status = $this->request->getGet('status');
+        $fromDate = $this->request->getGet('from_date');
+        $toDate = $this->request->getGet('to_date');
+
+        // Build query with filters
+        $db = \Config\Database::connect();
+        $builder = $db->table('requisitions r')
+            ->select('r.*, users.name as requested_by_name, warehouses.name as warehouse_name')
+            ->join('users', 'users.id = r.requested_by', 'left')
+            ->join('warehouses', 'warehouses.id = r.warehouse_id', 'left')
+            ->orderBy('r.created_at', 'DESC');
+
+        // Apply search filter
+        if (!empty($search)) {
+            $builder->like('r.requisition_number', $search);
+        }
+
+        // Apply status filter
+        if (!empty($status)) {
+            $builder->where('r.status', ucfirst($status));
+        }
+
+        // Apply date range filter
+        if (!empty($fromDate)) {
+            $builder->where('DATE(r.created_at) >=', $fromDate);
+        }
+        if (!empty($toDate)) {
+            $builder->where('DATE(r.created_at) <=', $toDate);
+        }
+
+        $requisitions = $builder->get()->getResultArray();
         $warehouses = $this->warehouseModel->findAll();
         $inventory = $this->inventoryModel->where('status', 'Active')->findAll();
         
@@ -139,7 +171,41 @@ class Procurement extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        $purchaseOrders = $this->poModel->getAllWithDetails();
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $status = $this->request->getGet('status');
+        $fromDate = $this->request->getGet('from_date');
+        $toDate = $this->request->getGet('to_date');
+
+        // Build query with filters
+        $db = \Config\Database::connect();
+        $builder = $db->table('purchase_orders po')
+            ->select('po.*, vendors.vendor_name')
+            ->join('vendors', 'vendors.id = po.vendor_id', 'left')
+            ->orderBy('po.created_at', 'DESC');
+
+        // Apply search filter
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('po.po_number', $search)
+                ->orLike('vendors.vendor_name', $search)
+            ->groupEnd();
+        }
+
+        // Apply status filter
+        if (!empty($status)) {
+            $builder->where('po.status', $status);
+        }
+
+        // Apply date range filter
+        if (!empty($fromDate)) {
+            $builder->where('DATE(po.created_at) >=', $fromDate);
+        }
+        if (!empty($toDate)) {
+            $builder->where('DATE(po.created_at) <=', $toDate);
+        }
+
+        $purchaseOrders = $builder->get()->getResultArray();
         $vendors = $this->vendorModel->findAll();
         
         $data = [
@@ -191,7 +257,38 @@ class Procurement extends BaseController
         $authCheck = $this->checkAuth();
         if ($authCheck) return $authCheck;
 
-        $pendingDeliveries = $this->poModel->getPendingDelivery();
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $status = $this->request->getGet('status');
+        $expectedDate = $this->request->getGet('expected_date');
+
+        // Build query with filters
+        $db = \Config\Database::connect();
+        $builder = $db->table('purchase_orders po')
+            ->select('po.*, vendors.vendor_name')
+            ->join('vendors', 'vendors.id = po.vendor_id', 'left')
+            ->whereIn('po.status', ['Pending', 'Sent', 'Shipped', 'In Transit'])
+            ->orderBy('po.expected_delivery', 'ASC');
+
+        // Apply search filter
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('po.po_number', $search)
+                ->orLike('vendors.vendor_name', $search)
+            ->groupEnd();
+        }
+
+        // Apply status filter
+        if (!empty($status)) {
+            $builder->where('po.status', $status);
+        }
+
+        // Apply expected date filter
+        if (!empty($expectedDate)) {
+            $builder->where('DATE(po.expected_delivery)', $expectedDate);
+        }
+
+        $deliveries = $builder->get()->getResultArray();
         $overdue = $this->poModel->getOverduePOs();
         
         $data = [
@@ -201,7 +298,8 @@ class Procurement extends BaseController
                 'name' => $this->session->get('name'),
                 'role' => $this->session->get('role')
             ],
-            'pendingDeliveries' => $pendingDeliveries,
+            'deliveries' => $deliveries,
+            'pendingDeliveries' => $deliveries,
             'overdue' => $overdue
         ];
 
@@ -645,6 +743,39 @@ class Procurement extends BaseController
         }
 
         return redirect()->to(base_url('procurement/vendors'));
+    }
+
+    /**
+     * =====================================================
+     * AJAX: Get Vendor Details
+     * =====================================================
+     */
+    public function getVendor($id)
+    {
+        $authCheck = $this->checkAuth();
+        if ($authCheck) return $authCheck;
+
+        try {
+            $vendor = $this->vendorModel->find($id);
+            
+            if ($vendor) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'vendor' => $vendor
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Vendor not found'
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'Get Vendor Error: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error loading vendor'
+            ]);
+        }
     }
 
     /**

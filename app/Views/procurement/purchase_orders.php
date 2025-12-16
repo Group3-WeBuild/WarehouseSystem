@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Orders | WITMS</title>
+    <title>Purchase Orders | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -41,7 +41,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Procurement Officer</small>
             </div>
             <nav class="nav flex-column">
@@ -96,7 +96,7 @@
                     <div class="col-md-3">
                         <div class="card bg-warning text-dark">
                             <div class="card-body text-center py-3">
-                                <h4 class="mb-0"><?= count(array_filter($purchaseOrders ?? [], fn($p) => ($p['status'] ?? '') == 'pending')) ?></h4>
+                                <h4 class="mb-0"><?= count(array_filter($purchaseOrders ?? [], fn($p) => ($p['status'] ?? '') == 'Pending')) ?></h4>
                                 <small>Pending</small>
                             </div>
                         </div>
@@ -104,7 +104,7 @@
                     <div class="col-md-3">
                         <div class="card bg-info text-white">
                             <div class="card-body text-center py-3">
-                                <h4 class="mb-0"><?= count(array_filter($purchaseOrders ?? [], fn($p) => ($p['status'] ?? '') == 'sent')) ?></h4>
+                                <h4 class="mb-0"><?= count(array_filter($purchaseOrders ?? [], fn($p) => ($p['status'] ?? '') == 'Sent')) ?></h4>
                                 <small>Sent to Vendor</small>
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                     <div class="col-md-3">
                         <div class="card bg-success text-white">
                             <div class="card-body text-center py-3">
-                                <h4 class="mb-0"><?= count(array_filter($purchaseOrders ?? [], fn($p) => ($p['status'] ?? '') == 'received')) ?></h4>
+                                <h4 class="mb-0"><?= count(array_filter($purchaseOrders ?? [], fn($p) => ($p['status'] ?? '') == 'Received')) ?></h4>
                                 <small>Received</small>
                             </div>
                         </div>
@@ -129,11 +129,11 @@
                             <div class="col-md-2">
                                 <select class="form-select" name="status">
                                     <option value="">All Status</option>
-                                    <option value="draft" <?= ($_GET['status'] ?? '') == 'draft' ? 'selected' : '' ?>>Draft</option>
-                                    <option value="pending" <?= ($_GET['status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending</option>
-                                    <option value="sent" <?= ($_GET['status'] ?? '') == 'sent' ? 'selected' : '' ?>>Sent</option>
-                                    <option value="received" <?= ($_GET['status'] ?? '') == 'received' ? 'selected' : '' ?>>Received</option>
-                                    <option value="cancelled" <?= ($_GET['status'] ?? '') == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                    <option value="Draft" <?= ($_GET['status'] ?? '') == 'Draft' ? 'selected' : '' ?>>Draft</option>
+                                    <option value="Pending" <?= ($_GET['status'] ?? '') == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                    <option value="Sent" <?= ($_GET['status'] ?? '') == 'Sent' ? 'selected' : '' ?>>Sent</option>
+                                    <option value="Received" <?= ($_GET['status'] ?? '') == 'Received' ? 'selected' : '' ?>>Received</option>
+                                    <option value="Cancelled" <?= ($_GET['status'] ?? '') == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -190,14 +190,14 @@
                                         <td>₱<?= number_format($po['total_amount'] ?? 0, 2) ?></td>
                                         <td>
                                             <?php 
-                                            $status = $po['status'] ?? 'draft';
-                                            $sClass = ['received' => 'success', 'sent' => 'info', 'pending' => 'warning', 'draft' => 'secondary', 'cancelled' => 'danger'][$status] ?? 'secondary';
+                                            $status = $po['status'] ?? 'Draft';
+                                            $sClass = ['Received' => 'success', 'Sent' => 'info', 'Pending' => 'warning', 'Draft' => 'secondary', 'Cancelled' => 'danger'][$status] ?? 'secondary';
                                             ?>
-                                            <span class="badge bg-<?= $sClass ?>"><?= ucfirst($status) ?></span>
+                                            <span class="badge bg-<?= $sClass ?>"><?= $status ?></span>
                                         </td>
                                         <td>
                                             <a href="<?= base_url('procurement/purchase-orders/' . ($po['id'] ?? 0)) ?>" class="btn btn-sm btn-outline-primary">View</a>
-                                            <?php if (($po['status'] ?? '') == 'sent'): ?>
+                                            <?php if (($po['status'] ?? '') == 'Sent'): ?>
                                             <a href="<?= base_url('procurement/receive/' . ($po['id'] ?? 0)) ?>" class="btn btn-sm btn-success">Receive</a>
                                             <?php endif; ?>
                                             <a href="<?= base_url('print/po/' . ($po['id'] ?? 0)) ?>" target="_blank" class="btn btn-sm btn-outline-secondary">🖨️</a>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendors Management | WITMS</title>
+    <title>Vendors Management | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -48,7 +48,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Procurement Officer</small>
             </div>
             <nav class="nav flex-column">
@@ -257,6 +257,90 @@
     </div>
 </div>
 
+<!-- View Vendor Modal -->
+<div class="modal fade" id="viewVendorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-eye"></i> Vendor Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="viewVendorContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Vendor Modal -->
+<div class="modal fade" id="editVendorModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pencil"></i> Edit Vendor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editVendorForm">
+                <div class="modal-body">
+                    <input type="hidden" name="vendor_id" id="editVendorId">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Vendor Name *</label>
+                            <input type="text" name="vendor_name" id="editVendorName" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Person</label>
+                            <input type="text" name="contact_person" id="editContactPerson" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" id="editEmail" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" id="editPhone" class="form-control">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Address</label>
+                            <textarea name="address" id="editAddress" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tax ID</label>
+                            <input type="text" name="tax_id" id="editTaxId" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Payment Terms</label>
+                            <select name="payment_terms" id="editPaymentTerms" class="form-select">
+                                <option value="Net 30">Net 30</option>
+                                <option value="Net 60">Net 60</option>
+                                <option value="COD">Cash on Delivery</option>
+                                <option value="Prepaid">Prepaid</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select name="status" id="editStatus" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="editVendorError" class="alert alert-danger mt-3 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -274,12 +358,69 @@ $(document).ready(function() {
 });
 
 function viewVendor(id) {
-    alert('View vendor #' + id + ' - Feature coming soon');
+    $('#viewVendorContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>');
+    $('#viewVendorModal').modal('show');
+    
+    $.get('<?= base_url('procurement/get-vendor/') ?>' + id, function(response) {
+        if (response.success && response.vendor) {
+            var v = response.vendor;
+            var html = '<table class="table table-borderless">';
+            html += '<tr><th>Vendor Name:</th><td>' + (v.vendor_name || 'N/A') + '</td></tr>';
+            html += '<tr><th>Contact Person:</th><td>' + (v.contact_person || 'N/A') + '</td></tr>';
+            html += '<tr><th>Email:</th><td>' + (v.email || 'N/A') + '</td></tr>';
+            html += '<tr><th>Phone:</th><td>' + (v.phone || 'N/A') + '</td></tr>';
+            html += '<tr><th>Address:</th><td>' + (v.address || 'N/A') + '</td></tr>';
+            html += '<tr><th>Tax ID:</th><td>' + (v.tax_id || 'N/A') + '</td></tr>';
+            html += '<tr><th>Payment Terms:</th><td>' + (v.payment_terms || 'N/A') + '</td></tr>';
+            html += '<tr><th>Status:</th><td><span class="badge bg-' + (v.status == 'Active' ? 'success' : 'secondary') + '">' + (v.status || 'N/A') + '</span></td></tr>';
+            html += '</table>';
+            $('#viewVendorContent').html(html);
+        } else {
+            $('#viewVendorContent').html('<div class="alert alert-danger">Failed to load vendor details.</div>');
+        }
+    }).fail(function() {
+        $('#viewVendorContent').html('<div class="alert alert-danger">Error loading vendor details.</div>');
+    });
 }
 
 function editVendor(id) {
-    alert('Edit vendor #' + id + ' - Feature coming soon');
+    $('#editVendorError').addClass('d-none');
+    $('#editVendorModal').modal('show');
+    
+    $.get('<?= base_url('procurement/get-vendor/') ?>' + id, function(response) {
+        if (response.success && response.vendor) {
+            var v = response.vendor;
+            $('#editVendorId').val(v.id);
+            $('#editVendorName').val(v.vendor_name || '');
+            $('#editContactPerson').val(v.contact_person || '');
+            $('#editEmail').val(v.email || '');
+            $('#editPhone').val(v.phone || '');
+            $('#editAddress').val(v.address || '');
+            $('#editTaxId').val(v.tax_id || '');
+            $('#editPaymentTerms').val(v.payment_terms || 'Net 30');
+            $('#editStatus').val(v.status || 'Active');
+        } else {
+            $('#editVendorError').text('Failed to load vendor details.').removeClass('d-none');
+        }
+    }).fail(function() {
+        $('#editVendorError').text('Error loading vendor details.').removeClass('d-none');
+    });
 }
+
+$('#editVendorForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    var vendorId = $('#editVendorId').val();
+    var formData = $(this).serialize();
+    
+    $.post('<?= base_url('procurement/update-vendor/') ?>' + vendorId, formData, function(response) {
+        $('#editVendorModal').modal('hide');
+        alert('Vendor updated successfully!');
+        location.reload();
+    }).fail(function() {
+        $('#editVendorError').text('Error updating vendor.').removeClass('d-none');
+    });
+});
 </script>
 </body>
 </html>

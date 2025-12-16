@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Tracking | WITMS</title>
+    <title>Delivery Tracking | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -48,7 +48,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Procurement Officer</small>
             </div>
             <nav class="nav flex-column">
@@ -127,10 +127,11 @@
                             <div class="col-md-2">
                                 <select class="form-select" name="status">
                                     <option value="">All Status</option>
-                                    <option value="pending" <?= ($_GET['status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending Shipment</option>
-                                    <option value="shipped" <?= ($_GET['status'] ?? '') == 'shipped' ? 'selected' : '' ?>>Shipped</option>
-                                    <option value="in_transit" <?= ($_GET['status'] ?? '') == 'in_transit' ? 'selected' : '' ?>>In Transit</option>
-                                    <option value="delivered" <?= ($_GET['status'] ?? '') == 'delivered' ? 'selected' : '' ?>>Delivered</option>
+                                    <option value="Pending" <?= ($_GET['status'] ?? '') == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                    <option value="Sent" <?= ($_GET['status'] ?? '') == 'Sent' ? 'selected' : '' ?>>Sent</option>
+                                    <option value="Shipped" <?= ($_GET['status'] ?? '') == 'Shipped' ? 'selected' : '' ?>>Shipped</option>
+                                    <option value="In Transit" <?= ($_GET['status'] ?? '') == 'In Transit' ? 'selected' : '' ?>>In Transit</option>
+                                    <option value="Delivered" <?= ($_GET['status'] ?? '') == 'Delivered' ? 'selected' : '' ?>>Delivered</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -168,16 +169,16 @@
                                 <tbody>
                                     <?php foreach ($deliveries as $d): ?>
                                     <?php 
-                                    $isOverdue = isset($d['expected_delivery_date']) && strtotime($d['expected_delivery_date']) < time() && ($d['delivery_status'] ?? '') != 'delivered';
+                                    $isOverdue = isset($d['expected_delivery']) && strtotime($d['expected_delivery']) < time() && ($d['status'] ?? '') != 'Delivered';
                                     ?>
                                     <tr class="<?= $isOverdue ? 'table-danger' : '' ?>">
                                         <td><strong><?= esc($d['po_number'] ?? 'N/A') ?></strong></td>
                                         <td><?= esc($d['vendor_name'] ?? 'Unknown') ?></td>
                                         <td><?= isset($d['ship_date']) ? date('M d, Y', strtotime($d['ship_date'])) : 'N/A' ?></td>
                                         <td>
-                                            <?php if (isset($d['expected_delivery_date'])): ?>
+                                            <?php if (isset($d['expected_delivery'])): ?>
                                             <span class="<?= $isOverdue ? 'text-danger fw-bold' : '' ?>">
-                                                <?= date('M d, Y', strtotime($d['expected_delivery_date'])) ?>
+                                                <?= date('M d, Y', strtotime($d['expected_delivery'])) ?>
                                                 <?= $isOverdue ? ' (Overdue)' : '' ?>
                                             </span>
                                             <?php else: ?>
@@ -187,16 +188,16 @@
                                         <td><code><?= esc($d['tracking_number'] ?? 'N/A') ?></code></td>
                                         <td>
                                             <?php 
-                                            $status = $d['delivery_status'] ?? 'pending';
-                                            $sClass = ['delivered' => 'success', 'in_transit' => 'info', 'shipped' => 'primary', 'pending' => 'warning'][$status] ?? 'secondary';
+                                            $status = $d['status'] ?? 'Pending';
+                                            $sClass = ['Delivered' => 'success', 'In Transit' => 'info', 'Shipped' => 'primary', 'Pending' => 'warning', 'Sent' => 'info'][$status] ?? 'secondary';
                                             ?>
-                                            <span class="badge bg-<?= $sClass ?>"><?= ucfirst(str_replace('_', ' ', $status)) ?></span>
+                                            <span class="badge bg-<?= $sClass ?>"><?= $status ?></span>
                                         </td>
                                         <td>
                                             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#trackingModal" onclick="showTracking(<?= $d['id'] ?? 0 ?>)">
                                                 📍 Track
                                             </button>
-                                            <?php if (($d['delivery_status'] ?? '') == 'in_transit'): ?>
+                                            <?php if (($d['status'] ?? '') == 'Sent' || ($d['status'] ?? '') == 'In Transit'): ?>
                                             <a href="<?= base_url('procurement/receive/' . ($d['id'] ?? 0)) ?>" class="btn btn-sm btn-success">Receive</a>
                                             <?php endif; ?>
                                         </td>

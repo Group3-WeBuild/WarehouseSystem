@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders Management | WITMS</title>
+    <title>Orders Management | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -42,7 +42,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Warehouse Manager</small>
             </div>
             <nav class="nav flex-column">
@@ -51,6 +51,9 @@
                 </a>
                 <a class="nav-link" href="<?= base_url('warehouse-manager/inventory') ?>">
                     <i class="bi bi-box-seam"></i> Inventory
+                </a>
+                <a class="nav-link" href="<?= base_url('warehouse-manager/barcode-scanner') ?>">
+                    <i class="bi bi-qr-code-scan"></i> Barcode Scanner
                 </a>
                 <a class="nav-link" href="<?= base_url('warehouse-manager/stock-movements') ?>">
                     <i class="bi bi-arrow-left-right"></i> Stock Movements
@@ -95,19 +98,19 @@
                     </div>
                     <div class="col-md-3">
                         <div class="stat-card bg-warning">
-                            <h3><?= $stats['pending'] ?? count(array_filter($orders ?? [], fn($o) => ($o['status'] ?? '') == 'pending')) ?></h3>
+                            <h3><?= $stats['pending'] ?? count(array_filter($orders ?? [], fn($o) => ($o['status'] ?? '') == 'Pending')) ?></h3>
                             <small>Pending</small>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="stat-card bg-info">
-                            <h3><?= $stats['processing'] ?? count(array_filter($orders ?? [], fn($o) => ($o['status'] ?? '') == 'processing')) ?></h3>
+                            <h3><?= $stats['processing'] ?? count(array_filter($orders ?? [], fn($o) => ($o['status'] ?? '') == 'Processing')) ?></h3>
                             <small>Processing</small>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="stat-card bg-success">
-                            <h3><?= $stats['completed'] ?? count(array_filter($orders ?? [], fn($o) => ($o['status'] ?? '') == 'completed')) ?></h3>
+                            <h3><?= $stats['completed'] ?? count(array_filter($orders ?? [], fn($o) => ($o['status'] ?? '') == 'Completed')) ?></h3>
                             <small>Completed</small>
                         </div>
                     </div>
@@ -123,11 +126,10 @@
                             <div class="col-md-2">
                                 <select class="form-select" name="status">
                                     <option value="">All Status</option>
-                                    <option value="pending" <?= ($_GET['status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending</option>
-                                    <option value="processing" <?= ($_GET['status'] ?? '') == 'processing' ? 'selected' : '' ?>>Processing</option>
-                                    <option value="shipped" <?= ($_GET['status'] ?? '') == 'shipped' ? 'selected' : '' ?>>Shipped</option>
-                                    <option value="completed" <?= ($_GET['status'] ?? '') == 'completed' ? 'selected' : '' ?>>Completed</option>
-                                    <option value="cancelled" <?= ($_GET['status'] ?? '') == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                    <option value="Pending" <?= ($_GET['status'] ?? '') == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                    <option value="Processing" <?= ($_GET['status'] ?? '') == 'Processing' ? 'selected' : '' ?>>Processing</option>
+                                    <option value="Completed" <?= ($_GET['status'] ?? '') == 'Completed' ? 'selected' : '' ?>>Completed</option>
+                                    <option value="Cancelled" <?= ($_GET['status'] ?? '') == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -175,18 +177,18 @@
                                         <td>₱<?= number_format($order['total_amount'] ?? 0, 2) ?></td>
                                         <td>
                                             <?php 
-                                            $status = $order['status'] ?? 'pending';
-                                            $sClass = ['completed' => 'success', 'shipped' => 'info', 'processing' => 'primary', 'pending' => 'warning', 'cancelled' => 'danger'][$status] ?? 'secondary';
+                                            $status = $order['status'] ?? 'Pending';
+                                            $sClass = ['Completed' => 'success', 'Processing' => 'primary', 'Pending' => 'warning', 'Cancelled' => 'danger'][$status] ?? 'secondary';
                                             ?>
-                                            <span class="badge bg-<?= $sClass ?>"><?= ucfirst($status) ?></span>
+                                            <span class="badge bg-<?= $sClass ?>"><?= $status ?></span>
                                         </td>
                                         <td>
                                             <a href="<?= base_url('warehouse-manager/orders/' . ($order['id'] ?? 0)) ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
-                                            <?php if (($order['status'] ?? '') == 'pending'): ?>
+                                            <?php if (($order['status'] ?? '') == 'Pending'): ?>
                                             <button class="btn btn-sm btn-success" onclick="processOrder(<?= $order['id'] ?? 0 ?>)"><i class="bi bi-check-lg"></i> Process</button>
                                             <?php endif; ?>
-                                            <?php if (($order['status'] ?? '') == 'processing'): ?>
-                                            <button class="btn btn-sm btn-info" onclick="shipOrder(<?= $order['id'] ?? 0 ?>)"><i class="bi bi-truck"></i> Ship</button>
+                                            <?php if (($order['status'] ?? '') == 'Processing'): ?>
+                                            <button class="btn btn-sm btn-info" onclick="completeOrder(<?= $order['id'] ?? 0 ?>)"><i class="bi bi-check-all"></i> Complete</button>
                                             <?php endif; ?>
                                             <a href="<?= base_url('print/order/' . ($order['id'] ?? 0)) ?>" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer"></i></a>
                                         </td>

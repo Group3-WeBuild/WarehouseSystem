@@ -174,7 +174,7 @@ class BarcodeModel extends Model
         if (!$item) return null;
         
         $qrData = [
-            'system' => 'WITMS',
+            'system' => 'WeBuild',
             'version' => '1.0',
             'item_id' => $item['id'],
             'sku' => $item['sku'],

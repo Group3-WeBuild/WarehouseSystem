@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title><?= esc($title ?? 'Warehouse Staff Dashboard') ?> | WITMS</title>
+    <title><?= esc($title ?? 'Warehouse Staff Dashboard') ?> | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -73,7 +73,7 @@
     <!-- Fixed Sidebar -->
     <aside class="sidebar">
         <div class="text-center py-4">
-            <h5 class="text-white mb-1">WITMS</h5>
+            <h5 class="text-white mb-1">WeBuild</h5>
             <small class="text-white-50">Warehouse Staff</small>
         </div>
         <nav class="nav flex-column">
@@ -82,6 +82,9 @@
             </a>
             <a class="nav-link" href="<?= base_url('warehouse-staff/inventory') ?>">
                 <i class="bi bi-box-seam"></i> View Inventory
+            </a>
+            <a class="nav-link" href="<?= base_url('warehouse-staff/barcode-scanner') ?>">
+                <i class="bi bi-qr-code-scan"></i> Barcode Scanner
             </a>
             <a class="nav-link" href="<?= base_url('warehouse-staff/stock-movements') ?>">
                 <i class="bi bi-arrow-left-right"></i> Stock Movements

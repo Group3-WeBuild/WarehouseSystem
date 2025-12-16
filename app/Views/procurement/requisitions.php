@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Requisitions | WITMS</title>
+    <title>Purchase Requisitions | WeBuild</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -41,7 +41,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 px-0 sidebar">
             <div class="text-center py-4">
-                <h5 class="text-white mb-1">WITMS</h5>
+                <h5 class="text-white mb-1">WeBuild</h5>
                 <small class="text-white-50">Procurement Officer</small>
             </div>
             <nav class="nav flex-column">
@@ -93,10 +93,10 @@
                             <div class="col-md-2">
                                 <select class="form-select" name="status">
                                     <option value="">All Status</option>
-                                    <option value="draft" <?= ($_GET['status'] ?? '') == 'draft' ? 'selected' : '' ?>>Draft</option>
-                                    <option value="pending" <?= ($_GET['status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending</option>
-                                    <option value="approved" <?= ($_GET['status'] ?? '') == 'approved' ? 'selected' : '' ?>>Approved</option>
-                                    <option value="rejected" <?= ($_GET['status'] ?? '') == 'rejected' ? 'selected' : '' ?>>Rejected</option>
+                                    <option value="Draft" <?= ($_GET['status'] ?? '') == 'Draft' ? 'selected' : '' ?>>Draft</option>
+                                    <option value="Pending" <?= ($_GET['status'] ?? '') == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                    <option value="Approved" <?= ($_GET['status'] ?? '') == 'Approved' ? 'selected' : '' ?>>Approved</option>
+                                    <option value="Rejected" <?= ($_GET['status'] ?? '') == 'Rejected' ? 'selected' : '' ?>>Rejected</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -150,17 +150,17 @@
                                         </td>
                                         <td>
                                             <?php 
-                                            $status = $req['status'] ?? 'draft';
-                                            $sClass = ['approved' => 'success', 'pending' => 'warning', 'rejected' => 'danger', 'draft' => 'secondary'][$status] ?? 'secondary';
+                                            $status = $req['status'] ?? 'Draft';
+                                            $sClass = ['Approved' => 'success', 'Pending' => 'warning', 'Rejected' => 'danger', 'Draft' => 'secondary'][$status] ?? 'secondary';
                                             ?>
-                                            <span class="badge bg-<?= $sClass ?>"><?= ucfirst($status) ?></span>
+                                            <span class="badge bg-<?= $sClass ?>"><?= $status ?></span>
                                         </td>
                                         <td>
                                             <a href="<?= base_url('procurement/requisitions/' . ($req['id'] ?? 0)) ?>" class="btn btn-sm btn-outline-primary">View</a>
-                                            <?php if (($req['status'] ?? '') == 'pending'): ?>
+                                            <?php if (($req['status'] ?? '') == 'Pending'): ?>
                                             <button class="btn btn-sm btn-success" onclick="approveReq(<?= $req['id'] ?? 0 ?>)">Approve</button>
                                             <?php endif; ?>
-                                            <?php if (($req['status'] ?? '') == 'approved'): ?>
+                                            <?php if (($req['status'] ?? '') == 'Approved'): ?>
                                             <a href="<?= base_url('procurement/create-po-from-req/' . ($req['id'] ?? 0)) ?>" class="btn btn-sm btn-info">Create PO</a>
                                             <?php endif; ?>
                                         </td>

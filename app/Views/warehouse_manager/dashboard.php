@@ -47,7 +47,7 @@
             <!-- Sidebar -->
             <div class="col-md-2 px-0 sidebar">
                 <div class="text-center py-4">
-                    <h5 class="text-white">WITMS</h5>
+                    <h5 class="text-white">WeBuild</h5>
                     <p class="text-white-50 small">Warehouse Manager</p>
                 </div>
                 <nav class="nav flex-column">
@@ -56,6 +56,9 @@
                     </a>
                     <a class="nav-link" href="<?= base_url('warehouse-manager/inventory') ?>">
                         <i class="bi bi-box-seam"></i> Inventory
+                    </a>
+                    <a class="nav-link" href="<?= base_url('warehouse-manager/barcode-scanner') ?>">
+                        <i class="bi bi-qr-code-scan"></i> Barcode Scanner
                     </a>
                     <a class="nav-link" href="<?= base_url('warehouse-manager/stock-movements') ?>">
                         <i class="bi bi-arrow-left-right"></i> Stock Movements
